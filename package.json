@@ -33,6 +33,7 @@
   "dependencies": {
     "babel-polyfill": "^6.26.0",
     "bootstrap": "4.0.0",
+    "bootstrap-daterangepicker": "^2.1.30",
     "chart.js": "2.7.1",
     "flag-icon-css": "2.9.0",
     "font-awesome": "4.7.0",
@@ -40,13 +41,16 @@
     "jquery": "^1.9.1",
     "material-ui": "^1.0.0-beta.33",
     "material-ui-icons-next": "^1.0.0-beta.17-next",
+    "moment": "^2.20.1",
     "react": "16.2.0",
+    "react-bootstrap-daterangepicker": "^4.1.0",
     "react-chartjs-2": "2.7.0",
     "react-dom": "16.2.0",
     "react-fontawesome": "^1.6.1",
     "react-redux": "^5.0.7",
     "react-router": "3.2.0",
     "react-router-dom": "4.2.2",
+    "react-select": "^1.2.1",
     "react-table": "^6.7.6",
     "react-transition-group": "2.2.1",
     "reactstrap": "5.0.0-beta",
@@ -55,8 +59,7 @@
     "status-indicator": "^1.0.9"
   },
   "scripts": {
-    "dev":
-      "webpack -d --progress --watch --profile --json > compilation-stats.json --env.dev",
+    "dev": "webpack -d --progress --watch --profile --json > compilation-stats.json --env.dev",
     "start": "webpack-dev-server --progress --color --inline --env.dev",
     "build": "webpack -p --progress --env.prod",
     "clean": "rimraf ./build"

@@ -44,7 +44,7 @@ const mockData = [
     moduleId: "00003"
   },
   {
-    candidate: "Eric Little",
+    candidate: "Lesley Little",
     testName: "Accounting",
     dateIssued: "01/01/2018",
     status: "completed",
@@ -177,7 +177,7 @@ class Dashboard extends Component {
                 },
                 {
                   Header: "Actions",
-                  maxWidth: 250,
+                  maxWidth: 300,
                   Cell: cell => (
                     <div
                       style={{
