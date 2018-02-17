@@ -5,7 +5,7 @@ import SecondaryHeader from "../components/Header/SecondaryHeader";
 import Sidebar from "../components/Sidebar/";
 import Footer from "../components/Footer/";
 
-import Dashboard from "./Dashboard/index.jsx";
+import Dashboard from "./Candidates/index.jsx";
 
 export default class App extends Component {
   constructor(props) {

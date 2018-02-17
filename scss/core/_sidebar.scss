@@ -5,7 +5,8 @@
   padding: $sidebar-padding;
   color: $sidebar-color;
   background: $sidebar-bg;
-  @include borders($sidebar-borders);
+  // @include borders($sidebar-borders);
+  border-right: 1px $border-color solid;
 
   .sidebar-row {
     margin: 5px;

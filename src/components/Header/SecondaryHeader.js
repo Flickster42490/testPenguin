@@ -13,6 +13,7 @@ import Screen from "../../images/screen.svg";
 import Lock from "../../images/lock.svg";
 import Add from "../../images/add.svg";
 import Library from "../../images/library.svg";
+import NewFolder from "../../images/new-folder.svg";
 import HeaderDropdown from "./HeaderDropdown";
 
 class SecondaryHeader extends Component {
@@ -46,6 +47,13 @@ class SecondaryHeader extends Component {
           >
             <span className="navbar-toggler-icon" />
           </NavbarToggler>
+          <NavItem className="px-3">
+            <NavLink href="#/tests/createNewTest">
+              <img src={NewFolder} />
+              <br />
+              Create New Test
+            </NavLink>
+          </NavItem>
           <NavItem className="px-3">
             <NavLink href="#">
               <img src={Screen} />

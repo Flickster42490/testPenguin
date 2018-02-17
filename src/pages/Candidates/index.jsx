@@ -7,25 +7,12 @@ import Aside from "../../components/Aside/";
 
 import Dashboard from "./candidatesDashboard.jsx";
 
-export default class App extends Component {
-  //   constructor(props) {
-  //     super(props);
-
-  //     this.state = {
-  //       secondaryHeader: false
-  //     };
-  //   }
-  //   componentWillMount() {
-  //     if (window.location.hash.includes("tests"))
-  //       this.setState({ secondaryHeader: true });
-  //   }
+export default class Candidates extends Component {
   render() {
     return (
       <div className="app-body">
         <Sidebar {...this.props} />
         <main className="main">
-          {/* {this.state.secondaryHeader && <SecondaryHeader />} */}
-          {/* <br /> */}
           <Container fluid>
             <Dashboard />
           </Container>
