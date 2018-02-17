@@ -11,6 +11,8 @@ import {
   Button
 } from "reactstrap";
 import Select from "react-select";
+import Slider from "react-rangeslider";
+import "react-rangeslider/lib/index.css";
 import "react-select/dist/react-select.css";
 
 import { DatePickerBasic } from "../DateRangePicker.jsx";
@@ -23,15 +25,32 @@ const options = [
   { value: 6, label: "Drew Tevrizian" }
 ];
 
+const catOptions = [
+  { value: 2, label: "Accounting" },
+  { value: 3, label: "Finance" },
+  { value: 5, label: "CPA (Custom)" },
+  { value: 4, label: "Finance II" }
+];
+
 class Sidebar extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      value: ""
+      value: "",
+      catValue: "",
+      sliderValue: 50
     };
 
     this.updateValue = this.updateValue.bind(this);
+    this.updateCatValue = this.updateCatValue.bind(this);
+    this.handleSliderChange = this.handleSliderChange.bind(this);
+  }
+
+  handleSliderChange(value) {
+    this.setState({
+      sliderValue: value
+    });
   }
 
   updateValue(newValue) {
@@ -39,12 +58,22 @@ class Sidebar extends Component {
       value: newValue
     });
   }
+
+  updateCatValue(newValue) {
+    this.setState({
+      catValue: newValue
+    });
+  }
+
   render() {
     return (
       <div className="sidebar">
         <Container>
-          <Row className="sidebar-row" style={{ display: "flex" }}>
-            <h4>Search</h4>
+          <Row
+            className="sidebar-row"
+            style={{ display: "flex", marginTop: "30px" }}
+          >
+            <h4>Search Filters</h4>
           </Row>
           <Row className="sidebar-row">
             By name or email: <br />
@@ -61,8 +90,32 @@ class Sidebar extends Component {
             By Tested Period: <br />
             <DatePickerBasic />
           </Row>
-          <Row className="sidebar-row" />
-          <Row className="sidebar-row" />
+          <br />
+          <Row className="sidebar-row">
+            By Test Score:&nbsp;
+            <strong>Greater than {this.state.sliderValue}</strong>
+            <Slider
+              style={{ width: "100%" }}
+              min={0}
+              max={100}
+              value={this.state.sliderValue}
+              // onChangeStart={this.handleChangeStart}
+              onChange={this.handleSliderChange}
+              // onChangeComplete={this.handleChangeComplete}
+            />
+          </Row>
+          <Row className="sidebar-row">
+            By Test Categories: <br />
+            <Select
+              options={catOptions}
+              clearable
+              searchable
+              value={this.state.catValue}
+              onChange={this.updateCatValue}
+              multi
+              removeSelected
+            />
+          </Row>
         </Container>
       </div>
     );

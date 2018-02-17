@@ -17,11 +17,9 @@ button {
   }
 }
 
-.btn-block {
-  width: 100%;
-
+.btn-group {
   .btn {
-    border: 1px $border-color solid;
+    border: 1px $border-color solid !important;
   }
 }
 

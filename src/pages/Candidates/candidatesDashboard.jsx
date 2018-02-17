@@ -96,6 +96,7 @@ class Dashboard extends Component {
             <ReactTable
               style={{ backgroundColor: "white" }}
               data={mockData}
+              sortable={false}
               columns={[
                 {
                   Header: "Candidate",
