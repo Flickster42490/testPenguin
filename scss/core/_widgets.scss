@@ -31,7 +31,6 @@
     padding: 10px 0;
     list-style: none;
 
-
     li {
       display: block;
       float: left;
@@ -114,6 +113,13 @@
       }
     }
 
+    .review-result-bars {
+      position: relative;
+      width: 40%;
+      float: right;
+      margin-top: -20px;
+    }
+
     &.legend {
       text-align: center;
 
@@ -135,7 +141,6 @@
   }
 
   &.type-2 {
-
     li {
       overflow: hidden;
 

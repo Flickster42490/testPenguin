@@ -2,6 +2,7 @@
 .sidebar {
   display: flex;
   flex-direction: column;
+  z-index: 100;
   padding: $sidebar-padding;
   color: $sidebar-color;
   background: $sidebar-bg;

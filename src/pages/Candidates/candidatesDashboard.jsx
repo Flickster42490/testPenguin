@@ -195,7 +195,12 @@ class Dashboard extends Component {
                         }}
                       >
                         <Button size="sm" color="primary">
-                          Review Results
+                          <a
+                            href="#/candidates/reviewResults"
+                            style={{ color: "#fff" }}
+                          >
+                            Review Results
+                          </a>
                         </Button>
                         <Button size="sm" color="danger">
                           Flag as Important
