@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Container } from "reactstrap";
 import Header from "../../components/Header/";
 // import SecondaryHeader from "../../components/Header/SecondaryHeader";
-import Sidebar from "../../components/Sidebar/";
+import Sidebar from "../../components/CandidatesSidebar/";
 import Aside from "../../components/Aside/";
 
 import Dashboard from "./candidatesDashboard.jsx";

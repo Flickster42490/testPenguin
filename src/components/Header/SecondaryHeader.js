@@ -7,6 +7,7 @@ import {
   NavLink,
   Badge
 } from "reactstrap";
+import { hashHistory } from "react-router";
 import FontAwesome from "react-fontawesome";
 
 import Screen from "../../images/screen.svg";
@@ -37,6 +38,11 @@ class SecondaryHeader extends Component {
     document.body.classList.toggle("aside-menu-hidden");
   }
 
+  handleClick(e) {
+    this.props.updatePage(e);
+    hashHistory.push(`tests/${e}`);
+  }
+
   render() {
     return (
       <header className="app-header navbar secondary">
@@ -47,12 +53,13 @@ class SecondaryHeader extends Component {
           >
             <span className="navbar-toggler-icon" />
           </NavbarToggler>
-          <NavItem className="px-3">
-            <NavLink href="#/tests/createNewTest">
-              <img src={NewFolder} />
-              <br />
-              Create New Test
-            </NavLink>
+          <NavItem
+            className="px-3"
+            onClick={() => this.handleClick("preBuiltTests")}
+          >
+            <img src={Lock} />
+            <br />
+            Review Pre-Built Tests
           </NavItem>
           <NavItem className="px-3">
             <NavLink href="#">
@@ -61,18 +68,19 @@ class SecondaryHeader extends Component {
               Review Previous Tests
             </NavLink>
           </NavItem>
-          <NavItem className="px-3">
-            <NavLink href="#">
-              <img src={Lock} />
-              <br />
-              Review Pre-Built Tests
-            </NavLink>
+          <NavItem
+            className="px-3"
+            onClick={() => this.handleClick("questionLibrary")}
+          >
+            <img src={Library} />
+            <br />
+            Review Questions in the Library
           </NavItem>
           <NavItem className="px-3">
-            <NavLink href="#">
-              <img src={Library} />
+            <NavLink href="#/tests/createNewTest">
+              <img src={NewFolder} />
               <br />
-              Review Questions in the Library
+              Create New Test
             </NavLink>
           </NavItem>
           <NavItem className="px-3">
