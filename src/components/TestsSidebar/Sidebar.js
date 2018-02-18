@@ -24,12 +24,12 @@ const difficultyOptions = [
 ];
 
 const catOptions = [
-  { value: 2, label: "Accounting" },
-  { value: 3, label: "Finance" },
-  { value: 5, label: "CPA" },
-  { value: 4, label: "Finance II" },
-  { value: 6, label: "A/P Clerk" },
-  { value: 7, label: "BookKeeping" }
+  { value: 2, label: "Treasury" },
+  { value: 3, label: "Payroll" },
+  { value: 5, label: "Fixed Assets" },
+  { value: 4, label: "Controls" },
+  { value: 6, label: "ERM" },
+  { value: 7, label: "Closing" }
 ];
 
 class Sidebar extends Component {
@@ -48,7 +48,6 @@ class Sidebar extends Component {
   }
 
   componentWillMount() {
-    console.log(this.props.page);
     this.setState({
       page: window.location.hash.split("/")[2]
     });

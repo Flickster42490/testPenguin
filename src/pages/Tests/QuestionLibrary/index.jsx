@@ -13,44 +13,25 @@ import "react-table/react-table.css";
 
 const mockData = [
   {
-    testName: "A/P Clerk",
-    estimatedTime: "60",
-    mcNumber: 6,
-    fbNumber: 12,
-    moduleNumber: 2,
-    categories: ["Accounting", "Finance", "Finance II", "CPA"]
+    questionName: "A/P Clerk",
+    estimatedTime: 3,
+    type: "Multiple Choice",
+    difficulty: "Easy",
+    categories: ["Finance"]
   },
   {
-    testName: "BookKeeper",
-    estimatedTime: "60",
-    mcNumber: 6,
-    fbNumber: 12,
-    moduleNumber: 2,
-    categories: ["Accounting", "Finance", "Finance II", "CPA"]
+    questionName: "Batch Coding",
+    estimatedTime: 2,
+    type: "Multiple Choice",
+    difficulty: "Medium",
+    categories: ["Accounting"]
   },
   {
-    testName: "Assistant Controller",
-    estimatedTime: "60",
-    mcNumber: 6,
-    fbNumber: 12,
-    moduleNumber: 2,
-    categories: ["Accounting", "Finance", "Finance II", "CPA"]
-  },
-  {
-    testName: "Cost Accountant",
-    estimatedTime: "60",
-    mcNumber: 6,
-    fbNumber: 12,
-    moduleNumber: 2,
-    categories: ["Accounting", "Finance", "Finance II", "CPA"]
-  },
-  {
-    testName: "CPA",
-    estimatedTime: "60",
-    mcNumber: 6,
-    fbNumber: 12,
-    moduleNumber: 2,
-    categories: ["Finance", "Finance II", "CPA"]
+    testName: "ChargeBacks",
+    estimatedTime: 5,
+    type: "Fill In Blank",
+    difficulty: "Hard",
+    categories: ["CPA"]
   }
 ];
 
@@ -63,6 +44,28 @@ export default class QuestionLibrary extends Component {
   render() {
     return (
       <div>
+        <Row style={{ textAlign: "center" }}>
+          <Col xs="12">
+            <ButtonGroup size="lg" block>
+              <Button outline color="default">
+                All Question Types (3)
+              </Button>
+              <Button outline color="default">
+                Multiple Choice (1)
+              </Button>
+              <Button outline color="default">
+                Fill In Blank (2)
+              </Button>
+              <Button outline color="default">
+                Short Answer (0)
+              </Button>
+              <Button outline color="default">
+                Modules (0)
+              </Button>
+            </ButtonGroup>
+          </Col>
+        </Row>
+        <br />
         <Row>
           <Col xs="12">
             <ReactTable
@@ -71,8 +74,8 @@ export default class QuestionLibrary extends Component {
               sortable={false}
               columns={[
                 {
-                  Header: "Test Name",
-                  accessor: "testName",
+                  Header: "Question Name",
+                  accessor: "questionName",
                   Cell: cell => (
                     <div
                       style={{
@@ -93,15 +96,18 @@ export default class QuestionLibrary extends Component {
                     return (
                       <div>
                         <div>
+                          <strong>Type: </strong>
+                          {cell.original.type} mins
+                          {/* will want to use moment duration fomrat */}
+                        </div>
+                        <div>
                           <strong>Estimated Time: </strong>
                           {cell.original.estimatedTime} mins
                           {/* will want to use moment duration fomrat */}
                         </div>
                         <div>
-                          <strong>Questions: </strong>
-                          {cell.original.mcNumber} Multiple Choice,
-                          {cell.original.fbNumber} Fill In Blank,
-                          {cell.original.moduleNumber} Modules
+                          <strong>Difficulty: </strong>
+                          {cell.original.difficulty}
                         </div>
                         <div>
                           <strong>Will Test Candidates in : </strong>
@@ -133,10 +139,7 @@ export default class QuestionLibrary extends Component {
                         }}
                       >
                         <Button size="sm" color="primary">
-                          View Questions
-                        </Button>
-                        <Button size="sm" color="success">
-                          Invite Candidates
+                          Preview Question
                         </Button>
                       </ButtonGroup>
                     </div>

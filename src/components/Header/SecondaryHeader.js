@@ -59,14 +59,15 @@ class SecondaryHeader extends Component {
           >
             <img src={Lock} />
             <br />
-            Review Pre-Built Tests
+            Pre-Built Tests
           </NavItem>
-          <NavItem className="px-3">
-            <NavLink href="#">
-              <img src={Screen} />
-              <br />
-              Review Previous Tests
-            </NavLink>
+          <NavItem
+            className="px-3"
+            onClick={() => this.handleClick("previousTests")}
+          >
+            <img src={Screen} />
+            <br />
+            Review Previous Tests
           </NavItem>
           <NavItem
             className="px-3"
@@ -74,7 +75,7 @@ class SecondaryHeader extends Component {
           >
             <img src={Library} />
             <br />
-            Review Questions in the Library
+            Question Library
           </NavItem>
           <NavItem className="px-3">
             <NavLink href="#/tests/createNewTest">
