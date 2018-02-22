@@ -117,18 +117,17 @@ class SecondaryHeader extends Component {
               Create New Test
             </span>
           </NavItem>
-          <NavItem className="px-3">
-            <NavLink href="#">
-              <img src={Add} />
-              <br />
-              <span
-                className={
-                  this.state.page === "createNewQuestion" ? "bold" : ""
-                }
-              >
-                Create New Question
-              </span>
-            </NavLink>
+          <NavItem
+            className="px-3"
+            onClick={() => this.handleClick("createNewQuestion")}
+          >
+            <img src={Add} />
+            <br />
+            <span
+              className={this.state.page === "createNewQuestion" ? "bold" : ""}
+            >
+              Create New Question
+            </span>
           </NavItem>
         </Nav>
       </header>

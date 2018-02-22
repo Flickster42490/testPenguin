@@ -15,14 +15,14 @@ const mockData = {
   difficulty: "Easy",
   type: "Multiple Choice",
   questionStem:
-    "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum ",
-  answerChoices: {
-    a: "Answer Choice 1",
-    b: "Answer Choice 2",
-    c: "Answer Choice 3",
-    d: "Answer Choice 4"
-  },
-  correctAnswer: "a",
+    "ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum ",
+  answerChoices: [
+    "Answer Choice 1",
+    "Answer Choice 2",
+    "Answer Choice 3",
+    "Answer Choice 4"
+  ],
+  correctAnswer: 1,
   notes:
     "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum "
 };
@@ -58,13 +58,38 @@ export default class Preview extends Component {
               <Col xs="10">
                 <h4>Question Stem: </h4>
                 <br />
-                {mockData.questionStem}
+                <p>{mockData.questionStem}</p>
               </Col>
             </Row>
             <br />
             <Row>
-              <Col xs="12" />
+              <Col xs="1" />
+              <Col xs="10">
+                {mockData.answerChoices.map(i => (
+                  <Button color="secondary" outline block>
+                    {i}
+                  </Button>
+                ))}
+              </Col>
             </Row>
+            <br />
+            <Row>
+              <Col xs="1" />
+              <Col xs="10">
+                <strong>Correct Answer:</strong>
+                {mockData.answerChoices[mockData.correctAnswer]}
+              </Col>
+            </Row>
+            <br />
+            <Row>
+              <Col xs="1" />
+              <Col xs="10">
+                <strong>Notes: </strong>
+                <br />
+                <p>{mockData.notes}</p>
+              </Col>
+            </Row>
+            <br />
           </Container>
         </Card>
       </div>
