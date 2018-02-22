@@ -55,6 +55,7 @@
     "react-select": "^1.2.1",
     "react-table": "^6.7.6",
     "react-tippy": "^1.2.2",
+    "react-toggle": "^4.0.2",
     "react-transition-group": "2.2.1",
     "reactstrap": "5.0.0-beta",
     "redux": "^3.7.2",

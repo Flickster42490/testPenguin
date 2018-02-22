@@ -18,6 +18,21 @@ import NewFolder from "../../images/new-folder.svg";
 import HeaderDropdown from "./HeaderDropdown";
 
 class SecondaryHeader extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      page: "preBuiltTests"
+    };
+  }
+
+  componentWillMount() {
+    if (this.state.page !== window.location.hash.split("/")[2])
+      this.setState({
+        page: window.location.hash.split("/")[2]
+      });
+  }
+
   sidebarToggle(e) {
     e.preventDefault();
     document.body.classList.toggle("sidebar-hidden");
@@ -39,8 +54,15 @@ class SecondaryHeader extends Component {
   }
 
   handleClick(e) {
-    this.props.updatePage(e);
-    hashHistory.push(`tests/${e}`);
+    this.setState(
+      {
+        page: e
+      },
+      () => {
+        this.props.updatePage(e);
+        hashHistory.push(`tests/${e}`);
+      }
+    );
   }
 
   render() {
@@ -59,7 +81,9 @@ class SecondaryHeader extends Component {
           >
             <img src={Lock} />
             <br />
-            Pre-Built Tests
+            <span className={this.state.page === "preBuiltTests" ? "bold" : ""}>
+              Pre-Built Tests
+            </span>
           </NavItem>
           <NavItem
             className="px-3"
@@ -67,7 +91,9 @@ class SecondaryHeader extends Component {
           >
             <img src={Screen} />
             <br />
-            Review Previous Tests
+            <span className={this.state.page === "previousTests" ? "bold" : ""}>
+              Review Previous Tests
+            </span>
           </NavItem>
           <NavItem
             className="px-3"
@@ -75,20 +101,33 @@ class SecondaryHeader extends Component {
           >
             <img src={Library} />
             <br />
-            Question Library
+            <span
+              className={this.state.page === "questionLibrary" ? "bold" : ""}
+            >
+              Question Library
+            </span>
           </NavItem>
-          <NavItem className="px-3">
-            <NavLink href="#/tests/createNewTest">
-              <img src={NewFolder} />
-              <br />
+          <NavItem
+            className="px-3"
+            onClick={() => this.handleClick("createNewTest")}
+          >
+            <img src={NewFolder} />
+            <br />
+            <span className={this.state.page === "createNewTest" ? "bold" : ""}>
               Create New Test
-            </NavLink>
+            </span>
           </NavItem>
           <NavItem className="px-3">
             <NavLink href="#">
               <img src={Add} />
               <br />
-              Create New Questions
+              <span
+                className={
+                  this.state.page === "createNewQuestion" ? "bold" : ""
+                }
+              >
+                Create New Question
+              </span>
             </NavLink>
           </NavItem>
         </Nav>

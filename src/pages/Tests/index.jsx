@@ -15,10 +15,6 @@ export default class App extends Component {
 
     this.handleUpdatePage = this.handleUpdatePage.bind(this);
   }
-  componentWillMount() {
-    if (window.location.hash.includes("tests"))
-      this.setState({ secondaryHeader: true });
-  }
 
   handleUpdatePage(e) {
     this.setState({

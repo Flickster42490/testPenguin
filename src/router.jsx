@@ -6,7 +6,9 @@ import ReviewResults from "./pages/Candidates/reviewResults.jsx";
 import Tests from "./pages/Tests/index.jsx";
 import CreateNewTest from "./pages/Tests/CreateNewTest/index.jsx";
 import PreBuiltTests from "./pages/Tests/PreBuiltTests/index.jsx";
+import PreviousTests from "./pages/Tests/PreviousTests/index.jsx";
 import QuestionLibrary from "./pages/Tests/QuestionLibrary/index.jsx";
+import PreviewQuestion from "./pages/Tests/QuestionLibrary/preview.jsx";
 import NotFound from "./pages/notFound/index.jsx";
 
 const AppRouter = () => (
@@ -18,7 +20,9 @@ const AppRouter = () => (
       <Route path="tests" component={Tests}>
         <IndexRedirect to="preBuiltTests" />
         <Route path="preBuiltTests" component={PreBuiltTests} />
+        <Route path="previousTests" component={PreviousTests} />
         <Route path="questionLibrary" component={QuestionLibrary} />
+        <Route path="questionLibrary/preview" component={PreviewQuestion} />
         <Route path="createNewTest" component={CreateNewTest} />
       </Route>
       <Route path="*" component={NotFound} />

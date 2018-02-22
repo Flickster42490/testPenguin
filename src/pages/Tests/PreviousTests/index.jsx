@@ -13,25 +13,31 @@ import "react-table/react-table.css";
 
 const mockData = [
   {
-    questionName: "A/P Clerk",
-    estimatedTime: 3,
-    type: "Multiple Choice",
-    difficulty: "Easy",
-    categories: ["Finance"]
+    testName: "A/P Clerk",
+    estimatedTime: "60",
+    mcNumber: 6,
+    fbNumber: 12,
+    moduleNumber: 2,
+    candidatesTested: 44,
+    testType: "Pre-Built"
   },
   {
-    questionName: "Batch Coding",
-    estimatedTime: 2,
-    type: "Multiple Choice",
-    difficulty: "Medium",
-    categories: ["Accounting"]
+    testName: "BookKeeper",
+    estimatedTime: "60",
+    mcNumber: 6,
+    fbNumber: 12,
+    moduleNumber: 2,
+    candidatesTested: 5,
+    testType: "Custom"
   },
   {
-    questionName: "ChargeBacks",
-    estimatedTime: 5,
-    type: "Fill In Blank",
-    difficulty: "Hard",
-    categories: ["CPA"]
+    testName: "Assistant Controller",
+    estimatedTime: "60",
+    mcNumber: 6,
+    fbNumber: 12,
+    moduleNumber: 2,
+    candidatesTested: 88,
+    testType: "Custom"
   }
 ];
 
@@ -44,28 +50,21 @@ export default class QuestionLibrary extends Component {
   render() {
     return (
       <div>
-        <Row style={{ textAlign: "center" }}>
+        {/* <Row style={{ textAlign: "center" }}>
           <Col xs="12">
             <ButtonGroup size="lg" block>
               <Button outline color="default">
-                All Question Types (3)
+                Settings
               </Button>
               <Button outline color="default">
-                Multiple Choice (1)
+                Questions
               </Button>
               <Button outline color="default">
-                Fill In Blank (2)
-              </Button>
-              <Button outline color="default">
-                Short Answer (0)
-              </Button>
-              <Button outline color="default">
-                Modules (0)
+                Candidates
               </Button>
             </ButtonGroup>
           </Col>
-        </Row>
-        <br />
+        </Row> */}
         <Row>
           <Col xs="12">
             <ReactTable
@@ -74,8 +73,8 @@ export default class QuestionLibrary extends Component {
               sortable={false}
               columns={[
                 {
-                  Header: "Question Name",
-                  accessor: "questionName",
+                  Header: "Name",
+                  accessor: "testName",
                   Cell: cell => (
                     <div
                       style={{
@@ -88,7 +87,32 @@ export default class QuestionLibrary extends Component {
                         <strong>{cell.value}</strong>
                       </div>
                     </div>
-                  )
+                  ),
+                  maxWidth: 240
+                },
+                {
+                  Header: "Overview",
+                  Cell: cell => {
+                    return (
+                      <div>
+                        <div>
+                          <strong>Estimated Time: </strong>
+                          {cell.original.estimatedTime} mins
+                          {/* will want to use moment duration fomrat */}
+                        </div>
+                        <div>
+                          <strong>Questions: </strong>
+                          {cell.original.mcNumber} Multiple Choice,
+                          {cell.original.fbNumber} Fill In Blank,
+                          {cell.original.moduleNumber} Modules
+                        </div>
+                        <div>
+                          <strong>Type : </strong>
+                          {cell.original.testType}
+                        </div>
+                      </div>
+                    );
+                  }
                 },
                 {
                   Header: "Details",
@@ -96,29 +120,17 @@ export default class QuestionLibrary extends Component {
                     return (
                       <div>
                         <div>
-                          <strong>Type: </strong>
-                          {cell.original.type} mins
-                          {/* will want to use moment duration fomrat */}
+                          <strong>Candidates Tested: </strong>
+                          {cell.original.candidatesTested}
                         </div>
                         <div>
-                          <strong>Estimated Time: </strong>
-                          {cell.original.estimatedTime} mins
-                          {/* will want to use moment duration fomrat */}
-                        </div>
-                        <div>
-                          <strong>Difficulty: </strong>
-                          {cell.original.difficulty}
-                        </div>
-                        <div>
-                          <strong>Will Test Candidates in : </strong>
-                          {cell.original.categories.map((i, idx) => {
-                            if (idx === 0) return <span>{i}</span>;
-                            else return <span>, {i}</span>;
-                          })}
+                          <strong>Type : </strong>
+                          {cell.original.testType}
                         </div>
                       </div>
                     );
-                  }
+                  },
+                  maxWidth: 200
                 },
                 {
                   Header: "Actions",
@@ -139,7 +151,13 @@ export default class QuestionLibrary extends Component {
                         }}
                       >
                         <Button size="sm" color="primary">
-                          <a href="/#/tests/questionLibrary/preview?mcq=1">Preview Question</a>
+                          Review
+                        </Button>
+                        <Button size="sm" color="success">
+                          Export Test Details
+                        </Button>
+                        <Button size="sm" color="default">
+                          Archive Test
                         </Button>
                       </ButtonGroup>
                     </div>

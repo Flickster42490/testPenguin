@@ -46,6 +46,7 @@
     margin: 0 !important;
     text-align: center;
     cursor: pointer;
+    color: $navbar-color;
 
     button {
       margin: 0 auto;
@@ -119,6 +120,11 @@
 
 .ml-auto {
   margin-right: 10px;
+}
+
+.bold {
+  font-weight: 800;
+  text-decoration: underline;
 }
 
 @include media-breakpoint-up(lg) {

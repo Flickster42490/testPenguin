@@ -12,6 +12,7 @@ import {
 } from "reactstrap";
 import Select from "react-select";
 import Slider from "react-rangeslider";
+import Toggle from "react-toggle";
 import "react-rangeslider/lib/index.css";
 import "react-select/dist/react-select.css";
 
@@ -30,6 +31,14 @@ const catOptions = [
   { value: 4, label: "Controls" },
   { value: 6, label: "ERM" },
   { value: 7, label: "Closing" }
+];
+
+const userOptions = [
+  { value: 2, label: "John Smith" },
+  { value: 3, label: "Max Li" },
+  { value: 5, label: "Jane Doe" },
+  { value: 4, label: "Lesley Little" },
+  { value: 6, label: "Drew Tevrizian" }
 ];
 
 class Sidebar extends Component {
@@ -107,6 +116,29 @@ class Sidebar extends Component {
                 multi
                 removeSelected
               />
+            </Row>
+          )}
+          {["previousTests"].includes(this.props.page) && (
+            <Row className="sidebar-row">
+              By name or email: <br />
+              <Select
+                options={userOptions}
+                clearable
+                searchable
+                value={this.state.catValue}
+                onChange={this.updateCatValue}
+                multi
+                removeSelected
+              />
+            </Row>
+          )}
+          {["previousTests"].includes(this.props.page) && (
+            <Row className="sidebar-row">
+              <br />
+              <label>
+                Search Archived: <br />
+                <Toggle defaultChecked />
+              </label>
             </Row>
           )}
         </Container>

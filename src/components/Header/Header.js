@@ -1,5 +1,13 @@
 import React, { Component } from "react";
-import { Nav, NavbarBrand, NavbarToggler, NavItem, Badge } from "reactstrap";
+import {
+  Nav,
+  NavbarBrand,
+  NavLink,
+  NavbarToggler,
+  NavItem,
+  Badge
+} from "reactstrap";
+import { hashHistory } from "react-router";
 import FontAwesome from "react-fontawesome";
 
 import Users from "../../images/users.svg";
@@ -8,6 +16,21 @@ import Alert from "../../images/alert.svg";
 import HeaderDropdown from "./HeaderDropdown";
 
 class Header extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      page: "candidates"
+    };
+  }
+
+  componentWillMount() {
+    if (this.state.page !== window.location.hash.split("/")[1])
+      this.setState({
+        page: window.location.hash.split("/")[1]
+      });
+  }
+
   sidebarToggle(e) {
     e.preventDefault();
     document.body.classList.toggle("sidebar-hidden");
@@ -28,6 +51,17 @@ class Header extends Component {
     document.body.classList.toggle("aside-menu-hidden");
   }
 
+  handleClick(e) {
+    this.setState(
+      {
+        page: e
+      },
+      () => {
+        hashHistory.push(e);
+      }
+    );
+  }
+
   render() {
     return (
       <header className="app-header navbar">
@@ -39,18 +73,22 @@ class Header extends Component {
           <span className="navbar-toggler-icon" />
         </NavbarToggler>
         <Nav className="d-md-down-none" navbar>
-          <NavItem className="px-3">
-            <a href="#/candidates">
-              <img src={Users} />
-              <br />
+          <NavItem
+            className="px-3"
+            onClick={() => this.handleClick("candidates")}
+          >
+            <img src={Users} />
+            <br />
+            <span className={this.state.page === "candidates" ? "bold" : ""}>
               Candidates
-            </a>
+            </span>
           </NavItem>
-          <NavItem className="px-3">
-            <a href="#/tests">
-              <img src={Assignment} />
-              <br />Tests
-            </a>
+          <NavItem className="px-3" onClick={() => this.handleClick("tests")}>
+            <img src={Assignment} />
+            <br />
+            <span className={this.state.page === "tests" ? "bold" : ""}>
+              Tests
+            </span>
           </NavItem>
         </Nav>
         <Nav className="ml-auto" navbar>

@@ -109,11 +109,12 @@ class Dashboard extends Component {
                         justifyContent: "center"
                       }}
                     >
-                      <div style={{ maxWidth: "50%", fontSize: "1.5rem" }}>
+                      <div style={{ maxWidth: "50%", fontSize: "1.2rem" }}>
                         <strong>{cell.value}</strong>
                       </div>
                     </div>
-                  )
+                  ),
+                  maxWidth: 200
                 },
                 {
                   Header: "Invitation Details",
