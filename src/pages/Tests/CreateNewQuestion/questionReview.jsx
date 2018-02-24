@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { hashHistory } from "react-router";
 import {
   Container,
   Row,
@@ -7,8 +8,20 @@ import {
   Button,
   ButtonGroup,
   ButtonToolbar,
-  Progress
+  Progress,
+  Collapse,
+  Form,
+  FormGroup,
+  FormText,
+  Label,
+  Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText
 } from "reactstrap";
+import queryString from "querystring";
+import Select from "react-select";
+import "react-select/dist/react-select.css";
 
 const mockData = {
   skillsTested: ["Finance"],
@@ -27,29 +40,65 @@ const mockData = {
     "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum "
 };
 
-export default class Preview extends Component {
+export default class questionDetails extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {};
+    this.handleNext = this.handleNext.bind(this);
   }
+
+  handleNext() {
+    alert("You have successfully added your question to the Question Library");
+    hashHistory.push("tests/questionLibrary");
+  }
+
   render() {
     return (
       <div>
         <Card>
           <Container style={{ marginTop: "10px" }}>
             <Row>
-              <Col xs="3">
-                <h3>A/P Clerk</h3>
+              <Col xs="12">
+                <div className="text-center">
+                  <h3>Review and Add</h3> (<strong>step 3 of 3</strong>)
+                </div>
               </Col>
-              <Col xs="3">
-                <h5>Skills Tested: {mockData.skillsTested}</h5>
+              <br />
+            </Row>
+            <Row>
+              <Col xs="12">
+                <div className="text-center">
+                  <div className="progress">
+                    <Progress
+                      bar
+                      color="success"
+                      value="3"
+                      style={{ paddingTop: "10px" }}
+                      max="3"
+                    />
+                  </div>
+                  <br />
+                </div>
               </Col>
+            </Row>
+            <Row>
               <Col xs="3">
-                <h5>Difficulty: {mockData.difficulty}</h5>
+                <h3>A/P Clerk</h3>&nbsp;&nbsp;&nbsp;&nbsp;
               </Col>
-              <Col xs="3">
-                <h5>Question Type: {mockData.type}</h5>
+              <Col xs="3" style={{ paddingTop: "10px" }}>
+                <h6>
+                  Skills Tested: <strong>{mockData.skillsTested}</strong>
+                </h6>&nbsp;&nbsp;
+              </Col>
+              <Col xs="3" style={{ paddingTop: "10px" }}>
+                <h6>
+                  Difficulty: <strong>{mockData.difficulty}</strong>
+                </h6>&nbsp;&nbsp;
+              </Col>
+              <Col xs="3" style={{ paddingTop: "10px" }}>
+                <h6>
+                  Question Type: <strong>{mockData.type}</strong>
+                </h6>
               </Col>
             </Row>
             <hr />
@@ -81,14 +130,15 @@ export default class Preview extends Component {
               </Col>
             </Row>
             <br />
-            <Row>
-              <Col xs="1" />
-              <Col xs="10">
-                <strong>Notes: </strong>
-                <br />
-                <p>{mockData.notes}</p>
+            <Row style={{ float: "right" }}>
+              <Col xs="4">
+                <Button color="success" onClick={() => this.handleNext()}>
+                  Add to Library{" "}
+                </Button>
               </Col>
             </Row>
+            <br />
+            <br />
             <br />
           </Container>
         </Card>
