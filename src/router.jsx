@@ -8,10 +8,12 @@ import PreBuiltTests from "./pages/Tests/PreBuiltTests/index.jsx";
 import PreviousTests from "./pages/Tests/PreviousTests/index.jsx";
 import QuestionLibrary from "./pages/Tests/QuestionLibrary/index.jsx";
 import PreviewQuestion from "./pages/Tests/QuestionLibrary/preview.jsx";
-import CreateNewTest from "./pages/Tests/CreateNewTest/index.jsx";
 import QuestionDetails from "./pages/Tests/CreateNewQuestion/questionDetails.jsx";
 import QuestionContents from "./pages/Tests/CreateNewQuestion/questionContents.jsx";
 import QuestionReview from "./pages/Tests/CreateNewQuestion/questionReview.jsx";
+import TestBasics from "./pages/Tests/CreateNewTest/testBasics.jsx";
+import AddQuestions from "./pages/Tests/CreateNewTest/addQuestions.jsx";
+import Settings from "./pages/Tests/CreateNewTest/settings.jsx";
 import NotFound from "./pages/notFound/index.jsx";
 
 const AppRouter = () => (
@@ -26,7 +28,12 @@ const AppRouter = () => (
         <Route path="previousTests" component={PreviousTests} />
         <Route path="questionLibrary" component={QuestionLibrary} />
         <Route path="questionLibrary/preview" component={PreviewQuestion} />
-        <Route path="createNewTest" component={CreateNewTest} />
+        <Route path="createNewTest">
+          <IndexRedirect to="testBasics" />
+          <Route path="testBasics" component={TestBasics} />
+          <Route path="addQuestions" component={AddQuestions} />
+          <Route path="settings" component={Settings} />
+        </Route>
         <Route path="createNewQuestion">
           <IndexRedirect to="questionDetails" />
           <Route path="questionDetails" component={QuestionDetails} />
