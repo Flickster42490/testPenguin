@@ -14,7 +14,7 @@ import QuestionReview from "./pages/Tests/CreateNewQuestion/questionReview.jsx";
 import TestBasics from "./pages/Tests/CreateNewTest/testBasics.jsx";
 import AddQuestions from "./pages/Tests/CreateNewTest/addQuestions.jsx";
 import Settings from "./pages/Tests/CreateNewTest/settings.jsx";
-import NotFound from "./pages/notFound/index.jsx";
+import NotFound from "./pages/NotFound/index.jsx";
 
 const AppRouter = () => (
   <Router history={hashHistory}>
