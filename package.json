@@ -78,7 +78,8 @@
     "web": "webpack-dev-server --progress --color --inline --env.dev",
     "build": "webpack -p --progress --env.prod",
     "clean": "rimraf ./build",
-    "start": "node server.js"
+    "start": "node server.js",
+    "heroku-postbuild": "npm run build"
   },
   "engines": {
     "node": ">= 8.9.4",
