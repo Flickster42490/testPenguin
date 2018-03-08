@@ -7,6 +7,7 @@
   "copyright": "Copyright 2018 creativeLabs Łukasz Holeczek",
   "license": "MIT",
   "private": true,
+  "proxy": "http://localhost:8000",
   "devDependencies": {
     "babel-core": "6.26.0",
     "babel-loader": "7.1.2",
@@ -31,10 +32,13 @@
     "webpack-dev-server": "2.11.1"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "babel-polyfill": "^6.26.0",
     "bootstrap": "4.0.0",
     "bootstrap-daterangepicker": "^2.1.30",
     "chart.js": "2.7.1",
+    "cors": "^2.8.4",
+    "express": "^4.16.2",
     "flag-icon-css": "2.9.0",
     "font-awesome": "4.7.0",
     "history": "4.7.2",
@@ -43,6 +47,11 @@
     "material-ui-icons-next": "^1.0.0-beta.17-next",
     "moment": "^2.20.1",
     "moment-duration-format": "^2.2.2",
+    "morgan": "^1.9.0",
+    "passport": "^0.4.0",
+    "passport-facebook": "^2.1.1",
+    "passport-google-oauth": "^1.0.0",
+    "passport-google-oauth20": "^1.0.0",
     "react": "16.2.0",
     "react-bootstrap-daterangepicker": "^4.1.0",
     "react-chartjs-2": "2.7.0",
