@@ -132,6 +132,7 @@ router.get(
 
 router.get("/google/return", (req, res) =>
   passport.authenticate("google", (err, user, info) => {
+    console.log("err: ", err, "user: ", user, "info : ", info);
     if (err) {
       return res.status(400).json(err);
     }
