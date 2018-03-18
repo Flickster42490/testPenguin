@@ -7,7 +7,7 @@
   "copyright": "Copyright 2018 creativeLabs Łukasz Holeczek",
   "license": "MIT",
   "private": true,
-  "proxy": "http://localhost:8000",
+  "proxy": "https://test-penguin.herokuapp.com",
   "main": "server.js",
   "devDependencies": {
     "babel-core": "6.26.0",
