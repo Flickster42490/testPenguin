@@ -27,12 +27,16 @@ export default class Dashboard extends Component {
         //if localForage doesn't find value, then check to see if userId is in the url, if not, redirect to login
         //if there is userId in url, then set the id in localForage.
         if (!value) {
-          if (!userId) window.location.href = "/#/login";
-          console.log("setting userId", userId);
-          localForage.setItem("userId", userId).then(val => {
-            console.log("after set", val);
-            this.setState({ loggedIn: true });
-          });
+          if (!userId) {
+            console.log("no userId");
+            window.location.href = "/#/login";
+          } else {
+            console.log("setting userId", userId);
+            localForage.setItem("userId", userId).then(val => {
+              console.log("after set", val);
+              this.setState({ loggedIn: true });
+            });
+          }
         } else {
           //if localForage has a value (usually within an hour), check with the server to see if it's been an hour since last logged in.
           console.log("value", value);
