@@ -82,7 +82,8 @@
     "web": "webpack-dev-server --progress --color --inline --env.dev",
     "build": "webpack -p --progress --env.prod",
     "clean": "rimraf ./build",
-    "start":
+    "start": "node server.js",
+    "local":
       "CALLBACK_URL=http://localhost:8000/auth/google/return DB_HOST=testpenguin.cwvdzkfscajo.us-east-2.rds.amazonaws.com DB_USER=master DB_PASSWORD=T3stp3nguin! DB_NAME=testpenguin_postgres node server.js",
     "heroku-postbuild": "npm run build"
   },
