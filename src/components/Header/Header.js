@@ -57,7 +57,7 @@ class Header extends Component {
         page: e
       },
       () => {
-        hashHistory.push(e);
+        hashHistory.push(`dashboard/${e}`);
       }
     );
   }

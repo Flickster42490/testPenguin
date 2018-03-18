@@ -60,7 +60,7 @@ class SecondaryHeader extends Component {
       },
       () => {
         this.props.updatePage(e);
-        hashHistory.push(`tests/${e}`);
+        hashHistory.push(`dashboard/tests/${e}`);
       }
     );
   }
