@@ -28,7 +28,7 @@ export default class Dashboard extends Component {
         //if there is userId in url, then set the id in localForage.
         if (!value) {
           if (!userId) window.location.href = "/#/login";
-          console.log("setting userId");
+          console.log("setting userId", userId);
           localForage.setItem("userId", userId).then(val => {
             console.log("after set", val);
             this.setState({ loggedIn: true });
