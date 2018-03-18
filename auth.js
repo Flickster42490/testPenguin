@@ -13,6 +13,7 @@ const cn = {
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD
 };
+console.log(cn);
 var db = pgp(cn);
 
 // Configure the Facebook strategy for use by Passport.
