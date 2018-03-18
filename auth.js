@@ -106,6 +106,7 @@ router.post("/check", (req, res) => {
       console.log(err, value);
       if (!err) {
         if (value === undefined) {
+          console.log("cant get value, will redirect back to login ");
           return res.redirect(`/#/login`);
         } else {
           //"has it been more than one hour since last authenticated?" then remove cached and send user back to login screen
@@ -113,11 +114,13 @@ router.post("/check", (req, res) => {
             "has it been more than one hour since last authenticated?",
             value.setHours(value.getHours() + 1) < new Date().getTime()
           );
-          if (!value.setHours(value.getHours() + 1) < new Date().getTime()) {
+          if (value.setHours(value.getHours() + 1) < new Date().getTime()) {
+            console.log("in here for some reason");
             Cache.del(req.body.userId, (err, count) => {
               return res.status(401);
             });
           } else {
+            console.log("all good auth check");
             return res.send(true);
           }
         }
@@ -125,6 +128,18 @@ router.post("/check", (req, res) => {
     });
   } else {
     return res.status(401);
+  }
+});
+
+router.post("/logout", (req, res) => {
+  console.log("userId", req.body.userId);
+  if (req.body.userId) {
+    Cache.del(req.body.userId, (err, count) => {
+      console.log(err, count);
+      return res.status(200).send(true);
+    });
+  } else {
+    return res.status(500).send(false);
   }
 });
 
