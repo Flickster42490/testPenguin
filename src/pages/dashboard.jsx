@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Container } from "reactstrap";
 import queryString from "querystring";
-import localForage from "localForage";
+import localForage from "localforage";
 import axios from "axios";
 import Header from "../components/Header/";
 import Footer from "../components/Footer/";
