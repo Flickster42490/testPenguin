@@ -1,7 +1,19 @@
 var passport = require("passport");
 var GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
 const cors = require("cors");
-const app = require("express")();
+const router = require("express").Router();
+const NodeCache = require("node-cache");
+const Cache = new NodeCache({ stdTTL: 360000, checkperiod: 370000 });
+
+var pgp = require("pg-promise")();
+const cn = {
+  host: process.env.DB_HOST,
+  port: 5432,
+  database: process.env.DB_NAME,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD
+};
+var db = pgp(cn);
 
 // Configure the Facebook strategy for use by Passport.
 //
@@ -19,14 +31,47 @@ passport.use(
       callbackURL: "http://localhost:8000/auth/google/return",
       passReqToCallback: true
     },
-    function(accessToken, refreshToken, _, profile, done) {
-      // In this example, the user's Facebook profile is supplied as the user
-      // record.  In a production-quality application, the Facebook profile should
-      // be associated with a user record in the application's database, which
-      // allows for account linking and authentication with other identity
-      // providers.
-      console.log("profile", profile, "!!!!!!!!!!", done);
-      return done(null, profile);
+    function(req, accessToken, refreshToken, profile, done) {
+      return db
+        .any("SELECT * FROM users WHERE google_id = $1", profile.id)
+        .then(user => {
+          if (user.length > 0) {
+            Cache.get(profile.id, (err, value) => {
+              if (!err && !value) {
+                return Cache.set(profile.id, new Date(), (err, data) => {
+                  console.log("err", err, "data", data);
+                  return done(null, profile);
+                });
+              } else {
+                return done(null, profile);
+              }
+            });
+          } else {
+            return db
+              .any(
+                "INSERT INTO users(google_id,first_name,last_name,display_name,image_url, provider, email_address) VALUES($1,$2,$3,$4,$5,$6,$7)",
+                [
+                  profile.id,
+                  profile.name.givenName,
+                  profile.name.familyName,
+                  profile.displayName,
+                  profile.photos[0] ? profile.photos[0].value : "",
+                  profile.provider,
+                  profile.emails[0] ? profile.emails[0].value : ""
+                ]
+              )
+              .then(() => {
+                return Cache.set(profile.id, new Date(), (err, data) => {
+                  console.log("err", err, "data", data);
+                  return done(null, profile);
+                });
+              });
+          }
+        })
+        .catch(err => {
+          console.log(err);
+          return done(err);
+        });
     }
   )
 );
@@ -47,19 +92,52 @@ passport.deserializeUser(function(obj, cb) {
   cb(null, obj);
 });
 
-module.exports = app;
+module.exports = router;
 
-app.use(cors());
+router.use(cors());
 
-app.use(passport.initialize());
-app.use(passport.session());
+router.post("/check", (req, res) => {
+  if (req.body.userId) {
+    Cache.get(req.body.userId, (err, value) => {
+      console.log(err, value);
+      if (!err) {
+        if (value === undefined) {
+          return res.redirect(`/#/login`);
+        } else {
+          //"has it been more than one hour since last authenticated?" then remove cached and send user back to login screen
+          console.log(
+            "has it been more than one hour since last authenticated?",
+            value.setHours(value.getHours() + 1) < new Date().getTime()
+          );
+          if (!value.setHours(value.getHours() + 1) < new Date().getTime()) {
+            Cache.del(req.body.userId, (err, count) => {
+              return res.status(401);
+            });
+          } else {
+            return res.send(true);
+          }
+        }
+      }
+    });
+  } else {
+    return res.status(401);
+  }
+});
 
-app.get("/google", passport.authenticate("google", { scope: ["profile"] }));
+router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
 
-app.get(
-  "/google/return",
-  passport.authenticate("google", {
-    successRedirect: "/",
-    failureRedirect: "/#/login"
-  })
+router.get("/google/return", (req, res) =>
+  passport.authenticate("google", (err, user, info) => {
+    if (err) {
+      return res.status(400).json(err);
+    }
+    if (user) {
+      return res.redirect(
+        `/#/dashboard/candidates?id=${encodeURIComponent(user.id)}`
+      );
+    }
+  })(req, res)
 );

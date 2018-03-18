@@ -1,6 +1,7 @@
 import React from "react";
 import { Router, Route, IndexRedirect, hashHistory } from "react-router";
 import App from "./pages/main.jsx";
+import Dashboard from "./pages/dashboard.jsx";
 import Login from "./pages/Login/index.jsx";
 import Candidates from "./pages/Candidates/index.jsx";
 import ReviewResults from "./pages/Candidates/reviewResults.jsx";
@@ -20,26 +21,29 @@ import NotFound from "./pages/NotFound/index.jsx";
 const AppRouter = () => (
   <Router history={hashHistory}>
     <Route path="/" component={App}>
-      <IndexRedirect to="candidates" />
-      <Route path="candidates" component={Candidates} />
-      <Route path="candidates/reviewResults" component={ReviewResults} />
-      <Route path="tests" component={Tests}>
-        <IndexRedirect to="preBuiltTests" />
-        <Route path="preBuiltTests" component={PreBuiltTests} />
-        <Route path="previousTests" component={PreviousTests} />
-        <Route path="questionLibrary" component={QuestionLibrary} />
-        <Route path="questionLibrary/preview" component={PreviewQuestion} />
-        <Route path="createNewTest">
-          <IndexRedirect to="testBasics" />
-          <Route path="testBasics" component={TestBasics} />
-          <Route path="addQuestions" component={AddQuestions} />
-          <Route path="settings" component={Settings} />
-        </Route>
-        <Route path="createNewQuestion">
-          <IndexRedirect to="questionDetails" />
-          <Route path="questionDetails" component={QuestionDetails} />
-          <Route path="questionContents" component={QuestionContents} />
-          <Route path="questionReview" component={QuestionReview} />
+      <IndexRedirect to="dashboard" />
+      <Route path="dashboard" component={Dashboard}>
+        <IndexRedirect to="candidates" />
+        <Route path="candidates" component={Candidates} />
+        <Route path="candidates/reviewResults" component={ReviewResults} />
+        <Route path="tests" component={Tests}>
+          <IndexRedirect to="preBuiltTests" />
+          <Route path="preBuiltTests" component={PreBuiltTests} />
+          <Route path="previousTests" component={PreviousTests} />
+          <Route path="questionLibrary" component={QuestionLibrary} />
+          <Route path="questionLibrary/preview" component={PreviewQuestion} />
+          <Route path="createNewTest">
+            <IndexRedirect to="testBasics" />
+            <Route path="testBasics" component={TestBasics} />
+            <Route path="addQuestions" component={AddQuestions} />
+            <Route path="settings" component={Settings} />
+          </Route>
+          <Route path="createNewQuestion">
+            <IndexRedirect to="questionDetails" />
+            <Route path="questionDetails" component={QuestionDetails} />
+            <Route path="questionContents" component={QuestionContents} />
+            <Route path="questionReview" component={QuestionReview} />
+          </Route>
         </Route>
       </Route>
       <Route path="login" component={Login} />

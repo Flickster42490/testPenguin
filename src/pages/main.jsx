@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { Container } from "reactstrap";
+import queryString from "querystring";
+import localForage from "localForage";
 import Header from "../components/Header/";
 import Footer from "../components/Footer/";
-
-import Dashboard from "./Candidates/index.jsx";
 
 export default class App extends Component {
   constructor(props) {
@@ -16,7 +16,6 @@ export default class App extends Component {
   render() {
     return (
       <div className="app">
-        <Header />
         {this.props.children}
         <Footer />
       </div>

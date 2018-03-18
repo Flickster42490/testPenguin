@@ -44,15 +44,19 @@
     "font-awesome": "4.7.0",
     "history": "4.7.2",
     "jquery": "^1.9.1",
+    "localforage": "^1.6.0",
     "material-ui": "^1.0.0-beta.33",
     "material-ui-icons-next": "^1.0.0-beta.17-next",
     "moment": "^2.20.1",
     "moment-duration-format": "^2.2.2",
     "morgan": "^1.9.0",
+    "node-cache": "^4.1.1",
     "passport": "^0.4.0",
     "passport-facebook": "^2.1.1",
     "passport-google-oauth": "^1.0.0",
     "passport-google-oauth20": "^1.0.0",
+    "pg-promise": "^8.2.2",
+    "query-string": "^6.0.0",
     "react": "16.2.0",
     "react-bootstrap-daterangepicker": "^4.1.0",
     "react-chartjs-2": "2.7.0",
@@ -73,12 +77,11 @@
     "status-indicator": "^1.0.9"
   },
   "scripts": {
-    "dev":
-      "webpack -d --progress --watch --profile --json > compilation-stats.json --env.dev",
+    "dev": "webpack -d --progress --watch --profile --json > compilation-stats.json --env.dev",
     "web": "webpack-dev-server --progress --color --inline --env.dev",
     "build": "webpack -p --progress --env.prod",
     "clean": "rimraf ./build",
-    "start": "node server.js",
+    "start": "DB_HOST=testpenguin.cwvdzkfscajo.us-east-2.rds.amazonaws.com DB_USER=master DB_PASSWORD=T3stp3nguin! DB_NAME=testpenguin_postgres node server.js",
     "heroku-postbuild": "npm run build"
   },
   "engines": {
