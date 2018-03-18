@@ -33,9 +33,11 @@ passport.use(
       passReqToCallback: true
     },
     function(req, accessToken, refreshToken, profile, done) {
+      console.log(profile);
       return db
         .any("SELECT * FROM users WHERE google_id = $1", profile.id)
         .then(user => {
+          console.log("user", user);
           if (user.length > 0) {
             Cache.get(profile.id, (err, value) => {
               if (!err && !value) {
