@@ -4,28 +4,20 @@ import {
   Row,
   Col,
   Card,
+  CardGroup,
+  CardHeader,
+  CardBody,
   Button,
   ButtonGroup,
   ButtonToolbar,
-  Progress
+  Form,
+  FormGroup,
+  Label,
+  Input,
+  FormText
 } from "reactstrap";
-
-const mockData = {
-  skillsTested: ["Finance"],
-  difficulty: "Easy",
-  type: "Multiple Choice",
-  questionStem:
-    "ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum ",
-  answerChoices: [
-    "Answer Choice 1",
-    "Answer Choice 2",
-    "Answer Choice 3",
-    "Answer Choice 4"
-  ],
-  correctAnswer: 1,
-  notes:
-    "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum "
-};
+import PreviewMultipleChoice from "./previewMultipleChoice.jsx";
+import PDF from "react-pdf-js";
 
 export default class Preview extends Component {
   constructor(props) {
@@ -36,60 +28,161 @@ export default class Preview extends Component {
   render() {
     return (
       <div>
+        {/* <PreviewMultipleChoice /> */}
         <Card>
           <Container style={{ marginTop: "10px" }}>
             <Row>
-              <Col xs="3">
-                <h3>A/P Clerk</h3>
+              <Col md="5">
+                <div>
+                  <Card>
+                    <CardHeader>
+                      <strong>Part 1:</strong>
+                    </CardHeader>
+                    <CardBody>
+                      <p>
+                        Prepare the month-end bank reconciliation on the right,
+                        using only the information presented below.
+                      </p>
+                      <p>
+                        Note: Place a '-' sign in front of the amount when
+                        inputting deductions.
+                      </p>
+                    </CardBody>
+                  </Card>
+                  <Card>
+                    <CardHeader>
+                      <Button outline color="default" block>
+                        Reconciling Items
+                      </Button>
+                    </CardHeader>
+                    <CardBody>
+                      <PDF file="/img/q1.pdf" fillWidth />
+                    </CardBody>
+                  </Card>
+                </div>
               </Col>
-              <Col xs="3">
-                <h5>Skills Tested: {mockData.skillsTested}</h5>
-              </Col>
-              <Col xs="3">
-                <h5>Difficulty: {mockData.difficulty}</h5>
-              </Col>
-              <Col xs="3">
-                <h5>Question Type: {mockData.type}</h5>
+              <Col md="7">
+                <Form>
+                  <FormGroup row>
+                    <Label sm={5}>
+                      Ending Balance per Bank Statement <br />Add/(Deduct)
+                    </Label>
+                    <Label sm={2} />
+                    <Label sm={5}>$117,888.95</Label>
+                  </FormGroup>
+                  <FormGroup row>
+                    <Col sm={5}>
+                      <Input type="select" name="select" id="exampleSelect">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                      </Input>
+                    </Col>
+                    <Col sm={2} />
+                    <Col sm={5}>
+                      <Input type="text" />
+                    </Col>
+                  </FormGroup>
+                  <FormGroup row>
+                    <Col sm={5}>
+                      <Input type="select" name="select" id="exampleSelect">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                      </Input>
+                    </Col>
+                    <Col sm={2} />
+                    <Col sm={5}>
+                      <Input type="text" />
+                    </Col>
+                  </FormGroup>
+                  <FormGroup row>
+                    <Label sm={5}>Correct Cash Balance</Label>
+                    <Label sm={2} />
+                    <Label sm={5}>$xxxxxx</Label>
+                  </FormGroup>
+                </Form>
+
+                <Form>
+                  <FormGroup row>
+                    <Label sm={5}>
+                      Ending Balance per Company Records <br />Add/(Deduct)
+                    </Label>{" "}
+                    <Label sm={2} />
+                    <Label sm={5}>$91,743.22</Label>
+                  </FormGroup>
+                  <FormGroup row>
+                    <Col sm={5}>
+                      <Input type="select" name="select" id="exampleSelect">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                      </Input>
+                    </Col>
+                    <Col sm={2} />
+                    <Col sm={5}>
+                      <Input type="text" />
+                    </Col>
+                  </FormGroup>
+                  <FormGroup row>
+                    <Col sm={5}>
+                      <Input type="select" name="select" id="exampleSelect">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                      </Input>
+                    </Col>
+                    <Col sm={2} />
+                    <Col sm={5}>
+                      <Input type="text" />
+                    </Col>
+                  </FormGroup>
+                  <FormGroup row>
+                    <Col sm={5}>
+                      <Input type="select" name="select" id="exampleSelect">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                      </Input>
+                    </Col>
+                    <Col sm={2} />
+                    <Col sm={5}>
+                      <Input type="text" />
+                    </Col>
+                  </FormGroup>
+                  <FormGroup row>
+                    <Col sm={5}>
+                      <Input type="select" name="select" id="exampleSelect">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                      </Input>
+                    </Col>
+                    <Col sm={2} />
+                    <Col sm={5}>
+                      <Input type="text" />
+                    </Col>
+                  </FormGroup>
+                  <FormGroup row>
+                    <Label sm={5}>Correct Cash Balance</Label>
+                    <Label sm={2} />
+                    <Label sm={5}>$xxxxxx</Label>
+                  </FormGroup>
+                </Form>
               </Col>
             </Row>
-            <hr />
-            <Row>
-              <Col xs="1" />
-              <Col xs="10">
-                <h4>Question Stem: </h4>
-                <br />
-                <p>{mockData.questionStem}</p>
-              </Col>
-            </Row>
-            <br />
-            <Row>
-              <Col xs="1" />
-              <Col xs="10">
-                {mockData.answerChoices.map(i => (
-                  <Button color="secondary" outline block>
-                    {i}
-                  </Button>
-                ))}
-              </Col>
-            </Row>
-            <br />
-            <Row>
-              <Col xs="1" />
-              <Col xs="10">
-                <strong>Correct Answer:&nbsp;</strong>
-                {mockData.answerChoices[mockData.correctAnswer]}
-              </Col>
-            </Row>
-            <br />
-            <Row>
-              <Col xs="1" />
-              <Col xs="10">
-                <strong>Notes: </strong>
-                <br />
-                <p>{mockData.notes}</p>
-              </Col>
-            </Row>
-            <br />
           </Container>
         </Card>
       </div>

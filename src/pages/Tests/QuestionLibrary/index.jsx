@@ -139,7 +139,9 @@ export default class QuestionLibrary extends Component {
                         }}
                       >
                         <Button size="sm" color="primary">
-                          <a href="/#/tests/questionLibrary/preview?mcq=1">Preview Question</a>
+                          <a href="/#/dashboard/tests/questionLibrary/preview?mcq=1">
+                            Preview Question
+                          </a>
                         </Button>
                       </ButtonGroup>
                     </div>
