@@ -117,7 +117,7 @@ class SecondaryHeader extends Component {
               Create New Test
             </span>
           </NavItem>
-          <NavItem
+          {/* <NavItem
             className="px-3"
             onClick={() => this.handleClick("createNewQuestion")}
           >
@@ -128,7 +128,7 @@ class SecondaryHeader extends Component {
             >
               Create New Question
             </span>
-          </NavItem>
+          </NavItem> */}
         </Nav>
       </header>
     );
