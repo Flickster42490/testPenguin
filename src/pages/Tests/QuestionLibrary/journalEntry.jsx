@@ -209,16 +209,16 @@ export default class Preview extends Component {
           </FormGroup>
           <FormGroup row sm={12}>
             <Col sm={4} style={{ textAlign: "center" }}>
-              <strong>Date</strong>
+              <span className="muted-header">Date</span>
             </Col>
             <Col sm={4} style={{ textAlign: "center" }}>
-              <strong>Account</strong>
+              <span className="muted-header">Account</span>
             </Col>
             <Col sm={2} style={{ textAlign: "center" }}>
-              <strong>Debit ($)</strong>
+              <span className="muted-header">Debit ($)</span>
             </Col>
             <Col sm={2} style={{ textAlign: "center" }}>
-              <strong>Credit ($)</strong>
+              <span className="muted-header">Credit ($)</span>
             </Col>
           </FormGroup>
           {segment.rows.map(i => this.constructEntryRow(segment, i))}

@@ -141,3 +141,42 @@
   -moz-box-shadow: 0px 0px 5px 5px #0099e0;
   box-shadow: 0px 0px 5px 5px #0099e0;
 }
+
+.module-container-card {
+  margin: 10px;
+  padding: 20px;
+  padding-bottom: 20px !important;
+}
+
+.muted-header {
+  font-weight: 600;
+  color: grey;
+}
+
+.pdf-card {
+  position: absolute;
+  bottom: 0;
+  width: 95%;
+  height: 50%;
+
+  .card-body {
+    padding: 0;
+  }
+}
+
+.transparent-card {
+  border: none;
+  margin-top: calc(0.375rem + 1px);
+
+  .transparent-card-header {
+    background-color: #fff;
+    padding: 0;
+    border-bottom: none;
+  }
+
+  .transparent-card-body {
+    border: none;
+    padding: 0;
+    padding-top: 1.25rem;
+  }
+}
