@@ -20,9 +20,11 @@ import DatePicker from "react-date-picker";
 import PDF from "react-pdf-js";
 const Entries = [
   {
+    id: "1",
     subtitle: "To record payment of the interest accrued since June 30, 2019",
     rows: [
       {
+        id: "1",
         date: undefined,
         account: [
           "Interest Expense",
@@ -34,6 +36,7 @@ const Entries = [
         credit: undefined
       },
       {
+        id: "2",
         date: undefined,
         account: [
           "Interest Expense",
@@ -47,10 +50,12 @@ const Entries = [
     ]
   },
   {
+    id: "2",
     subtitle:
       "To record retirement of the bonds, per the terms of the bond indenture",
     rows: [
       {
+        id: "1",
         date: undefined,
         account: [
           "Interest Expense",
@@ -62,6 +67,7 @@ const Entries = [
         credit: undefined
       },
       {
+        id: "2",
         date: undefined,
         account: [
           "Interest Expense",
@@ -73,6 +79,7 @@ const Entries = [
         credit: undefined
       },
       {
+        id: "3",
         date: undefined,
         account: [
           "Interest Expense",
@@ -84,6 +91,7 @@ const Entries = [
         credit: undefined
       },
       {
+        id: "4",
         date: undefined,
         account: [
           "Interest Expense",
@@ -101,14 +109,53 @@ export default class Preview extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {};
+    this.state = {
+      journalEntry: []
+    };
   }
 
-  constructEntryRow(row) {
+  componentWillMount() {
+    this.updateFormat(Entries);
+  }
+
+  updateFormat(data) {
+    this.setState({
+      journalEntry: data.map(segment => {
+        return {
+          id: segment.id,
+          rows: segment.rows.map(row => {
+            return {
+              id: row.id,
+              date: row.date || undefined,
+              account: undefined,
+              debit: row.debit || undefined,
+              credit: row.credit || undefined
+            };
+          })
+        };
+      })
+    });
+  }
+
+  updateCalendar(segment, row, date) {
+    let segmentIndex = segment.id - 1;
+    let rowIndex = row.id - 1;
+    this.state.journalEntry[segmentIndex].rows[rowIndex].date = date;
+    this.forceUpdate();
+  }
+
+  updateAnswer(segment, row, attribute) {}
+
+  constructEntryRow(segment, row) {
+    let segmentIndex = segment.id - 1;
+    let rowIndex = row.id - 1;
     return (
-      <FormGroup row>
+      <FormGroup row key={row.id}>
         <Col sm={4}>
-          <DatePicker value={row.date} />
+          <DatePicker
+            value={this.state.journalEntry[segmentIndex].rows[rowIndex].date}
+            onChange={date => this.updateCalendar(segment, row, date)}
+          />
         </Col>
         <Col sm={4}>
           <Input type="select" name="select" id="exampleSelect">
@@ -130,9 +177,10 @@ export default class Preview extends Component {
   }
 
   constructSegments() {
+    console.log(this.state);
     return Entries.map(segment => {
       return (
-        <div>
+        <div key={segment.id}>
           <FormGroup row>
             <Label sm={12}>
               <strong>Journal Entry: </strong> {segment.subtitle}
@@ -152,7 +200,7 @@ export default class Preview extends Component {
               <strong>Credit</strong>
             </Col>
           </FormGroup>
-          {segment.rows.map(i => this.constructEntryRow(i))}
+          {segment.rows.map(i => this.constructEntryRow(segment, i))}
         </div>
       );
     });
