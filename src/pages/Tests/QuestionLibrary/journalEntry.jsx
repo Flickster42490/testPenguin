@@ -154,7 +154,6 @@ export default class Preview extends Component {
   }
 
   updateCredit(currentRow, event) {
-    console.log(event.target.value);
     currentRow.credit = event.target.value;
     this.forceUpdate();
   }
@@ -173,6 +172,7 @@ export default class Preview extends Component {
         </Col>
         <Col sm={4}>
           <Select
+            className="journal-entry-select"
             options={Entries[segmentIndex].rows[rowIndex].account.map(i => {
               return { value: i, label: i };
             })}
@@ -199,7 +199,6 @@ export default class Preview extends Component {
   }
 
   constructSegments() {
-    console.log(this.state);
     return Entries.map(segment => {
       return (
         <div key={segment.id}>
