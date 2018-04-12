@@ -17,6 +17,7 @@ import {
   FormText
 } from "reactstrap";
 import DatePicker from "react-date-picker";
+import Select from "react-select";
 import PDF from "react-pdf-js";
 const Entries = [
   {
@@ -137,40 +138,61 @@ export default class Preview extends Component {
     });
   }
 
-  updateCalendar(segment, row, date) {
-    let segmentIndex = segment.id - 1;
-    let rowIndex = row.id - 1;
-    this.state.journalEntry[segmentIndex].rows[rowIndex].date = date;
+  updateAccount(currentRow, value) {
+    currentRow.account = value;
     this.forceUpdate();
   }
 
-  updateAnswer(segment, row, attribute) {}
+  updateCalendar(currentRow, date) {
+    currentRow.date = date;
+    this.forceUpdate();
+  }
+
+  updateDebit(currentRow, event) {
+    currentRow.debit = event.target.value;
+    this.forceUpdate();
+  }
+
+  updateCredit(currentRow, event) {
+    console.log(event.target.value);
+    currentRow.credit = event.target.value;
+    this.forceUpdate();
+  }
 
   constructEntryRow(segment, row) {
     let segmentIndex = segment.id - 1;
     let rowIndex = row.id - 1;
+    let currentRow = this.state.journalEntry[segmentIndex].rows[rowIndex];
     return (
       <FormGroup row key={row.id}>
         <Col sm={4}>
           <DatePicker
-            value={this.state.journalEntry[segmentIndex].rows[rowIndex].date}
-            onChange={date => this.updateCalendar(segment, row, date)}
+            value={currentRow.date}
+            onChange={date => this.updateCalendar(currentRow, date)}
           />
         </Col>
         <Col sm={4}>
-          <Input type="select" name="select" id="exampleSelect">
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-          </Input>
+          <Select
+            options={Entries[segmentIndex].rows[rowIndex].account.map(i => {
+              return { value: i, label: i };
+            })}
+            searchable
+            simpleValue
+            value={currentRow.account}
+            onChange={value => this.updateAccount(currentRow, value)}
+          />
         </Col>
         <Col sm={2}>
-          <Input type="text" />
+          <Input
+            type="text"
+            onBlur={value => this.updateDebit(currentRow, value)}
+          />
         </Col>
         <Col sm={2}>
-          <Input type="text" />
+          <Input
+            type="text"
+            onBlur={value => this.updateCredit(currentRow, value)}
+          />
         </Col>
       </FormGroup>
     );
@@ -194,10 +216,10 @@ export default class Preview extends Component {
               <strong>Account</strong>
             </Col>
             <Col sm={2} style={{ textAlign: "center" }}>
-              <strong>Debit</strong>
+              <strong>Debit ($)</strong>
             </Col>
             <Col sm={2} style={{ textAlign: "center" }}>
-              <strong>Credit</strong>
+              <strong>Credit ($)</strong>
             </Col>
           </FormGroup>
           {segment.rows.map(i => this.constructEntryRow(segment, i))}
