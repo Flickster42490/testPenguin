@@ -32,19 +32,26 @@ export default class Preview extends Component {
     this.state = {
       question: [],
       externalDocs: [],
-      activeDocIndex: 0
+      activeDocIndex: 0,
+      width: 0
     };
   }
 
   componentWillMount() {
     const queries = window.location.hash.split("?")[1];
     const questionId = queryString.parse(queries).id;
+    this.updateDimensions();
+    window.addEventListener("resize", this.updateDimensions.bind(this));
     axios.get(`/questions/id/${questionId}`).then(d => {
       let externalDocs = this.createExternalDocsArray(d.data);
       this.setState({ externalDocs: externalDocs, question: d.data }, () => {
         this.forceUpdate();
       });
     });
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateDimensions.bind(this));
   }
 
   createExternalDocsArray(question) {
@@ -65,6 +72,27 @@ export default class Preview extends Component {
         url: question[0].module_ext_url_3
       });
     return externalDocs;
+  }
+
+  setPdfScale() {
+    if (this.state.width < 1340) {
+      return 0.6;
+    } else if (this.state.width < 1441) {
+      return 0.7;
+    } else if (this.state.width < 1651) {
+      return 0.8;
+    } else if (this.state.width < 1851) {
+      return 0.9;
+    } else {
+      return 1;
+    }
+  }
+
+  /**
+   * Calculate & Update state of new dimensions
+   */
+  updateDimensions() {
+    this.setState({ width: window.innerWidth });
   }
 
   render() {
@@ -124,7 +152,7 @@ export default class Preview extends Component {
                               externalDocs[this.state.activeDocIndex].url
                             }`}
                             style={{ maxWidth: "100%", height: "auto" }}
-                            scale={0.7} //lowest is 0.7. Based on viewport size.
+                            scale={this.setPdfScale()} //lowest is 0.7. Based on viewport size.
                           />
                         </CardBody>
                       </Card>
