@@ -16,9 +16,9 @@ import {
   Input,
   FormText
 } from "reactstrap";
-import DatePicker from "react-datepicker";
+import DatePicker from "../../../components/DatePicker/dist/react-datepicker";
 import moment from "moment";
-import "react-datepicker/dist/react-datepicker.css";
+import "../../../components/DatePicker/dist/react-datepicker.css";
 import Select from "react-select";
 
 import utils from "../../../utils";
@@ -40,7 +40,6 @@ export default class Preview extends Component {
   // }
 
   componentWillReceiveProps(props) {
-    console.log(props.question);
     if (props.question) {
       this.setState({
         journalEntry: props.question.module_answer.segments
@@ -98,7 +97,7 @@ export default class Preview extends Component {
           <DatePicker
             selected={moment(currentRow.date)}
             onChange={date => this.updateCalendar(currentRow, date)}
-            disabled={this.state.disabled}
+            // disabled={this.state.disabled}
           />
         </Col>
         <Col sm={4}>
