@@ -97,7 +97,7 @@ export default class Preview extends Component {
           <DatePicker
             selected={moment(currentRow.date)}
             onChange={date => this.updateCalendar(currentRow, date)}
-            // disabled={this.state.disabled}
+            disabled={this.state.disabled}
           />
         </Col>
         <Col sm={4}>

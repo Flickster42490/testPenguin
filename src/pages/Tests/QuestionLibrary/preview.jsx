@@ -6,6 +6,7 @@ import {
   Card,
   CardGroup,
   CardHeader,
+  CardFooter,
   CardBody,
   Button,
   ButtonGroup,
@@ -33,7 +34,8 @@ export default class Preview extends Component {
       question: [],
       externalDocs: [],
       activeDocIndex: 0,
-      width: 0
+      width: 0,
+      disabled: true
     };
   }
 
@@ -177,11 +179,35 @@ export default class Preview extends Component {
                         name="text"
                         rows="6"
                         id="exampleText"
+                        disabled={this.state.disabled}
+                        value={
+                          question[0] ? question[0].module_stem_2_answer : ""
+                        }
                       />{" "}
                     </CardBody>
                   </Card>
                 </Col>
               </Row>
+              <CardFooter>
+                <Row>
+                  <Col md="12">
+                    <div>
+                      <Card className="transparent-card">
+                        <CardHeader className="transparent-card-header">
+                          <strong>Question Notes:</strong>
+                        </CardHeader>
+                        <CardBody className="transparent-card-body">
+                          <span
+                            dangerouslySetInnerHTML={{
+                              __html: question[0] ? question[0].notes : ""
+                            }}
+                          />
+                        </CardBody>
+                      </Card>
+                    </div>
+                  </Col>
+                </Row>
+              </CardFooter>
             </CardBody>
           </Card>
         </Preloader>
