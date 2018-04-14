@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const cors = require("cors");
 const passport = require("passport");
-const db = require("./db");
+const db = require("./server/db");
 
 const app = express();
 
@@ -27,8 +27,9 @@ app.get("/", function(req, res) {
 app.listen(process.env.PORT || 8000);
 
 function _registerRoutes(app) {
-  app.use("/auth", require("./auth"));
-  app.use("/questions", require("./questions"));
+  app.use("/auth", require("./server/auth"));
+  app.use("/questions", require("./server/questions"));
+  app.use("/tests", require("./server/tests"));
   // app.use("/graphql", require("./graphql"));
   // app.use("/info", require("./version"));
   // app.use("/", require("./version"));

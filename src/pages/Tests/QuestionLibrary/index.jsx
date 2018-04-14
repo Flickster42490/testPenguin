@@ -40,7 +40,7 @@ export default class QuestionLibrary extends Component {
       questions,
       (sum, q) => {
         if (q.type === "module") sum.module++;
-        if (q.type === "mc") sum.mc++;
+        if (q.type === "multiple_choice") sum.mc++;
         sum.total++;
         return sum;
       },
@@ -98,7 +98,8 @@ export default class QuestionLibrary extends Component {
                     Cell: cell => (
                       <span>
                         {utils.toUpper(utils.addSpace(cell.original.type))}{" "}
-                        {utils.toUpper(utils.addSpace(cell.original.type))
+                        {utils.toUpper(utils.addSpace(cell.original.type)) ===
+                        "Module"
                           ? `(${utils.toUpper(
                               utils.addSpace(cell.original.module_type)
                             )})`
@@ -116,6 +117,7 @@ export default class QuestionLibrary extends Component {
                   {
                     Header: "Difficulty",
                     accessor: "difficulty",
+                    maxWidth: "100",
                     Cell: cell => (
                       <span>{utils.toUpper(cell.original.difficulty)}</span>
                     )
@@ -124,36 +126,6 @@ export default class QuestionLibrary extends Component {
                     Header: "Category",
                     accessor: "tags"
                   },
-                  // {
-                  //   Header: "Details",
-                  //   Cell: cell => {
-                  //     return (
-                  //       <div>
-                  //         <div>
-                  //           <strong>Type: </strong>
-                  //           {cell.original.type} mins
-                  //           {/* will want to use moment duration fomrat */}
-                  //         </div>
-                  //         <div>
-                  //           <strong>Estimated Time: </strong>
-                  //           {cell.original.estimatedTime} mins
-                  //           {/* will want to use moment duration fomrat */}
-                  //         </div>
-                  //         <div>
-                  //           <strong>Difficulty: </strong>
-                  //           {cell.original.difficulty}
-                  //         </div>
-                  //         <div>
-                  //           <strong>Will Test Candidates in : </strong>
-                  //           {cell.original.categories.map((i, idx) => {
-                  //             if (idx === 0) return <span>{i}</span>;
-                  //             else return <span>, {i}</span>;
-                  //           })}
-                  //         </div>
-                  //       </div>
-                  //     );
-                  //   }
-                  // },
                   {
                     Header: "Actions",
                     maxWidth: 300,

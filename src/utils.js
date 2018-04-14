@@ -1,5 +1,6 @@
 module.exports = {
   toUpper: str => {
+    if (!str) return str;
     return str
       .toLowerCase()
       .split(" ")
@@ -10,6 +11,10 @@ module.exports = {
   },
 
   addSpace: str => {
-    return str.replace("_", " ");
+    if (!str) return str;
+    if (str.indexOf("_") !== -1) {
+      return str.replace("_", " ");
+    }
+    return str;
   }
 };

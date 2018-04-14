@@ -8,6 +8,7 @@ import {
   ButtonToolbar,
   Progress
 } from "reactstrap";
+import axios from "axios";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 
@@ -58,7 +59,15 @@ export default class PreBuiltTests extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {};
+    this.state = {
+      tests: []
+    };
+  }
+
+  componentWillMount() {
+    axios.get("/preBuiltTests").then(d => {
+      console.log(d);
+    });
   }
   render() {
     return (
