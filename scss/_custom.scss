@@ -146,6 +146,14 @@
   margin: 10px;
   padding: 20px;
   padding-bottom: 20px !important;
+
+  .left-column {
+    padding-right: 25px;
+  }
+
+  .right-column {
+    padding-left: 25px;
+  }
 }
 
 .muted-header {
@@ -162,6 +170,10 @@
   .card-body {
     padding: 0;
   }
+}
+
+.preview-title {
+  background-color: #fff;
 }
 
 .transparent-card {

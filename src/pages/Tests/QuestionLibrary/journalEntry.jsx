@@ -16,127 +16,57 @@ import {
   Input,
   FormText
 } from "reactstrap";
-import DatePicker from "react-date-picker";
+import DatePicker from "react-datepicker";
+import moment from "moment";
+import "react-datepicker/dist/react-datepicker.css";
+
 import Select from "react-select";
 import PDF from "react-pdf-js";
-const Entries = [
-  {
-    id: "1",
-    subtitle: "To record payment of the interest accrued since June 30, 2019",
-    rows: [
-      {
-        id: "1",
-        date: undefined,
-        account: [
-          "Interest Expense",
-          "Cash",
-          "Bonds Payable",
-          "Loss on Bond Retirement"
-        ],
-        debit: undefined,
-        credit: undefined
-      },
-      {
-        id: "2",
-        date: undefined,
-        account: [
-          "Interest Expense",
-          "Cash",
-          "Bonds Payable",
-          "Loss on Bond Retirement"
-        ],
-        debit: undefined,
-        credit: undefined
-      }
-    ]
-  },
-  {
-    id: "2",
-    subtitle:
-      "To record retirement of the bonds, per the terms of the bond indenture",
-    rows: [
-      {
-        id: "1",
-        date: undefined,
-        account: [
-          "Interest Expense",
-          "Cash",
-          "Bonds Payable",
-          "Loss on Bond Retirement"
-        ],
-        debit: undefined,
-        credit: undefined
-      },
-      {
-        id: "2",
-        date: undefined,
-        account: [
-          "Interest Expense",
-          "Cash",
-          "Bonds Payable",
-          "Loss on Bond Retirement"
-        ],
-        debit: undefined,
-        credit: undefined
-      },
-      {
-        id: "3",
-        date: undefined,
-        account: [
-          "Interest Expense",
-          "Cash",
-          "Bonds Payable",
-          "Loss on Bond Retirement"
-        ],
-        debit: undefined,
-        credit: undefined
-      },
-      {
-        id: "4",
-        date: undefined,
-        account: [
-          "Interest Expense",
-          "Cash",
-          "Bonds Payable",
-          "Loss on Bond Retirement"
-        ],
-        debit: undefined,
-        credit: undefined
-      }
-    ]
-  }
-];
+import utils from "../../../utils";
+
 export default class Preview extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
-      journalEntry: []
+      journalEntry: [],
+      disabled: true
     };
+
+    this.constructEntryRow = this.constructEntryRow.bind(this);
+    this.constructSegments = this.constructSegments.bind(this);
   }
 
-  componentWillMount() {
-    this.updateFormat(Entries);
+  // componentWillMount() {
+  //   this.updateFormat(journalEntry);
+  // }
+
+  componentWillReceiveProps(props) {
+    console.log(props.question);
+    if (props.question) {
+      this.setState({
+        journalEntry: props.question.module_answer.segments
+      });
+    }
   }
 
-  updateFormat(data) {
-    this.setState({
-      journalEntry: data.map(segment => {
-        return {
-          id: segment.id,
-          rows: segment.rows.map(row => {
-            return {
-              id: row.id,
-              date: row.date || undefined,
-              account: undefined,
-              debit: row.debit || undefined,
-              credit: row.credit || undefined
-            };
-          })
-        };
-      })
-    });
-  }
+  // updateFormat(data) {
+  //   this.setState({
+  //     journalEntry: data.map(segment => {
+  //       return {
+  //         id: segment.id,
+  //         rows: segment.rows.map(row => {
+  //           return {
+  //             id: row.id,
+  //             date: row.date || undefined,
+  //             account: undefined,
+  //             debit: row.debit || undefined,
+  //             credit: row.credit || undefined
+  //           };
+  //         })
+  //       };
+  //     })
+  //   });
+  // }
 
   updateAccount(currentRow, value) {
     currentRow.account = value;
@@ -159,23 +89,30 @@ export default class Preview extends Component {
   }
 
   constructEntryRow(segment, row) {
+    let { journalEntry } = this.state;
     let segmentIndex = segment.id - 1;
     let rowIndex = row.id - 1;
-    let currentRow = this.state.journalEntry[segmentIndex].rows[rowIndex];
+    let currentRow = journalEntry[segmentIndex].rows[rowIndex];
     return (
       <FormGroup row key={row.id}>
         <Col sm={4}>
           <DatePicker
-            value={currentRow.date}
+            selected={moment(currentRow.date)}
             onChange={date => this.updateCalendar(currentRow, date)}
+            disabled={this.state.disabled}
           />
         </Col>
         <Col sm={4}>
           <Select
             className="journal-entry-select"
-            options={Entries[segmentIndex].rows[rowIndex].account.map(i => {
-              return { value: i, label: i };
-            })}
+            options={
+              Array.isArray(currentRow.account)
+                ? currentRow.account.map(i => {
+                    return { value: i, label: i };
+                  })
+                : [{ value: currentRow.account, label: currentRow.account }]
+            }
+            disabled={this.state.disabled}
             searchable
             simpleValue
             value={currentRow.account}
@@ -185,12 +122,16 @@ export default class Preview extends Component {
         <Col sm={2}>
           <Input
             type="text"
+            readOnly={this.state.disabled}
+            value={currentRow.debit}
             onBlur={value => this.updateDebit(currentRow, value)}
           />
         </Col>
         <Col sm={2}>
           <Input
             type="text"
+            value={currentRow.credit}
+            readOnly={this.state.disabled}
             onBlur={value => this.updateCredit(currentRow, value)}
           />
         </Col>
@@ -199,7 +140,7 @@ export default class Preview extends Component {
   }
 
   constructSegments() {
-    return Entries.map(segment => {
+    return this.state.journalEntry.map(segment => {
       return (
         <div key={segment.id}>
           <FormGroup row>
