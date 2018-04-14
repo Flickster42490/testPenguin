@@ -2,7 +2,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
 const cors = require("cors");
-var passport = require("passport");
+const passport = require("passport");
+const db = require("./db");
 
 const app = express();
 
@@ -16,10 +17,10 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(passport.initialize());
 app.use(passport.session());
-// app.use(db());
+app.use(db());
 _registerRoutes(app);
 
-app.get("*", function(req, res) {
+app.get("/", function(req, res) {
   res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
@@ -27,6 +28,7 @@ app.listen(process.env.PORT || 8000);
 
 function _registerRoutes(app) {
   app.use("/auth", require("./auth"));
+  app.use("/questions", require("./questions"));
   // app.use("/graphql", require("./graphql"));
   // app.use("/info", require("./version"));
   // app.use("/", require("./version"));
