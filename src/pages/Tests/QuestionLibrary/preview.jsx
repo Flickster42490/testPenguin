@@ -30,7 +30,9 @@ export default class Preview extends Component {
     super(props);
 
     this.state = {
-      question: []
+      question: [],
+      externalDocs: [],
+      activeDocIndex: 0
     };
   }
 
@@ -38,13 +40,35 @@ export default class Preview extends Component {
     const queries = window.location.hash.split("?")[1];
     const questionId = queryString.parse(queries).id;
     axios.get(`/questions/id/${questionId}`).then(d => {
-      this.setState({ question: d.data }, () => {
+      let externalDocs = this.createExternalDocsArray(d.data);
+      this.setState({ externalDocs: externalDocs, question: d.data }, () => {
         this.forceUpdate();
       });
     });
   }
+
+  createExternalDocsArray(question) {
+    let externalDocs = [];
+    if (question[0].module_ext_name_1)
+      externalDocs.push({
+        name: question[0].module_ext_name_1,
+        url: question[0].module_ext_url_1
+      });
+    if (question[0].module_ext_name_2)
+      externalDocs.push({
+        name: question[0].module_ext_name_2,
+        url: question[0].module_ext_url_2
+      });
+    if (question[0].module_ext_name_3)
+      externalDocs.push({
+        name: question[0].module_ext_name_3,
+        url: question[0].module_ext_url_3
+      });
+    return externalDocs;
+  }
+
   render() {
-    const { question } = this.state;
+    const { question, externalDocs } = this.state;
     return (
       <div>
         {/* <PreviewMultipleChoice /> */}
@@ -80,18 +104,32 @@ export default class Preview extends Component {
                       </CardBody>
                     </Card>
                   </div>
-                  <div>
-                    <Card className="pdf-card">
-                      <CardHeader>
-                        <Button outline color="default" block>
-                          Reconciling Items
-                        </Button>
-                      </CardHeader>
-                      <CardBody>
-                        <PDF file="/img/q1.pdf" fillWidth />
-                      </CardBody>
-                    </Card>
-                  </div>
+                  {externalDocs.length > 0 && (
+                    <div>
+                      <Card className="pdf-card">
+                        <CardHeader>
+                          <ButtonGroup>
+                            {externalDocs.map((doc, idx) => {
+                              return (
+                                <Button outline color="default" key={idx}>
+                                  {doc.name}
+                                </Button>
+                              );
+                            })}
+                          </ButtonGroup>
+                        </CardHeader>
+                        <CardBody>
+                          <PDF
+                            file={`/img/${
+                              externalDocs[this.state.activeDocIndex].url
+                            }`}
+                            style={{ maxWidth: "100%", height: "auto" }}
+                            scale={0.7} //lowest is 0.7. Based on viewport size.
+                          />
+                        </CardBody>
+                      </Card>
+                    </div>
+                  )}
                 </Col>
                 <Col md="7" className="right-column">
                   <JournalEntry question={question[0]} />
@@ -106,7 +144,12 @@ export default class Preview extends Component {
                           __html: question[0] ? question[0].module_stem_2 : ""
                         }}
                       />
-                      <Input type="textarea" name="text" id="exampleText" />{" "}
+                      <Input
+                        type="textarea"
+                        name="text"
+                        rows="6"
+                        id="exampleText"
+                      />{" "}
                     </CardBody>
                   </Card>
                 </Col>
