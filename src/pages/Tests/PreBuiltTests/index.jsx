@@ -65,23 +65,28 @@ export default class PreBuiltTests extends Component {
   }
 
   componentWillMount() {
-    axios.get("/preBuiltTests").then(d => {
-      console.log(d);
+    axios.get("/tests/type/pre_built").then(d => {
+      this.setState({
+        tests: d.data
+      });
     });
   }
+
   render() {
+    console.log(this.state.tests);
+    const { tests } = this.state;
     return (
       <div>
         <Row>
           <Col xs="12">
             <ReactTable
               style={{ backgroundColor: "white" }}
-              data={mockData}
+              data={tests}
               sortable={false}
               columns={[
                 {
                   Header: "Test Name",
-                  accessor: "testName",
+                  accessor: "name",
                   Cell: cell => (
                     <div
                       style={{
@@ -97,31 +102,39 @@ export default class PreBuiltTests extends Component {
                   )
                 },
                 {
-                  Header: "Details",
-                  Cell: cell => {
-                    return (
-                      <div>
-                        <div>
-                          <strong>Estimated Time: </strong>
-                          {cell.original.estimatedTime} mins
-                          {/* will want to use moment duration fomrat */}
-                        </div>
-                        <div>
-                          <strong>Questions: </strong>
-                          {cell.original.mcNumber} Multiple Choice,
-                          {cell.original.fbNumber} Fill In Blank,
-                          {cell.original.moduleNumber} Modules
-                        </div>
-                        <div>
-                          <strong>Will Test Candidates in : </strong>
-                          {cell.original.categories.map((i, idx) => {
-                            if (idx === 0) return <span>{i}</span>;
-                            else return <span>, {i}</span>;
-                          })}
-                        </div>
-                      </div>
-                    );
-                  }
+                  Header: "Estimated Time",
+                  accessor: "estimated_time",
+                  Cell: cell => <span>{cell.original.estimated_time} mins</span>
+                },
+                {
+                  Header: "Question Types",
+                  accessor: "question_types",
+                  Cell: cell => (
+                    <div>
+                      <span>{cell.value.multiple_choice} Multiple Choices</span>
+                      <br />
+                      <span>{cell.value.module} Modules</span>
+                    </div>
+                  )
+                },
+                {
+                  Header: "Categories",
+                  accessor: "tags",
+                  Cell: cell => (
+                    <div>
+                      {cell.value.map((i, idx, arr) => {
+                        if (idx === arr.length - 1) {
+                          return <span>{i}</span>;
+                        }
+                        return (
+                          <span>
+                            {i}
+                            <br />
+                          </span>
+                        );
+                      })}
+                    </div>
+                  )
                 },
                 {
                   Header: "Actions",
@@ -142,7 +155,13 @@ export default class PreBuiltTests extends Component {
                         }}
                       >
                         <Button size="sm" color="primary">
-                          View Questions
+                          <a
+                            href={`/#/dashboard/tests/preBuiltTests/viewQuestions?id=${
+                              cell.original.id
+                            }`}
+                          >
+                            View Questions
+                          </a>
                         </Button>
                         <Button size="sm" color="success">
                           Invite Candidates

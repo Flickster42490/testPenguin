@@ -12,36 +12,34 @@ import {
   ButtonToolbar,
   Progress
 } from "reactstrap";
+import queryString from "querystring";
 import _ from "lodash";
 import FontAwesome from "react-fontawesome";
-
-const MCMockData = {
-  skillsTested: ["Finance"],
-  difficulty: "Easy",
-  type: "Multiple Choice",
-  questionStem:
-    "ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum ",
-  answerChoices: [
-    "Answer Choice 1",
-    "Answer Choice 2",
-    "Answer Choice 3",
-    "Answer Choice 4"
-  ],
-  correctAnswer: 1,
-  notes:
-    "Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum "
-};
 
 export default class PreviewMultipleChoice extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      question: this.props.question[0]
+      question: this.props.question[0],
+      returnTo: null,
+      returnToTestId: null
     };
   }
+
+  componentWillMount() {
+    const queries = window.location.hash.substring(
+      window.location.hash.indexOf("?") + 1
+    );
+    const returnTo = queryString.parse(queries).returnTo || null;
+    const returnToTestId = queryString.parse(queries).returnToTestId || null;
+    this.setState({
+      returnTo: returnTo,
+      returnToTestId: returnToTestId
+    });
+  }
   render() {
-    const { question } = this.state;
+    const { question, returnTo, returnToTestId } = this.state;
     return (
       <div>
         <Card className="module-container-card">
@@ -51,10 +49,18 @@ export default class PreviewMultipleChoice extends Component {
                 <h3>{question.name}</h3>
               </Col>
               <Col md="2">
-                <a href="#/dashboard/tests/questionLibrary">
-                  <FontAwesome name="chevron-circle-left" size="2x" /> &nbsp; Go
-                  Back
-                </a>
+                {!returnTo && (
+                  <a href="#/dashboard/tests/questionLibrary">
+                    <FontAwesome name="chevron-circle-left" size="2x" /> &nbsp;
+                    Go Back
+                  </a>
+                )}
+                {returnTo && (
+                  <a href={`${returnTo}?id=${returnToTestId}`}>
+                    <FontAwesome name="chevron-circle-left" size="2x" /> &nbsp;
+                    Go Back
+                  </a>
+                )}
               </Col>
             </Row>
           </CardHeader>

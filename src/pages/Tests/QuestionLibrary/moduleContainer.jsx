@@ -33,17 +33,29 @@ export default class ModuleContainer extends Component {
       externalDocs: [],
       activeDocIndex: 0,
       width: 0,
-      disabled: true
+      disabled: true,
+      returnTo: null,
+      returnToTestId: null
     };
   }
 
   componentWillMount() {
+    const queries = window.location.hash.substring(
+      window.location.hash.indexOf("?") + 1
+    );
+    const returnTo = queryString.parse(queries).returnTo || null;
+    const returnToTestId = queryString.parse(queries).returnToTestId || null;
     this.updateDimensions();
     window.addEventListener("resize", this.updateDimensions.bind(this));
 
     let externalDocs = this.createExternalDocsArray(this.props.question);
     this.setState(
-      { externalDocs: externalDocs, question: this.props.question },
+      {
+        externalDocs: externalDocs,
+        question: this.props.question,
+        returnTo: returnTo,
+        returnToTestId: returnToTestId
+      },
       () => {
         this.forceUpdate();
       }
@@ -55,7 +67,6 @@ export default class ModuleContainer extends Component {
   }
 
   createExternalDocsArray(question) {
-    console.log(question);
     let externalDocs = [];
     if (question[0].module_ext_name_1)
       externalDocs.push({
@@ -97,7 +108,7 @@ export default class ModuleContainer extends Component {
   }
 
   render() {
-    const { question, externalDocs } = this.state;
+    const { question, externalDocs, returnTo, returnToTestId } = this.state;
     return (
       <div>
         {/* <PreviewMultipleChoice /> */}
@@ -108,10 +119,18 @@ export default class ModuleContainer extends Component {
                 <h3>{question[0] ? question[0].name : ""}</h3>
               </Col>
               <Col md="2">
-                <a href="#/dashboard/tests/questionLibrary">
-                  <FontAwesome name="chevron-circle-left" size="2x" /> &nbsp; Go
-                  Back
-                </a>
+                {!returnTo && (
+                  <a href="#/dashboard/tests/questionLibrary">
+                    <FontAwesome name="chevron-circle-left" size="2x" /> &nbsp;
+                    Go Back
+                  </a>
+                )}
+                {returnTo && (
+                  <a href={`${returnTo}?id=${returnToTestId}`}>
+                    <FontAwesome name="chevron-circle-left" size="2x" /> &nbsp;
+                    Go Back
+                  </a>
+                )}
               </Col>
             </Row>
           </CardHeader>
