@@ -187,7 +187,7 @@ export default class ModuleBody extends Component {
                     id="exampleText"
                     disabled={this.state.disabled}
                     value={
-                      this.state.disabled ? question.module_stem_2_answer : ""
+                      !this.state.disabled ? question.module_stem_2_answer : ""
                     }
                   />{" "}
                 </CardBody>
