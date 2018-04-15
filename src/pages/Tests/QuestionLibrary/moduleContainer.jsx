@@ -120,13 +120,19 @@ export default class ModuleContainer extends Component {
               </Col>
               <Col md="2">
                 {!returnTo && (
-                  <a href="#/dashboard/tests/questionLibrary">
+                  <a
+                    href="#/dashboard/tests/questionLibrary"
+                    className="float-right"
+                  >
                     <FontAwesome name="chevron-circle-left" size="2x" /> &nbsp;
                     Go Back
                   </a>
                 )}
                 {returnTo && (
-                  <a href={`${returnTo}?id=${returnToTestId}`}>
+                  <a
+                    href={`${returnTo}?id=${returnToTestId}`}
+                    className="float-right"
+                  >
                     <FontAwesome name="chevron-circle-left" size="2x" /> &nbsp;
                     Go Back
                   </a>
