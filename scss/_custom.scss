@@ -147,6 +147,10 @@
   background-color: #fff;
 }
 
+.float-right {
+  float: right;
+}
+
 .module-container-card {
   margin: 10px;
   padding: 20px;
@@ -174,6 +178,17 @@
 
 .preview-title {
   background-color: #fff;
+}
+
+.test-app {
+  .module-container-card {
+    margin-top: 65px;
+
+    .question-subtitle {
+      font-weight: 200;
+      color: slategray;
+    }
+  }
 }
 
 .transparent-card {

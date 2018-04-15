@@ -166,6 +166,15 @@ export default class PreBuiltTests extends Component {
                         <Button size="sm" color="success">
                           Invite Candidates
                         </Button>
+                        <Button size="sm" color="secondary">
+                          <a
+                            href={`/#/testApp/app?id=${
+                              cell.original.id
+                            }&preview=true&returnTo=${window.location.hash}`}
+                          >
+                            Preview Test
+                          </a>
+                        </Button>
                       </ButtonGroup>
                     </div>
                   )

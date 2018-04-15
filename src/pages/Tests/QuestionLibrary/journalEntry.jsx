@@ -28,7 +28,7 @@ export default class Preview extends Component {
     super(props);
     this.state = {
       journalEntry: [],
-      disabled: true
+      disabled: props.disabled ? props.disabled : true
     };
 
     this.constructEntryRow = this.constructEntryRow.bind(this);
