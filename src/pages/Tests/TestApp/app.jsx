@@ -6,7 +6,7 @@ import { Row, Col, Card, CardHeader, Button } from "reactstrap";
 import ModuleBody from "./moduleBody.jsx";
 import MultipleChoice from "./multipleChoiceBody.jsx";
 import { Preloader } from "../../../components/Preloader.jsx";
-import Countdown from "react-countdown-now";
+import Countdown from "../../../components/Countdown/Countdown";
 
 export default class TestApp extends Component {
   constructor(props) {
