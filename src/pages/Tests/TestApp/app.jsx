@@ -114,6 +114,7 @@ export default class TestApp extends Component {
       questions,
       questionsAnswered,
       currentIdx,
+      candidateId,
       lastIdx,
       startTime,
       preview,
@@ -165,6 +166,13 @@ export default class TestApp extends Component {
                       <Button size="lg" color="success" className="float-right">
                         {preview && (
                           <a href={`${returnTo}?id=${testId}`}>Finish Test</a>
+                        )}
+                        {!preview && (
+                          <a
+                            href={`/testApp/completed?id=${testId}&candidateId=${candidateId}`}
+                          >
+                            Finish Test
+                          </a>
                         )}
                       </Button>
                     )}

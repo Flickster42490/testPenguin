@@ -45,8 +45,8 @@ export default class ModuleBody extends Component {
       width: 0,
       disabled: props.preview
     };
-    console.log(props.question);
     this.handleSubModuleOneUpdate = this.handleSubModuleOneUpdate.bind(this);
+    this.handleSubModuleTwoUpdate = this.handleSubModuleTwoUpdate.bind(this);
   }
 
   componentWillMount() {
@@ -89,7 +89,6 @@ export default class ModuleBody extends Component {
   }
 
   handleSubModuleOneUpdate(subModule) {
-    console.log(this.state.questionAnswered);
     this.setState(
       {
         questionAnswered: Object.assign(this.state.questionAnswered, {
@@ -97,7 +96,19 @@ export default class ModuleBody extends Component {
         })
       },
       () => {
-        console.log(this.state.questionAnswered);
+        this.props.handleAnswerUpdate(this.state.questionAnswered);
+      }
+    );
+  }
+
+  handleSubModuleTwoUpdate(e) {
+    this.setState(
+      {
+        questionAnswered: Object.assign(this.state.questionAnswered, {
+          module_stem_2_candidate_answer: e.target.value
+        })
+      },
+      () => {
         this.props.handleAnswerUpdate(this.state.questionAnswered);
       }
     );
@@ -225,7 +236,7 @@ export default class ModuleBody extends Component {
                       type="textarea"
                       name="text"
                       rows="6"
-                      id="exampleText"
+                      onBlur={this.handleSubModuleTwoUpdate}
                     />
                   )}
                   {this.state.disabled && (

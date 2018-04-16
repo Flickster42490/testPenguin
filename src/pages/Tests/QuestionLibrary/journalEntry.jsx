@@ -116,7 +116,6 @@ export default class Preview extends Component {
     let segmentIndex = segment.id - 1;
     let rowIndex = row.id - 1;
     let currentRow = journalEntry[segmentIndex].rows[rowIndex];
-    console.log(currentRow.date);
     return (
       <FormGroup row key={row.id}>
         <Col sm={4}>
