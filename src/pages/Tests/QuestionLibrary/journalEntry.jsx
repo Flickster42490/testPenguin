@@ -53,11 +53,20 @@ export default class Preview extends Component {
   componentWillReceiveProps(props) {
     if (props.question && this.state.disabled) {
       this.setState({
-        journalEntry: props.question.module_answer.segments
+        journalEntry: deepCopy(props.question.module_answer.segments),
+        journalEntryFormat: deepCopy(props.question.module_format.segments)
       });
-    } else if (props.question) {
+    } else if (props.question && props.questionAnswered) {
+      console.log(props.questionAnswered.module_candidate_answer.segments);
       this.setState({
-        journalEntry: props.question.module_format.segments,
+        journalEntry: deepCopy(
+          props.questionAnswered.module_candidate_answer.segments
+        ),
+        journalEntryFormat: deepCopy(props.question.module_format.segments)
+      });
+    } else {
+      this.setState({
+        journalEntry: deepCopy(props.question.module_candidate_answer.segments),
         journalEntryFormat: deepCopy(props.question.module_format.segments)
       });
     }
@@ -84,22 +93,22 @@ export default class Preview extends Component {
 
   updateAccount(currentRow, value) {
     currentRow.account = value;
-    this.forceUpdate();
+    this.props.handleSubModuleOneUpdate(this.state.journalEntry);
   }
 
   updateCalendar(currentRow, date) {
-    currentRow.date = date;
-    this.forceUpdate();
+    currentRow.date = date.format("MM/DD/YYYY");
+    this.props.handleSubModuleOneUpdate(this.state.journalEntry);
   }
 
   updateDebit(currentRow, event) {
     currentRow.debit = event.target.value;
-    this.forceUpdate();
+    this.props.handleSubModuleOneUpdate(this.state.journalEntry);
   }
 
   updateCredit(currentRow, event) {
     currentRow.credit = event.target.value;
-    this.forceUpdate();
+    this.props.handleSubModuleOneUpdate(this.state.journalEntry);
   }
 
   constructEntryRow(segment, row) {
@@ -107,10 +116,7 @@ export default class Preview extends Component {
     let segmentIndex = segment.id - 1;
     let rowIndex = row.id - 1;
     let currentRow = journalEntry[segmentIndex].rows[rowIndex];
-    console.log(
-      currentRow.account,
-      journalEntryFormat[segmentIndex].rows[rowIndex].account
-    );
+    console.log(currentRow.date);
     return (
       <FormGroup row key={row.id}>
         <Col sm={4}>

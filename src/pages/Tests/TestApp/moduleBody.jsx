@@ -22,18 +22,31 @@ import PDF from "react-pdf-js";
 import FontAwesome from "react-fontawesome";
 
 import JournalEntry from "../QuestionLibrary/journalEntry.jsx";
-
+const deepCopy = oldObj => {
+  var newObj = oldObj;
+  if (oldObj && typeof oldObj === "object") {
+    newObj =
+      Object.prototype.toString.call(oldObj) === "[object Array]" ? [] : {};
+    for (var i in oldObj) {
+      newObj[i] = deepCopy(oldObj[i]);
+    }
+  }
+  return newObj;
+};
 export default class ModuleBody extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      question: [],
+      question: null,
+      questionAnswered: null,
       externalDocs: [],
       activeDocIndex: 0,
       width: 0,
       disabled: props.preview
     };
+    console.log(props.question);
+    this.handleSubModuleOneUpdate = this.handleSubModuleOneUpdate.bind(this);
   }
 
   componentWillMount() {
@@ -45,6 +58,7 @@ export default class ModuleBody extends Component {
       {
         externalDocs: externalDocs,
         question: this.props.question,
+        questionAnswered: this.props.questionAnswered,
         questionList: this.props.questionList,
         currentIdx: this.props.currentIdx
       },
@@ -60,6 +74,7 @@ export default class ModuleBody extends Component {
       {
         externalDocs: externalDocs,
         question: this.props.question,
+        questionAnswered: this.props.questionAnswered,
         questionList: this.props.questionList,
         currentIdx: this.props.currentIdx
       },
@@ -71,6 +86,21 @@ export default class ModuleBody extends Component {
 
   componentWillUnmount() {
     window.removeEventListener("resize", this.updateDimensions.bind(this));
+  }
+
+  handleSubModuleOneUpdate(subModule) {
+    console.log(this.state.questionAnswered);
+    this.setState(
+      {
+        questionAnswered: Object.assign(this.state.questionAnswered, {
+          module_candidate_answer: { segments: subModule }
+        })
+      },
+      () => {
+        console.log(this.state.questionAnswered);
+        this.props.handleAnswerUpdate(this.state.questionAnswered);
+      }
+    );
   }
 
   createExternalDocsArray(question) {
@@ -115,7 +145,13 @@ export default class ModuleBody extends Component {
   }
 
   render() {
-    const { question, externalDocs, questionList, currentIdx } = this.state;
+    const {
+      question,
+      questionAnswered,
+      externalDocs,
+      questionList,
+      currentIdx
+    } = this.state;
     return (
       <div>
         <CardBody>
@@ -168,6 +204,8 @@ export default class ModuleBody extends Component {
                 question.module_type === "journal_entry" && (
                   <JournalEntry
                     question={question}
+                    questionAnswered={questionAnswered}
+                    handleSubModuleOneUpdate={this.handleSubModuleOneUpdate}
                     disabled={this.state.disabled}
                   />
                 )}

@@ -2,11 +2,24 @@ import React, { Component } from "react";
 import axios from "axios";
 import queryString from "querystring";
 import { Row, Col, Card, CardHeader, Button } from "reactstrap";
+import _ from "lodash";
 
 import ModuleBody from "./moduleBody.jsx";
 import MultipleChoice from "./multipleChoiceBody.jsx";
 import { Preloader } from "../../../components/Preloader.jsx";
 import Countdown from "../../../components/Countdown/Countdown";
+
+const deepCopy = oldObj => {
+  var newObj = oldObj;
+  if (oldObj && typeof oldObj === "object") {
+    newObj =
+      Object.prototype.toString.call(oldObj) === "[object Array]" ? [] : {};
+    for (var i in oldObj) {
+      newObj[i] = deepCopy(oldObj[i]);
+    }
+  }
+  return newObj;
+};
 
 export default class TestApp extends Component {
   constructor(props) {
@@ -14,6 +27,7 @@ export default class TestApp extends Component {
 
     this.state = {
       questions: [],
+      questionsAnswered: [],
       currentIdx: 0,
       lastIdx: null,
       currentQuestion: null,
@@ -22,21 +36,29 @@ export default class TestApp extends Component {
     };
 
     this.handleNextQuestion = this.handleNextQuestion.bind(this);
+    this.handleAnswerUpdate = this.handleAnswerUpdate.bind(this);
   }
 
   componentWillMount() {
     const queries = window.location.hash.split("?")[1];
     const testId = queryString.parse(queries).id;
     const preview = Boolean(queryString.parse(queries).preview) || false;
+    const { candidateId } = queryString.parse(queries);
     const returnTo = queryString.parse(queries).returnTo;
     axios.get(`/tests/id/${testId}/questions`).then(d => {
+      d.data.forEach(
+        i => (i.module_candidate_answer = deepCopy(i.module_format))
+      );
+
       this.setState(
         {
           questions: d.data,
+          questionsAnswered: deepCopy(d.data),
           lastIdx: d.data.length - 1,
           currentQuestion: d.data[this.state.currentIdx],
           preview: preview,
           testId: testId,
+          candidateId: candidateId,
           returnTo: returnTo,
           estimatedTime: d.data.reduce(
             (sum, i) => (sum = sum + Number(i.estimated_time)),
@@ -48,6 +70,20 @@ export default class TestApp extends Component {
         }
       );
     });
+  }
+
+  handleAnswerUpdate(answer) {
+    let { questionsAnswered, currentIdx } = this.state;
+    const updatedQuestionsAnswered = deepCopy(questionsAnswered);
+    updatedQuestionsAnswered[currentIdx] = answer;
+    this.setState(
+      {
+        questionsAnswered: updatedQuestionsAnswered
+      },
+      () => {
+        console.log(questionsAnswered);
+      }
+    );
   }
 
   handleNextQuestion() {
@@ -76,6 +112,7 @@ export default class TestApp extends Component {
   render() {
     const {
       questions,
+      questionsAnswered,
       currentIdx,
       lastIdx,
       startTime,
@@ -86,7 +123,12 @@ export default class TestApp extends Component {
     } = this.state;
     const question = questions[currentIdx];
     const testLength = questions.length;
-    console.log(preview);
+    console.log(
+      "app currentidx quetstions answers",
+      questionsAnswered,
+      currentIdx,
+      questionsAnswered[currentIdx]
+    );
     return (
       <div>
         <Preloader loading={questions.length < 1}>
@@ -141,17 +183,21 @@ export default class TestApp extends Component {
               {questions[currentIdx].type === "module" && (
                 <ModuleBody
                   question={questions[currentIdx]}
+                  questionAnswered={questionsAnswered[currentIdx]}
                   currentIdx={currentIdx}
                   questionList={questions}
                   preview={preview}
+                  handleAnswerUpdate={this.handleAnswerUpdate}
                 />
               )}
               {questions[currentIdx].type === "multiple_choice" && (
                 <MultipleChoice
                   question={questions[currentIdx]}
+                  questionAnswered={questionsAnswered[currentIdx]}
                   currentIdx={currentIdx}
                   questionList={questions}
                   preview={preview}
+                  handleAnswerUpdate={this.handleAnswerUpdate}
                 />
               )}
             </Card>
