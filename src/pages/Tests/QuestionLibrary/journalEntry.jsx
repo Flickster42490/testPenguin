@@ -18,6 +18,7 @@ import {
 } from "reactstrap";
 import DatePicker from "../../../components/DatePicker/dist/react-datepicker";
 import moment from "moment";
+import _ from "lodash";
 import "../../../components/DatePicker/dist/react-datepicker.css";
 import Select from "react-select";
 
@@ -52,23 +53,33 @@ export default class Preview extends Component {
 
   componentWillReceiveProps(props) {
     if (props.question && this.state.disabled) {
-      this.setState({
-        journalEntry: deepCopy(props.question.module_answer.segments),
-        journalEntryFormat: deepCopy(props.question.module_format.segments)
-      });
+      this.setState(
+        {
+          journalEntry: deepCopy(props.question.module_answer.segments),
+          journalEntryFormat: deepCopy(props.question.module_format.segments)
+        },
+        () => this.forceUpdate()
+      );
     } else if (props.question && props.questionAnswered) {
-      console.log(props.questionAnswered.module_candidate_answer.segments);
-      this.setState({
-        journalEntry: deepCopy(
-          props.questionAnswered.module_candidate_answer.segments
-        ),
-        journalEntryFormat: deepCopy(props.question.module_format.segments)
-      });
+      this.setState(
+        {
+          journalEntry: deepCopy(
+            props.questionAnswered.module_candidate_answer.segments
+          ),
+          journalEntryFormat: deepCopy(props.question.module_format.segments)
+        },
+        () => this.forceUpdate()
+      );
     } else {
-      this.setState({
-        journalEntry: deepCopy(props.question.module_candidate_answer.segments),
-        journalEntryFormat: deepCopy(props.question.module_format.segments)
-      });
+      this.setState(
+        {
+          journalEntry: deepCopy(
+            props.question.module_candidate_answer.segments
+          ),
+          journalEntryFormat: deepCopy(props.question.module_format.segments)
+        },
+        () => this.forceUpdate()
+      );
     }
   }
 
@@ -112,17 +123,18 @@ export default class Preview extends Component {
   }
 
   constructEntryRow(segment, row) {
-    let { journalEntry, journalEntryFormat } = this.state;
+    let { journalEntry, journalEntryFormat, disabled } = this.state;
     let segmentIndex = segment.id - 1;
     let rowIndex = row.id - 1;
     let currentRow = journalEntry[segmentIndex].rows[rowIndex];
+    console.log(disabled, currentRow.debit, currentRow.credit);
     return (
       <FormGroup row key={row.id}>
         <Col sm={4}>
           <DatePicker
             selected={moment(currentRow.date || Date.now())}
             onChange={date => this.updateCalendar(currentRow, date)}
-            disabled={this.state.disabled}
+            disabled={disabled}
           />
         </Col>
         <Col sm={4}>
@@ -139,7 +151,7 @@ export default class Preview extends Component {
                   )
                 : [{ value: currentRow.account, label: currentRow.account }]
             }
-            disabled={this.state.disabled}
+            disabled={disabled}
             searchable
             simpleValue
             clearable={false}
@@ -147,22 +159,42 @@ export default class Preview extends Component {
             onChange={value => this.updateAccount(currentRow, value)}
           />
         </Col>
-        <Col sm={2}>
-          <Input
-            type="text"
-            readOnly={this.state.disabled}
-            value={currentRow.debit}
-            onBlur={value => this.updateDebit(currentRow, value)}
-          />
-        </Col>
-        <Col sm={2}>
-          <Input
-            type="text"
-            value={currentRow.credit}
-            readOnly={this.state.disabled}
-            onBlur={value => this.updateCredit(currentRow, value)}
-          />
-        </Col>
+        {disabled && (
+          <Col sm={2}>
+            <Input
+              type="text"
+              readOnly={disabled}
+              defaultValue={curentRow.debit}
+            />
+          </Col>
+        )}
+        {disabled && (
+          <Col sm={2}>
+            <Input
+              type="text"
+              defaultValue={curentRow.credit}
+              readOnly={disabled}
+            />
+          </Col>
+        )}
+        {!disabled && (
+          <Col sm={2}>
+            <Input
+              type="text"
+              value={!currentRow.debit ? " " : currentRow.debit}
+              onChange={value => this.updateDebit(currentRow, value)}
+            />
+          </Col>
+        )}
+        {!disabled && (
+          <Col sm={2}>
+            <Input
+              type="text"
+              value={!currentRow.credit ? " " : currentRow.credit}
+              onChange={value => this.updateCredit(currentRow, value)}
+            />
+          </Col>
+        )}
       </FormGroup>
     );
   }

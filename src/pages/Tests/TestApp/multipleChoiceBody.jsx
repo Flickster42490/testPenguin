@@ -21,7 +21,9 @@ export default class MultipleChoiceBody extends Component {
     super(props);
 
     this.state = {
-      question: this.props.question
+      question: props.question,
+      preview: props.preview,
+      currentSelectedIdx: null
     };
   }
 
@@ -36,8 +38,21 @@ export default class MultipleChoiceBody extends Component {
     );
   }
 
+  toggleSelected(idx, choice) {
+    let { question } = this.state;
+    this.setState(
+      {
+        question: Object.assign(question, { mc_candidate_answer: choice.id }),
+        currentSelectedIdx: idx
+      },
+      () => {
+        this.props.handleAnswerUpdate(this.state.question);
+      }
+    );
+  }
+
   render() {
-    const { question } = this.state;
+    const { question, preview, currentSelectedIdx } = this.state;
     return (
       <div>
         <CardBody>
@@ -53,17 +68,26 @@ export default class MultipleChoiceBody extends Component {
               {question.mc_choices.map((i, idx) => (
                 <Button
                   color="secondary"
+                  active={currentSelectedIdx === idx}
                   outline
                   block
                   key={idx}
                   data-id={i.id}
+                  onClick={() => this.toggleSelected(idx, i)}
                 >
                   {i.value}
                 </Button>
               ))}
-              <br />
-              <strong>Correct Answer:&nbsp;</strong>
-              {_.find(question.mc_choices, { id: question.mc_answer }).value}
+              {preview && (
+                <div>
+                  <br />
+                  <strong>Correct Answer:&nbsp;</strong>
+                  {
+                    _.find(question.mc_choices, { id: question.mc_answer })
+                      .value
+                  }
+                </div>
+              )}
             </CardBody>
           </Card>
           <br />

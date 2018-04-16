@@ -81,7 +81,7 @@ export default class TestApp extends Component {
         questionsAnswered: updatedQuestionsAnswered
       },
       () => {
-        console.log(questionsAnswered);
+        this.forceUpdate();
       }
     );
   }
@@ -99,7 +99,7 @@ export default class TestApp extends Component {
 
   timerRender({ hours, minutes, seconds, completed }) {
     if (completed) {
-      return <span>That's It</span>;
+      window.location.href = `/testApp/completed?id=${testId}&candidateId=${candidateId}`;
     } else {
       return (
         <h4>
