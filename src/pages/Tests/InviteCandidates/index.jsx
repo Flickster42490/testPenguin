@@ -86,10 +86,16 @@ export default class InviteCandidates extends Component {
 
   handleSubmit() {
     axios.post("/users/candidate/invite", this.state.candidate).then(d => {
+      const candidate = d.data ? d.data[0] : null;
       if (d.status === 200) {
-        this.setState({
-          showSuccessToaster: true
-        });
+        this.setState(
+          {
+            showSuccessToaster: true
+          },
+          candidate => {
+            axios.post("/testAttempts/create", candidate);
+          }
+        );
       }
     });
   }
