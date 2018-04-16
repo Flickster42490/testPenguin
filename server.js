@@ -30,6 +30,7 @@ function _registerRoutes(app) {
   app.use("/auth", require("./server/auth"));
   app.use("/questions", require("./server/questions"));
   app.use("/tests", require("./server/tests"));
+  app.use("/users", require("./server/users"));
   // app.use("/graphql", require("./graphql"));
   // app.use("/info", require("./version"));
   // app.use("/", require("./version"));

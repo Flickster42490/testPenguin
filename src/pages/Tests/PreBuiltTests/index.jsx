@@ -128,7 +128,13 @@ export default class PreBuiltTests extends Component {
                             </a>
                           </Button>
                           <Button size="sm" color="success">
-                            Invite Candidates
+                            <a
+                              href={`/#/dashboard/tests/inviteCandidates?id=${
+                                cell.original.id
+                              }&name=${cell.original.name}`}
+                            >
+                              Invite Candidates
+                            </a>
                           </Button>
                           <Button size="sm" color="secondary">
                             <a

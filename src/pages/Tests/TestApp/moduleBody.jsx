@@ -32,7 +32,7 @@ export default class ModuleBody extends Component {
       externalDocs: [],
       activeDocIndex: 0,
       width: 0,
-      disabled: false
+      disabled: props.preview
     };
   }
 
@@ -74,7 +74,6 @@ export default class ModuleBody extends Component {
   }
 
   createExternalDocsArray(question) {
-    console.log(question);
     let externalDocs = [];
     if (question.module_ext_name_1)
       externalDocs.push({
@@ -167,7 +166,10 @@ export default class ModuleBody extends Component {
               {question &&
                 question.type === "module" &&
                 question.module_type === "journal_entry" && (
-                  <JournalEntry question={question} disabled={false} />
+                  <JournalEntry
+                    question={question}
+                    disabled={this.state.disabled}
+                  />
                 )}
               <br />
               <Card className="transparent-card">
@@ -180,16 +182,22 @@ export default class ModuleBody extends Component {
                       __html: question.module_stem_2
                     }}
                   />
-                  <Input
-                    type="textarea"
-                    name="text"
-                    rows="6"
-                    id="exampleText"
-                    disabled={this.state.disabled}
-                    value={
-                      !this.state.disabled ? question.module_stem_2_answer : ""
-                    }
-                  />{" "}
+                  {!this.state.disabled && (
+                    <Input
+                      type="textarea"
+                      name="text"
+                      rows="6"
+                      id="exampleText"
+                    />
+                  )}
+                  {this.state.disabled && (
+                    <Input
+                      type="textarea"
+                      name="text"
+                      rows="6"
+                      value={question.module_stem_2_answer}
+                    />
+                  )}
                 </CardBody>
               </Card>
             </Col>

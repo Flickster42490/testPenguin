@@ -28,7 +28,7 @@ export default class Preview extends Component {
     super(props);
     this.state = {
       journalEntry: [],
-      disabled: props.disabled ? props.disabled : true
+      disabled: props.disabled
     };
 
     this.constructEntryRow = this.constructEntryRow.bind(this);
@@ -40,9 +40,13 @@ export default class Preview extends Component {
   // }
 
   componentWillReceiveProps(props) {
-    if (props.question) {
+    if (props.question && this.state.disabled) {
       this.setState({
         journalEntry: props.question.module_answer.segments
+      });
+    } else if (props.question) {
+      this.setState({
+        journalEntry: props.question.module_format.segments
       });
     }
   }
@@ -95,7 +99,7 @@ export default class Preview extends Component {
       <FormGroup row key={row.id}>
         <Col sm={4}>
           <DatePicker
-            selected={moment(currentRow.date)}
+            selected={moment(currentRow.date || Date.now())}
             onChange={date => this.updateCalendar(currentRow, date)}
             disabled={this.state.disabled}
           />
@@ -167,6 +171,7 @@ export default class Preview extends Component {
   }
 
   render() {
+    console.log(this.state.disabled);
     return <Form>{this.constructSegments()}</Form>;
   }
 }

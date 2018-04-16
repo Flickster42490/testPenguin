@@ -27,7 +27,7 @@ export default class TestApp extends Component {
   componentWillMount() {
     const queries = window.location.hash.split("?")[1];
     const testId = queryString.parse(queries).id;
-    const preview = Boolean(queryString.parse(queries).preview);
+    const preview = Boolean(queryString.parse(queries).preview) || false;
     const returnTo = queryString.parse(queries).returnTo;
     axios.get(`/tests/id/${testId}/questions`).then(d => {
       this.setState(
@@ -37,7 +37,11 @@ export default class TestApp extends Component {
           currentQuestion: d.data[this.state.currentIdx],
           preview: preview,
           testId: testId,
-          returnTo: returnTo
+          returnTo: returnTo,
+          estimatedTime: d.data.reduce(
+            (sum, i) => (sum = sum + Number(i.estimated_time)),
+            0
+          )
         },
         () => {
           this.forceUpdate();
@@ -47,7 +51,6 @@ export default class TestApp extends Component {
   }
 
   handleNextQuestion() {
-    console.log("lskdjflksdj");
     this.setState(
       {
         currentIdx: this.state.currentIdx + 1
@@ -78,11 +81,12 @@ export default class TestApp extends Component {
       startTime,
       preview,
       returnTo,
-      testId
+      testId,
+      estimatedTime
     } = this.state;
     const question = questions[currentIdx];
     const testLength = questions.length;
-
+    console.log(preview);
     return (
       <div>
         <Preloader loading={questions.length < 1}>
@@ -100,7 +104,7 @@ export default class TestApp extends Component {
                   </Col>
                   <Col md="4">
                     <Countdown
-                      date={startTime + 900000000}
+                      date={startTime + estimatedTime * 60000}
                       renderer={this.timerRender}
                     />
                   </Col>
@@ -139,6 +143,7 @@ export default class TestApp extends Component {
                   question={questions[currentIdx]}
                   currentIdx={currentIdx}
                   questionList={questions}
+                  preview={preview}
                 />
               )}
               {questions[currentIdx].type === "multiple_choice" && (
@@ -146,6 +151,7 @@ export default class TestApp extends Component {
                   question={questions[currentIdx]}
                   currentIdx={currentIdx}
                   questionList={questions}
+                  preview={preview}
                 />
               )}
             </Card>

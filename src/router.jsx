@@ -10,6 +10,7 @@ import ReviewResults from "./pages/Candidates/reviewResults.jsx";
 import Tests from "./pages/Tests/index.jsx";
 import PreBuiltTests from "./pages/Tests/PreBuiltTests/index.jsx";
 import ViewQuestions from "./pages/Tests/PreBuiltTests/viewQuestions.jsx";
+import InviteCandidates from "./pages/Tests/InviteCandidates/index.jsx";
 import PreviousTests from "./pages/Tests/PreviousTests/index.jsx";
 import QuestionLibrary from "./pages/Tests/QuestionLibrary/index.jsx";
 import PreviewQuestion from "./pages/Tests/QuestionLibrary/preview.jsx";
@@ -36,6 +37,7 @@ const AppRouter = () => (
           <IndexRedirect to="preBuiltTests" />
           <Route path="preBuiltTests" component={PreBuiltTests} />
           <Route path="preBuiltTests/viewQuestions" component={ViewQuestions} />
+          <Route path="inviteCandidates" component={InviteCandidates} />
           <Route path="previousTests" component={PreviousTests} />
           <Route path="questionLibrary" component={QuestionLibrary} />
           <Route path="questionLibrary/preview" component={PreviewQuestion} />
