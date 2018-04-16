@@ -22,12 +22,23 @@ import "../../../components/DatePicker/dist/react-datepicker.css";
 import Select from "react-select";
 
 import utils from "../../../utils";
-
+const deepCopy = oldObj => {
+  var newObj = oldObj;
+  if (oldObj && typeof oldObj === "object") {
+    newObj =
+      Object.prototype.toString.call(oldObj) === "[object Array]" ? [] : {};
+    for (var i in oldObj) {
+      newObj[i] = deepCopy(oldObj[i]);
+    }
+  }
+  return newObj;
+};
 export default class Preview extends Component {
   constructor(props) {
     super(props);
     this.state = {
       journalEntry: [],
+      journalEntryFormat: [],
       disabled: props.disabled
     };
 
@@ -46,7 +57,8 @@ export default class Preview extends Component {
       });
     } else if (props.question) {
       this.setState({
-        journalEntry: props.question.module_format.segments
+        journalEntry: props.question.module_format.segments,
+        journalEntryFormat: deepCopy(props.question.module_format.segments)
       });
     }
   }
@@ -91,10 +103,14 @@ export default class Preview extends Component {
   }
 
   constructEntryRow(segment, row) {
-    let { journalEntry } = this.state;
+    let { journalEntry, journalEntryFormat } = this.state;
     let segmentIndex = segment.id - 1;
     let rowIndex = row.id - 1;
     let currentRow = journalEntry[segmentIndex].rows[rowIndex];
+    console.log(
+      currentRow.account,
+      journalEntryFormat[segmentIndex].rows[rowIndex].account
+    );
     return (
       <FormGroup row key={row.id}>
         <Col sm={4}>
@@ -108,15 +124,20 @@ export default class Preview extends Component {
           <Select
             className="journal-entry-select"
             options={
-              Array.isArray(currentRow.account)
-                ? currentRow.account.map(i => {
-                    return { value: i, label: i };
-                  })
+              Array.isArray(
+                journalEntryFormat[segmentIndex].rows[rowIndex].account
+              )
+                ? journalEntryFormat[segmentIndex].rows[rowIndex].account.map(
+                    i => {
+                      return { value: i, label: i };
+                    }
+                  )
                 : [{ value: currentRow.account, label: currentRow.account }]
             }
             disabled={this.state.disabled}
             searchable
             simpleValue
+            clearable={false}
             value={currentRow.account}
             onChange={value => this.updateAccount(currentRow, value)}
           />
@@ -171,7 +192,6 @@ export default class Preview extends Component {
   }
 
   render() {
-    console.log(this.state.disabled);
     return <Form>{this.constructSegments()}</Form>;
   }
 }
