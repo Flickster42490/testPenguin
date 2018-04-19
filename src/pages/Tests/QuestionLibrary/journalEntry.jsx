@@ -73,9 +73,7 @@ export default class Preview extends Component {
     } else {
       this.setState(
         {
-          journalEntry: deepCopy(
-            props.question.module_candidate_answer.segments
-          ),
+          journalEntry: deepCopy(props.question.module_answer.segments),
           journalEntryFormat: deepCopy(props.question.module_format.segments)
         },
         () => this.forceUpdate()
@@ -127,7 +125,7 @@ export default class Preview extends Component {
     let segmentIndex = segment.id - 1;
     let rowIndex = row.id - 1;
     let currentRow = journalEntry[segmentIndex].rows[rowIndex];
-    console.log(disabled, currentRow.debit, currentRow.credit);
+    console.log(currentRow);
     return (
       <FormGroup row key={row.id}>
         <Col sm={4}>
@@ -164,7 +162,7 @@ export default class Preview extends Component {
             <Input
               type="text"
               readOnly={disabled}
-              defaultValue={curentRow.debit}
+              defaultValue={currentRow.debit}
             />
           </Col>
         )}
@@ -172,7 +170,7 @@ export default class Preview extends Component {
           <Col sm={2}>
             <Input
               type="text"
-              defaultValue={curentRow.credit}
+              defaultValue={currentRow.credit}
               readOnly={disabled}
             />
           </Col>

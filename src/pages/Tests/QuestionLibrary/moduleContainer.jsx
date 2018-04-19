@@ -188,7 +188,10 @@ export default class ModuleContainer extends Component {
                 {question[0] &&
                   question[0].type === "module" &&
                   question[0].module_type === "journal_entry" && (
-                    <JournalEntry question={question[0]} />
+                    <JournalEntry
+                      question={question[0]}
+                      disabled={this.state.disabled}
+                    />
                   )}
                 <br />
                 <Card className="transparent-card">
