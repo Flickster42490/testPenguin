@@ -194,28 +194,30 @@ export default class ModuleContainer extends Component {
                     />
                   )}
                 <br />
-                <Card className="transparent-card">
-                  <CardHeader className="transparent-card-header">
-                    <strong>Part 2:</strong>
-                  </CardHeader>
-                  <CardBody className="transparent-card-body">
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html: question[0] ? question[0].module_stem_2 : ""
-                      }}
-                    />
-                    <Input
-                      type="textarea"
-                      name="text"
-                      rows="6"
-                      id="exampleText"
-                      disabled={this.state.disabled}
-                      value={
-                        question[0] ? question[0].module_stem_2_answer : ""
-                      }
-                    />{" "}
-                  </CardBody>
-                </Card>
+                {question[0].module_stem_2 && (
+                  <Card className="transparent-card">
+                    <CardHeader className="transparent-card-header">
+                      <strong>Part 2:</strong>
+                    </CardHeader>
+                    <CardBody className="transparent-card-body">
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: question[0] ? question[0].module_stem_2 : ""
+                        }}
+                      />
+                      <Input
+                        type="textarea"
+                        name="text"
+                        rows="6"
+                        id="exampleText"
+                        disabled={this.state.disabled}
+                        value={
+                          question[0] ? question[0].module_stem_2_answer : ""
+                        }
+                      />{" "}
+                    </CardBody>
+                  </Card>
+                )}
               </Col>
             </Row>
             <CardFooter>
