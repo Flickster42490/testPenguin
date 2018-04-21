@@ -3,6 +3,7 @@ import axios from "axios";
 import queryString from "querystring";
 import { Row, Col, Card, CardHeader, Button } from "reactstrap";
 import { hashHistory } from "react-router";
+import FontAwesome from "react-fontawesome";
 import _ from "lodash";
 
 import ModuleBody from "./moduleBody.jsx";
@@ -38,6 +39,7 @@ export default class TestApp extends Component {
 
     this.handleNextQuestion = this.handleNextQuestion.bind(this);
     this.handleAnswerUpdate = this.handleAnswerUpdate.bind(this);
+    this.handleSaveProgress = this.handleSaveProgress.bind(this);
   }
 
   componentWillMount() {
@@ -50,26 +52,31 @@ export default class TestApp extends Component {
       d.data.forEach(
         i => (i.module_candidate_answer = deepCopy(i.module_format))
       );
-
-      this.setState(
-        {
-          questions: d.data,
-          questionsAnswered: deepCopy(d.data),
-          lastIdx: d.data.length - 1,
-          currentQuestion: d.data[this.state.currentIdx],
-          preview: preview,
-          testId: testId,
-          candidateId: candidateId,
-          returnTo: returnTo,
-          estimatedTime: d.data.reduce(
-            (sum, i) => (sum = sum + Number(i.estimated_time)),
-            0
-          )
-        },
-        () => {
-          this.forceUpdate();
-        }
-      );
+      axios
+        .post(`/testAttempts/retrieveSavedProgress`, { userId: candidateId })
+        .then(saved => {
+          console.log("saved", saved);
+          let candidateAnswers = saved ? saved.data[0].candidate_answers : null;
+          this.setState(
+            {
+              questions: d.data,
+              questionsAnswered: candidateAnswers || deepCopy(d.data),
+              lastIdx: d.data.length - 1,
+              currentQuestion: d.data[this.state.currentIdx],
+              preview: preview,
+              testId: testId,
+              candidateId: candidateId,
+              returnTo: returnTo,
+              estimatedTime: d.data.reduce(
+                (sum, i) => (sum = sum + Number(i.estimated_time)),
+                0
+              )
+            },
+            () => {
+              this.forceUpdate();
+            }
+          );
+        });
     });
   }
 
@@ -99,22 +106,23 @@ export default class TestApp extends Component {
   }
 
   handleSaveProgress() {
-    const {
-      candidateId,
-      module_candidate_answer,
-      module_stem_2_answer
-    } = this.state;
-    axios
-      .post("/testAttempts/saveProgress", {
-        userId: candidateId,
-        candidateAnswer: {
-          module1: module_candidate_answer,
-          module2: module_stem_2_answer
-        }
-      })
-      .then(d => {
-        hashHistory.push("/testApp/completed");
-      });
+    const { candidateId, questionsAnswered } = this.state;
+    const body = {
+      userId: candidateId,
+      candidateAnswer: questionsAnswered
+    };
+    this.setState(
+      {
+        saveSpinner: true
+      },
+      () => {
+        axios.post("/testAttempts/saveProgress", body).then(d => {
+          this.setState({
+            saveSpinner: false
+          });
+        });
+      }
+    );
   }
 
   timerRender({ hours, minutes, seconds, completed }) {
@@ -158,12 +166,19 @@ export default class TestApp extends Component {
               <CardHeader className="preview-title">
                 <Row>
                   <Col md="5">
-                    <h3>
-                      {question.name} &nbsp;&nbsp;
-                      <span className="question-subtitle">
-                        (Question {currentIdx + 1} of {testLength})
-                      </span>
-                    </h3>
+                    {preview && (
+                      <h3>
+                        {question.name} &nbsp;&nbsp;
+                        <span className="question-subtitle">
+                          (Question {currentIdx + 1} of {testLength})
+                        </span>
+                      </h3>
+                    )}
+                    {!preview && (
+                      <h3>
+                        Question {currentIdx + 1} of {testLength}
+                      </h3>
+                    )}
                   </Col>
                   <Col md="4">
                     <Countdown
@@ -202,7 +217,13 @@ export default class TestApp extends Component {
                       color="secondary"
                       className="float-right"
                       disabled={preview}
+                      onClick={this.handleSaveProgress}
                     >
+                      {this.state.saveSpinner && (
+                        <span>
+                          <FontAwesome name="spinner" spin />&nbsp;&nbsp;
+                        </span>
+                      )}
                       Save Progress
                     </Button>
                   </Col>

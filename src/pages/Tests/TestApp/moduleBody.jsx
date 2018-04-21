@@ -236,7 +236,12 @@ export default class ModuleBody extends Component {
                       type="textarea"
                       name="text"
                       rows="6"
-                      onBlur={this.handleSubModuleTwoUpdate}
+                      value={
+                        !questionAnswered.module_stem_2_candidate_answer
+                          ? " "
+                          : questionAnswered.module_stem_2_candidate_answer
+                      }
+                      onChange={value => this.handleSubModuleTwoUpdate(value)}
                     />
                   )}
                   {this.state.disabled && (
@@ -244,33 +249,13 @@ export default class ModuleBody extends Component {
                       type="textarea"
                       name="text"
                       rows="6"
-                      value={question.module_stem_2_answer}
+                      defaultValue={question.module_stem_2_answer}
                     />
                   )}
                 </CardBody>
               </Card>
             </Col>
           </Row>
-          {/* <CardFooter>
-              <Row>
-                <Col md="12">
-                  <div>
-                    <Card className="transparent-card">
-                      <CardHeader className="transparent-card-header">
-                        <strong>Question Notes:</strong>
-                      </CardHeader>
-                      <CardBody className="transparent-card-body">
-                        <span
-                          dangerouslySetInnerHTML={{
-                            __html: question.notes
-                          }}
-                        />
-                      </CardBody>
-                    </Card>
-                  </div>
-                </Col>
-              </Row>
-            </CardFooter> */}
         </CardBody>
       </div>
     );
