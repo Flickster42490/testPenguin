@@ -3,6 +3,7 @@ import { Router, Route, IndexRedirect, hashHistory } from "react-router";
 import App from "./pages/main.jsx";
 import TestAppContainer from "./pages/testAppContainer.jsx";
 import TestApp from "./pages/Tests/TestApp/app.jsx";
+import Completed from "./pages/Tests/TestApp/completed.jsx";
 import Dashboard from "./pages/dashboard.jsx";
 import Login from "./pages/Login/index.jsx";
 import Candidates from "./pages/Candidates/index.jsx";
@@ -27,6 +28,7 @@ const AppRouter = () => (
     <Route path="/" component={App}>
       <Route path="testApp" component={TestAppContainer}>
         <Route path="app" component={TestApp} />
+        <Route path="completed" component={Completed} />
       </Route>
       <IndexRedirect to="dashboard" />
       <Route path="dashboard" component={Dashboard}>

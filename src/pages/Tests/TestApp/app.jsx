@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import queryString from "querystring";
 import { Row, Col, Card, CardHeader, Button } from "reactstrap";
+import { hashHistory } from "react-router";
 import _ from "lodash";
 
 import ModuleBody from "./moduleBody.jsx";
@@ -97,9 +98,28 @@ export default class TestApp extends Component {
     );
   }
 
+  handleSaveProgress() {
+    const {
+      candidateId,
+      module_candidate_answer,
+      module_stem_2_answer
+    } = this.state;
+    axios
+      .post("/testAttempts/saveProgress", {
+        userId: candidateId,
+        candidateAnswer: {
+          module1: module_candidate_answer,
+          module2: module_stem_2_answer
+        }
+      })
+      .then(d => {
+        hashHistory.push("/testApp/completed");
+      });
+  }
+
   timerRender({ hours, minutes, seconds, completed }) {
     if (completed) {
-      window.location.href = `/testApp/completed?id=${testId}&candidateId=${candidateId}`;
+      window.location.href = `/#/testApp/completed?id=${testId}&candidateId=${candidateId}`;
     } else {
       return (
         <h4>
@@ -169,7 +189,7 @@ export default class TestApp extends Component {
                         )}
                         {!preview && (
                           <a
-                            href={`/testApp/completed?id=${testId}&candidateId=${candidateId}`}
+                            href={`/#/testApp/completed?id=${testId}&candidateId=${candidateId}`}
                           >
                             Finish Test
                           </a>

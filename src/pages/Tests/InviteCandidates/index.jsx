@@ -48,7 +48,8 @@ export default class InviteCandidates extends Component {
         firstName: null,
         lastName: null,
         email: null
-      }
+      },
+      submitDisable: true
     });
 
     this.handleEmail = this.handleEmail.bind(this);
@@ -61,39 +62,63 @@ export default class InviteCandidates extends Component {
   }
 
   handleFirstName(e) {
+    let { candidate } = this.state;
     this.setState({
-      candidate: Object.assign(this.state.candidate, {
+      candidate: Object.assign(candidate, {
         firstName: e.target.value
-      })
+      }),
+      submitDisable: !(
+        candidate.firstName &&
+        candidate.lastName &&
+        candidate.email
+      )
     });
   }
 
   handleLastName(e) {
+    let { candidate } = this.state;
     this.setState({
-      candidate: Object.assign(this.state.candidate, {
+      candidate: Object.assign(candidate, {
         lastName: e.target.value
-      })
+      }),
+      submitDisable: !(
+        candidate.firstName &&
+        candidate.lastName &&
+        candidate.email
+      )
     });
   }
 
   handleEmail(e) {
+    let { candidate } = this.state;
     this.setState({
-      candidate: Object.assign(this.state.candidate, {
+      candidate: Object.assign(candidate, {
         email: e.target.value
-      })
+      }),
+      submitDisable: !(
+        candidate.firstName &&
+        candidate.lastName &&
+        candidate.email
+      )
     });
   }
 
   handleSubmit() {
     axios.post("/users/candidate/invite", this.state.candidate).then(d => {
       const candidate = d.data ? d.data[0] : null;
-      if (d.status === 200) {
+      if (d.status === 200 && candidate) {
         this.setState(
           {
             showSuccessToaster: true
           },
-          candidate => {
-            axios.post("/testAttempts/create", candidate);
+          () => {
+            axios
+              .post("/testAttempts/create", { userId: candidate.id })
+              .then(() => {
+                this.setState({
+                  submitDisable: true
+                });
+              });
           }
         );
       }
@@ -171,7 +196,11 @@ export default class InviteCandidates extends Component {
             <br />
             <Row style={{ float: "right" }}>
               <Col xs="4">
-                <Button color="success" onClick={() => this.handleSubmit()}>
+                <Button
+                  color="success"
+                  onClick={() => this.handleSubmit()}
+                  disabled={this.state.submitDisable}
+                >
                   Submit
                 </Button>
               </Col>
