@@ -111,12 +111,12 @@ export default class Preview extends Component {
   }
 
   updateDebit(currentRow, event) {
-    currentRow.debit = event.target.value;
+    currentRow.debit = Number(event.target.value);
     this.props.handleSubModuleOneUpdate(this.state.journalEntry);
   }
 
   updateCredit(currentRow, event) {
-    currentRow.credit = event.target.value;
+    currentRow.credit = Number(event.target.value);
     this.props.handleSubModuleOneUpdate(this.state.journalEntry);
   }
 

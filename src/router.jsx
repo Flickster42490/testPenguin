@@ -4,6 +4,7 @@ import App from "./pages/main.jsx";
 import TestAppContainer from "./pages/testAppContainer.jsx";
 import TestApp from "./pages/Tests/TestApp/app.jsx";
 import Completed from "./pages/Tests/TestApp/completed.jsx";
+import Instructions from "./pages/Tests/TestApp/instructions.jsx";
 import Dashboard from "./pages/dashboard.jsx";
 import Login from "./pages/Login/index.jsx";
 import Candidates from "./pages/Candidates/index.jsx";
@@ -27,6 +28,7 @@ const AppRouter = () => (
   <Router history={hashHistory}>
     <Route path="/" component={App}>
       <Route path="testApp" component={TestAppContainer}>
+        <Route path="instructions" component={Instructions} />
         <Route path="app" component={TestApp} />
         <Route path="completed" component={Completed} />
       </Route>

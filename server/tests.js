@@ -8,6 +8,14 @@ router.get("/", (req, res) => {
   });
 });
 
+router.get("/:id", (req, res) => {
+  return req.db
+    .any("SELECT * FROM tests where id = $1", [req.params.id])
+    .then(data => {
+      return res.send(data);
+    });
+});
+
 router.get("/type/:type", (req, res) => {
   return req.db
     .any("SELECT * FROM tests where type = $1", [req.params.type])
@@ -31,10 +39,11 @@ router.get("/id/:id/questions", (req, res) => {
       });
       return req.db
         .any(
-          "SELECT * FROM questions where id = ANY($1::int[])",
+          "SELECT * FROM questions where id = ANY($1::int[]) ORDER BY id",
           questionListString
         )
         .then(q => {
+          console.log(q);
           return res.send(q);
         });
     });

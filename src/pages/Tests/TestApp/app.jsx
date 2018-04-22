@@ -40,43 +40,69 @@ export default class TestApp extends Component {
     this.handleNextQuestion = this.handleNextQuestion.bind(this);
     this.handleAnswerUpdate = this.handleAnswerUpdate.bind(this);
     this.handleSaveProgress = this.handleSaveProgress.bind(this);
+    this.handleSubmitTest = this.handleSubmitTest.bind(this);
   }
 
   componentWillMount() {
     const queries = window.location.hash.split("?")[1];
-    const testId = queryString.parse(queries).id;
     const preview = Boolean(queryString.parse(queries).preview) || false;
-    const { candidateId } = queryString.parse(queries);
+    const { testId, candidateId, id } = queryString.parse(queries);
     const returnTo = queryString.parse(queries).returnTo;
     axios.get(`/tests/id/${testId}/questions`).then(d => {
       d.data.forEach(
         i => (i.module_candidate_answer = deepCopy(i.module_format))
       );
-      axios
-        .post(`/testAttempts/retrieveSavedProgress`, { userId: candidateId })
-        .then(saved => {
-          console.log("saved", saved);
-          let candidateAnswers = saved ? saved.data[0].candidate_answers : null;
-          this.setState(
-            {
-              questions: d.data,
-              questionsAnswered: candidateAnswers || deepCopy(d.data),
-              lastIdx: d.data.length - 1,
-              currentQuestion: d.data[this.state.currentIdx],
-              preview: preview,
-              testId: testId,
-              candidateId: candidateId,
-              returnTo: returnTo,
-              estimatedTime: d.data.reduce(
-                (sum, i) => (sum = sum + Number(i.estimated_time)),
-                0
-              )
-            },
-            () => {
-              this.forceUpdate();
-            }
-          );
-        });
+      if (!preview) {
+        axios
+          .post(`/testAttempts/retrieveSavedProgress`, { id: id })
+          .then(saved => {
+            let candidateAnswers = saved
+              ? saved.data[0].candidate_answers
+              : null;
+            this.setState(
+              {
+                questions: d.data,
+                questionsAnswered: candidateAnswers || deepCopy(d.data),
+                lastIdx: d.data.length - 1,
+                currentQuestion: d.data[this.state.currentIdx],
+                preview: preview,
+                testId: testId,
+                id: id,
+                candidateId: candidateId,
+                returnTo: returnTo,
+                estimatedTime: d.data.reduce(
+                  (sum, i) => (sum = sum + Number(i.estimated_time)),
+                  0
+                )
+              },
+              () => {
+                console.log(this.state.questionsAnswered);
+                this.forceUpdate();
+              }
+            );
+          });
+      } else {
+        this.setState(
+          {
+            questions: d.data,
+            questionsAnswered: deepCopy(d.data),
+            lastIdx: d.data.length - 1,
+            currentQuestion: d.data[this.state.currentIdx],
+            preview: preview,
+            testId: testId,
+            id: id,
+            candidateId: candidateId,
+            returnTo: returnTo,
+            estimatedTime: d.data.reduce(
+              (sum, i) => (sum = sum + Number(i.estimated_time)),
+              0
+            )
+          },
+          () => {
+            this.forceUpdate();
+          }
+        );
+      }
     });
   }
 
@@ -94,6 +120,23 @@ export default class TestApp extends Component {
     );
   }
 
+  handleSubmitTest() {
+    let { testId, returnTo, candidateId, questionsAnswered, id } = this.state;
+    axios
+      .post(`/testAttempts/submitTest`, {
+        id: id,
+        candidateAnswers: questionsAnswered
+      })
+      .then(d => {
+        if (d.status == 200) {
+          if (this.state.preview)
+            window.location.href = `${returnTo}?id=${testId}`;
+          else
+            window.location.href = `/#/testApp/completed?id=${testId}&candidateId=${candidateId}`;
+        }
+      });
+  }
+
   handleNextQuestion() {
     this.setState(
       {
@@ -106,10 +149,11 @@ export default class TestApp extends Component {
   }
 
   handleSaveProgress() {
-    const { candidateId, questionsAnswered } = this.state;
+    const { id, candidateId, questionsAnswered } = this.state;
     const body = {
       userId: candidateId,
-      candidateAnswer: questionsAnswered
+      id: id,
+      candidateAnswers: questionsAnswered
     };
     this.setState(
       {
@@ -198,17 +242,14 @@ export default class TestApp extends Component {
                       </Button>
                     )}
                     {currentIdx === lastIdx && (
-                      <Button size="lg" color="success" className="float-right">
-                        {preview && (
-                          <a href={`${returnTo}?id=${testId}`}>Finish Test</a>
-                        )}
-                        {!preview && (
-                          <a
-                            href={`/#/testApp/completed?id=${testId}&candidateId=${candidateId}`}
-                          >
-                            Finish Test
-                          </a>
-                        )}
+                      <Button
+                        size="lg"
+                        color="success"
+                        className="float-right"
+                        onClick={this.handleSubmitTest}
+                      >
+                        {preview && <a>Finish Test</a>}
+                        {!preview && <a>Finish Test</a>}
                       </Button>
                     )}
                     <Button

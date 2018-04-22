@@ -16,3 +16,11 @@ router.post("/candidate/invite", (req, res) => {
       console.log("err", err);
     });
 });
+
+router.get("/:id", (req, res) => {
+  return req.db
+    .any("SELECT * FROM users where id = $1", [req.params.id])
+    .then(data => {
+      return res.send(data);
+    });
+});

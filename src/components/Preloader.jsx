@@ -9,7 +9,6 @@ export function Preloader(props) {
     borderWidth: props.preloadStroke,
     borderLeftColor: props.preloadColor
   };
-
   if (props.loading) {
     return (
       <div className="preloader" style={preloadStyles}>
