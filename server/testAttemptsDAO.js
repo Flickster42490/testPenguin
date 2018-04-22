@@ -1,6 +1,33 @@
 const _ = require("lodash");
 
 module.exports = {
+  aggregateResults: r => {
+    let newResult = _.reduce(
+      r,
+      (obj, i) => {
+        if (i.type === "multiple_choice") {
+          if (!obj.multipleChoice) {
+            obj.multipleChoice = { correct: 0, wrong: 0 };
+          }
+          if (i.correct)
+            obj.multipleChoice.correct = obj.multipleChoice.correct + 1;
+          else if (!i.correct)
+            obj.multipleChoice.wrong = obj.multipleChoice.wrong + 1;
+        } else if (i.type === "module" && i.module_type === "journal_entry") {
+          if (!obj.journalEntry) {
+            obj.journalEntry = { correctRows: 0, wrongRows: 0 };
+          }
+          obj.journalEntry.correctRows =
+            obj.journalEntry.correctRows + i.correctRows;
+          obj.journalEntry.wrongRows = obj.journalEntry.wrongRows + i.wrongRows;
+        }
+        return obj;
+      },
+      {}
+    );
+    return newResult;
+  },
+
   checkJournalEntryAnswers: q => {
     let question = {
       id: q.id,

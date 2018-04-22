@@ -4,6 +4,18 @@ const _ = require("lodash");
 const TestAttempts = require("./testAttemptsDAO");
 module.exports = router;
 
+router.get("/", (req, res) => {
+  return req.db
+    .any(
+      `SELECT u.first_name, u.last_name, t.*, a.* FROM "test_attempts" as a 
+    left join "users" as u on a.user_id = u.id 
+    left  join "tests" as t on t.id = a.test_id`
+    )
+    .then(d => {
+      return res.send(d);
+    });
+});
+
 router.post("/create", (req, res) => {
   return req.db
     .any(
@@ -70,7 +82,7 @@ router.post("/submitTest", (req, res) => {
           results.push(question);
         }
       });
-      console.log("Test Results: ", results);
+      results = TestAttempts.aggregateResults(results);
       return req.db.any(
         "UPDATE test_attempts SET (results, completed_at) = ($1,$2) where id = $3 RETURNING *",
         [JSON.stringify(results), new Date(), id]
