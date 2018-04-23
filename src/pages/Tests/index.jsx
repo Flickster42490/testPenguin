@@ -26,8 +26,8 @@ export default class App extends Component {
       <div className="app-body">
         <Sidebar page={this.state.page} />
         <main className="main">
-          <SecondaryHeader updatePage={this.handleUpdatePage} />
-          <br /> <br />
+          {/* <SecondaryHeader updatePage={this.handleUpdatePage} />
+          <br /> <br /> */}
           <Container fluid>{this.props.children}</Container>
         </main>
         <Aside />

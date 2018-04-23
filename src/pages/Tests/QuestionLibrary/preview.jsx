@@ -16,6 +16,7 @@ export default class Preview extends Component {
   }
 
   componentWillMount() {
+    document.body.classList.toggle("sidebar-hidden");
     const queries = window.location.hash.split("?")[1];
     const questionId = queryString.parse(queries).id;
     axios.get(`/questions/id/${questionId}`).then(d => {
@@ -24,6 +25,10 @@ export default class Preview extends Component {
         this.forceUpdate();
       });
     });
+  }
+
+  componentWillUnmount() {
+    document.body.classList.toggle("sidebar-hidden");
   }
 
   render() {

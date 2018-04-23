@@ -13,6 +13,11 @@ import FontAwesome from "react-fontawesome";
 import Users from "../../images/users.svg";
 import Assignment from "../../images/assignment.svg";
 import Alert from "../../images/alert.svg";
+import Screen from "../../images/screen.svg";
+import Lock from "../../images/lock.svg";
+import Add from "../../images/add.svg";
+import Library from "../../images/library.svg";
+import NewFolder from "../../images/new-folder.svg";
 import HeaderDropdown from "./HeaderDropdown";
 
 class Header extends Component {
@@ -65,13 +70,14 @@ class Header extends Component {
   render() {
     return (
       <header className="app-header navbar">
-        <NavbarToggler className="d-lg-none" onClick={this.mobileSidebarToggle}>
+        {/* <NavbarToggler className="d-lg-none" onClick={this.mobileSidebarToggle}>
           <span className="navbar-toggler-icon" />
-        </NavbarToggler>
+        </NavbarToggler> */}
         <NavbarBrand href="#" />
-        <NavbarToggler className="d-md-down-none" onClick={this.sidebarToggle}>
+        {/* <NavbarToggler className="d-md-down-none" onClick={this.sidebarToggle}>
           <span className="navbar-toggler-icon" />
-        </NavbarToggler>
+        </NavbarToggler> */}
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <Nav className="d-md-down-none" navbar>
           <NavItem
             className="px-3"
@@ -83,11 +89,46 @@ class Header extends Component {
               Candidates
             </span>
           </NavItem>
-          <NavItem className="px-3" onClick={() => this.handleClick("tests")}>
+          <NavItem
+            className="px-3"
+            onClick={() => this.handleClick("tests/preBuiltTests")}
+          >
             <img src={Assignment} />
             <br />
-            <span className={this.state.page === "tests" ? "bold" : ""}>
-              Tests
+            <span className={this.state.page === "preBuiltTests" ? "bold" : ""}>
+              Pre-Built Tests
+            </span>
+          </NavItem>
+          <NavItem
+            className="px-3"
+            onClick={() => this.handleClick("tests/previousTests")}
+          >
+            <img src={Screen} />
+            <br />
+            <span className={this.state.page === "previousTests" ? "bold" : ""}>
+              Review Previous Tests
+            </span>
+          </NavItem>
+          <NavItem
+            className="px-3"
+            onClick={() => this.handleClick("tests/questionLibrary")}
+          >
+            <img src={Library} />
+            <br />
+            <span
+              className={this.state.page === "questionLibrary" ? "bold" : ""}
+            >
+              Question Library
+            </span>
+          </NavItem>
+          <NavItem
+            className="px-3"
+            onClick={() => this.handleClick("tests/createNewTest")}
+          >
+            <img src={NewFolder} />
+            <br />
+            <span className={this.state.page === "createNewTest" ? "bold" : ""}>
+              Create New Test
             </span>
           </NavItem>
         </Nav>
