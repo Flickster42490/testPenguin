@@ -22,7 +22,7 @@ export default class MultipleChoiceBody extends Component {
 
     this.state = {
       question: props.question,
-      preview: props.preview,
+      preview: props.preview || props.review,
       currentSelectedIdx: null
     };
   }

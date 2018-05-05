@@ -63,10 +63,14 @@ router.post("/retrieveSavedProgress", (req, res) => {
     .then(c => {
       console.log(c);
       count = c[0].reentered_count ? c[0].reentered_count + 1 : 1;
-      return req.db.any(
-        "UPDATE test_attempts SET (reentered_count, last_reentered_at) = ($1,$2) where id = $3 RETURNING *",
-        [count, new Date(), req.body.id]
-      );
+      if (req.body.review) {
+        return Promise.resolve(true);
+      } else {
+        return req.db.any(
+          "UPDATE test_attempts SET (reentered_count, last_reentered_at) = ($1,$2) where id = $3 RETURNING *",
+          [count, new Date(), req.body.id]
+        );
+      }
     })
     .then(() => {
       return req.db.any(
@@ -112,22 +116,25 @@ router.post("/submitTest", (req, res) => {
     )
     .then(() => {
       let results = [];
-      JSON.parse(candidateAnswers).forEach(q => {
+      let answers = JSON.parse(candidateAnswers);
+      answers.forEach(q => {
         if (q.type === "multiple_choice") {
           let question = { id: q.id, type: q.type };
           question.correct =
             q.mc_candidate_answer === q.mc_answer ? true : false;
           // console.log(question.correct);
+          q.correct = question.correct;
           results.push(question);
         } else if (q.type === "module" && q.module_type === "journal_entry") {
           let question = TestAttempts.checkJournalEntryAnswers(q);
+          q.correct = question;
           results.push(question);
         }
       });
       results = TestAttempts.aggregateResults(results);
       return req.db.any(
-        "UPDATE test_attempts SET (results, completed_at) = ($1,$2) where id = $3 RETURNING *",
-        [JSON.stringify(results), new Date(), id]
+        "UPDATE test_attempts SET (results, completed_at, candidate_answers) = ($1,$2,$3) where id = $4 RETURNING *",
+        [JSON.stringify(results), new Date(), JSON.stringify(answers), id]
       );
     })
     .then(d => {

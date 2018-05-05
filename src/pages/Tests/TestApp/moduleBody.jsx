@@ -36,14 +36,14 @@ const deepCopy = oldObj => {
 export default class ModuleBody extends Component {
   constructor(props) {
     super(props);
-
+    let disabled = props.preview || props.review;
     this.state = {
       question: null,
       questionAnswered: null,
       externalDocs: [],
       activeDocIndex: 0,
       width: 0,
-      disabled: props.preview
+      disabled: disabled
     };
     this.handleSubModuleOneUpdate = this.handleSubModuleOneUpdate.bind(this);
     this.handleSubModuleTwoUpdate = this.handleSubModuleTwoUpdate.bind(this);

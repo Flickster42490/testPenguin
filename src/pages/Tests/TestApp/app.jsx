@@ -34,7 +34,8 @@ export default class TestApp extends Component {
       lastIdx: null,
       currentQuestion: null,
       startTime: Date.now(),
-      preview: false
+      preview: false,
+      review: false
     };
 
     this.handleNextQuestion = this.handleNextQuestion.bind(this);
@@ -46,13 +47,16 @@ export default class TestApp extends Component {
   componentWillMount() {
     const queries = window.location.hash.split("?")[1];
     const preview = Boolean(queryString.parse(queries).preview) || false;
-    const { testId, candidateId, id } = queryString.parse(queries);
+    const review = Boolean(queryString.parse(queries).review) || false;
+    const { testId, candidateId, id, reviewIdx } = queryString.parse(queries);
     const returnTo = queryString.parse(queries).returnTo;
+    let currentIdx = this.state.currentIdx;
+    if (reviewIdx) currentIdx = reviewIdx;
     axios.get(`/tests/id/${testId}/questions`).then(d => {
       d.data.forEach(
         i => (i.module_candidate_answer = deepCopy(i.module_format))
       );
-      if (!preview) {
+      if (!preview && !review) {
         axios
           .post(`/testAttempts/retrieveSavedProgress`, { id: id })
           .then(saved => {
@@ -64,8 +68,42 @@ export default class TestApp extends Component {
                 questions: d.data,
                 questionsAnswered: candidateAnswers || deepCopy(d.data),
                 lastIdx: d.data.length - 1,
-                currentQuestion: d.data[this.state.currentIdx],
+                currentQuestion: d.data[currentIdx],
                 preview: preview,
+                testId: testId,
+                id: id,
+                candidateId: candidateId,
+                returnTo: returnTo,
+                estimatedTime: d.data.reduce(
+                  (sum, i) => (sum = sum + Number(i.estimated_time)),
+                  0
+                )
+              },
+              () => {
+                console.log(this.state.questionsAnswered);
+                this.forceUpdate();
+              }
+            );
+          });
+      } else if (review) {
+        axios
+          .post(`/testAttempts/retrieveSavedProgress`, {
+            id: id,
+            review: review
+          })
+          .then(saved => {
+            let candidateAnswers = saved
+              ? saved.data[0].candidate_answers
+              : null;
+            this.setState(
+              {
+                questions: d.data,
+                questionsAnswered: candidateAnswers || deepCopy(d.data),
+                currentIdx: currentIdx,
+                lastIdx: d.data.length - 1,
+                currentQuestion: d.data[currentIdx],
+                preview: preview,
+                review: review,
                 testId: testId,
                 id: id,
                 candidateId: candidateId,
@@ -87,7 +125,7 @@ export default class TestApp extends Component {
             questions: d.data,
             questionsAnswered: deepCopy(d.data),
             lastIdx: d.data.length - 1,
-            currentQuestion: d.data[this.state.currentIdx],
+            currentQuestion: d.data[currentIdx],
             preview: preview,
             testId: testId,
             id: id,
@@ -190,6 +228,7 @@ export default class TestApp extends Component {
       lastIdx,
       startTime,
       preview,
+      review,
       returnTo,
       testId,
       estimatedTime
@@ -202,6 +241,7 @@ export default class TestApp extends Component {
       currentIdx,
       questionsAnswered[currentIdx]
     );
+    console.log(returnTo);
     return (
       <div>
         <Preloader loading={questions.length < 1}>
@@ -210,63 +250,89 @@ export default class TestApp extends Component {
               <CardHeader className="preview-title">
                 <Row>
                   <Col md="5">
-                    {preview && (
-                      <h3>
-                        {question.name} &nbsp;&nbsp;
-                        <span className="question-subtitle">
-                          (Question {currentIdx + 1} of {testLength})
-                        </span>
-                      </h3>
-                    )}
-                    {!preview && (
-                      <h3>
-                        Question {currentIdx + 1} of {testLength}
-                      </h3>
-                    )}
+                    {preview &&
+                      !review && (
+                        <h3>
+                          {question.name} &nbsp;&nbsp;
+                          <span className="question-subtitle">
+                            (Question {currentIdx + 1} of {testLength})
+                          </span>
+                        </h3>
+                      )}
+                    {!preview &&
+                      review && (
+                        <h3>
+                          {question.name} &nbsp;&nbsp;
+                          <span className="question-subtitle">
+                            (Question {Number(currentIdx) + 1} of {testLength})
+                          </span>
+                        </h3>
+                      )}
+                    {!preview &&
+                      !review && (
+                        <h3>
+                          Question {currentIdx + 1} of {testLength}
+                        </h3>
+                      )}
                   </Col>
                   <Col md="4">
-                    <Countdown
-                      date={startTime + estimatedTime * 60000}
-                      renderer={this.timerRender}
-                    />
+                    {!preview &&
+                      !review && (
+                        <Countdown
+                          date={startTime + estimatedTime * 60000}
+                          renderer={this.timerRender}
+                        />
+                      )}
                   </Col>
                   <Col md="3">
-                    {currentIdx !== lastIdx && (
-                      <Button
-                        size="lg"
-                        color="primary"
-                        className="float-right"
-                        onClick={this.handleNextQuestion}
-                      >
-                        Next Question
-                      </Button>
-                    )}
-                    {currentIdx === lastIdx && (
-                      <Button
-                        size="lg"
-                        color="success"
-                        className="float-right"
-                        onClick={this.handleSubmitTest}
-                      >
-                        {preview && <a>Finish Test</a>}
-                        {!preview && <a>Finish Test</a>}
-                      </Button>
-                    )}
-                    <Button
-                      size="lg"
-                      outline
-                      color="secondary"
-                      className="float-right"
-                      disabled={preview}
-                      onClick={this.handleSaveProgress}
-                    >
-                      {this.state.saveSpinner && (
-                        <span>
-                          <FontAwesome name="spinner" spin />&nbsp;&nbsp;
-                        </span>
+                    {currentIdx !== lastIdx &&
+                      !review && (
+                        <Button
+                          size="lg"
+                          color="primary"
+                          className="float-right"
+                          onClick={this.handleNextQuestion}
+                        >
+                          Next Question
+                        </Button>
                       )}
-                      Save Progress
-                    </Button>
+                    {currentIdx === lastIdx &&
+                      !review && (
+                        <Button
+                          size="lg"
+                          color="success"
+                          className="float-right"
+                          onClick={this.handleSubmitTest}
+                        >
+                          {preview && <a>Finish Test</a>}
+                          {!preview && <a>Finish Test</a>}
+                        </Button>
+                      )}
+                    {!preview &&
+                      !review && (
+                        <Button
+                          size="lg"
+                          outline
+                          color="secondary"
+                          className="float-right"
+                          disabled={preview}
+                          onClick={this.handleSaveProgress}
+                        >
+                          {this.state.saveSpinner && (
+                            <span>
+                              <FontAwesome name="spinner" spin />&nbsp;&nbsp;
+                            </span>
+                          )}
+                          Save Progress
+                        </Button>
+                      )}
+                    {review &&
+                      returnTo && (
+                        <a href={returnTo} className="float-right">
+                          <FontAwesome name="chevron-circle-left" size="2x" />{" "}
+                          &nbsp; Go Back
+                        </a>
+                      )}
                   </Col>
                 </Row>
               </CardHeader>
@@ -277,6 +343,7 @@ export default class TestApp extends Component {
                   currentIdx={currentIdx}
                   questionList={questions}
                   preview={preview}
+                  review={review}
                   handleAnswerUpdate={this.handleAnswerUpdate}
                 />
               )}
@@ -287,6 +354,7 @@ export default class TestApp extends Component {
                   currentIdx={currentIdx}
                   questionList={questions}
                   preview={preview}
+                  review={review}
                   handleAnswerUpdate={this.handleAnswerUpdate}
                 />
               )}

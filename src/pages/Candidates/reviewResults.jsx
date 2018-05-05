@@ -11,7 +11,7 @@ import {
   ButtonGroup,
   ButtonToolbar
 } from "reactstrap";
-import { Tooltip } from "react-tippy";
+import encodeUrl from "encodeurl";
 import axios from "axios";
 import moment from "moment";
 import queryString from "querystring";
@@ -92,7 +92,7 @@ export default class ReviewResults extends Component {
     let duration = moment.duration(
       moment(completed_at).diff(moment(started_at))
     );
-    let mins = duration.asMinutes();
+    let mins = Math.round(duration.asMinutes());
     return mins;
   }
 
@@ -135,6 +135,7 @@ export default class ReviewResults extends Component {
 
   render() {
     const { testResults } = this.state;
+    console.log(testResults);
     return (
       <Preloader loading={!testResults}>
         <div className="app-body">
@@ -237,7 +238,7 @@ export default class ReviewResults extends Component {
                   <Col xs={10}>
                     <ReactTable
                       style={{ backgroundColor: "white", textAlign: "center" }}
-                      data={mockData}
+                      data={testResults.candidate_answers}
                       sortable={false}
                       columns={[
                         {
@@ -245,26 +246,35 @@ export default class ReviewResults extends Component {
                           accessor: "id"
                         },
                         {
-                          Header: "Question",
+                          Header: "Type",
                           Cell: cell => {
                             return (
-                              <Tooltip
-                                title={cell.original.question}
-                                position="top"
-                                trigger="mouseenter"
-                              >
-                                {cell.original.question}
-                              </Tooltip>
+                              <div>
+                                {cell.original.type === module
+                                  ? cell.original.module_type
+                                  : cell.original.type}
+                              </div>
                             );
                           }
                         },
                         {
+                          Header: "Name",
+                          accessor: "name"
+                        },
+                        {
                           Header: "Score",
                           Cell: cell => {
+                            let { correct } = cell.original;
                             return (
                               <div>
-                                {cell.original.correct && <span>Correct</span>}
-                                {!cell.original.correct && (
+                                {typeof correct === "boolean" &&
+                                  correct && <span>Correct</span>}
+                                {typeof correct === "object" && (
+                                  <span>
+                                    {correct.correctRows}/{correct.totalRows}
+                                  </span>
+                                )}
+                                {!correct && (
                                   <span style={{ color: "red" }}>
                                     Incorrect
                                   </span>
@@ -276,44 +286,28 @@ export default class ReviewResults extends Component {
                         {
                           Header: "Time",
                           Cell: cell => {
+                            let reviewIdx;
+                            testResults.candidate_answers.forEach((i, idx) => {
+                              if (i.id === cell.original.id) reviewIdx = idx;
+                            });
                             return (
-                              <div
-                                style={{
-                                  justifyContent: "left"
-                                }}
+                              <a
+                                href={`/#/testApp/app?testId=${
+                                  testResults.test_id
+                                }&candidateId=${testResults.user_id}&id=${
+                                  testResults.id
+                                }&review=true&reviewIdx=${reviewIdx}&returnTo=${`/#/dashboard/candidates/reviewResults%3Fid=${
+                                  testResults.id
+                                }`}`}
                               >
-                                <div>
-                                  Spent:{" "}
-                                  {moment
-                                    .duration(cell.original.actualTime, "S")
-                                    .format("m [min] s [sec]")}
-                                </div>
-                                <div>
-                                  Expected:{" "}
-                                  {moment
-                                    .duration(cell.original.expectedTime, "S")
-                                    .format("m [min] s [sec]")}
-                                </div>
-                              </div>
+                                <Button color="link">Go To Question</Button>
+                              </a>
                             );
                           }
                         }
                       ]}
                       defaultPageSize={5}
                       className="-striped -highlight"
-                    />
-                  </Col>
-                </Row>
-                <hr />
-                <Row>
-                  <Col xs={10}>
-                    <h4>Notes</h4>
-                    <Input
-                      type="textarea"
-                      name="textarea-input"
-                      id="textarea-input"
-                      rows="10"
-                      placeholder="Write notes about the candidate here..."
                     />
                   </Col>
                 </Row>
