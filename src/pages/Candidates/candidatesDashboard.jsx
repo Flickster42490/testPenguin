@@ -183,7 +183,7 @@ class Dashboard extends Component {
                           <Button size="sm" color="primary">
                             <a
                               href={`#/dashboard/candidates/reviewResults?id=${
-                                cell.original.attempId
+                                cell.original.test_attempt_id
                               }`}
                               style={{ color: "#fff" }}
                             >

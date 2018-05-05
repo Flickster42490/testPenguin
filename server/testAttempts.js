@@ -7,7 +7,7 @@ module.exports = router;
 router.get("/", (req, res) => {
   return req.db
     .any(
-      `SELECT u.first_name, u.last_name, t.*, a.* FROM "test_attempts" as a 
+      `SELECT u.first_name, u.last_name, t.*, a.*, a.id as test_attempt_id FROM "test_attempts" as a 
     left join "users" as u on a.user_id = u.id 
     left  join "tests" as t on t.id = a.test_id`
     )
