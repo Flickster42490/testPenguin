@@ -138,7 +138,7 @@ export default class PreBuiltTests extends Component {
                           </Button>
                           <Button size="sm" color="secondary">
                             <a
-                              href={`/#/testApp/app?id=${
+                              href={`/#/testApp/app?testId=${
                                 cell.original.id
                               }&preview=true&returnTo=${window.location.hash}`}
                             >

@@ -23,7 +23,7 @@ router.get("/findOne/:id", (req, res) => {
     left join "users" as u on a.user_id = u.id 
     left join "tests" as t on t.id = a.test_id
     where a.id = $1`,
-      [req.param.id]
+      [req.params.id]
     )
     .then(d => {
       return res.send(d);
@@ -41,11 +41,39 @@ router.post("/create", (req, res) => {
     });
 });
 
-router.post("/retrieveSavedProgress", (req, res) => {
+router.post("/start", (req, res) => {
   return req.db
-    .any("SELECT candidate_answers FROM test_attempts where id = $1 limit 1", [
-      req.body.id
-    ])
+    .any(
+      "UPDATE test_attempts SET (started_at) = ($1) where id = $2 RETURNING *"[
+        (new Date(), req.body.testId)
+      ]
+    )
+    .then(data => {
+      return res.send(data);
+    });
+});
+
+router.post("/retrieveSavedProgress", (req, res) => {
+  let count;
+  return req.db
+    .any(
+      "SELECT started_at, reentered_count FROM test_attempts where id = $1 limit 1",
+      [req.body.id]
+    )
+    .then(c => {
+      console.log(c);
+      count = c[0].reentered_count ? c[0].reentered_count + 1 : 1;
+      return req.db.any(
+        "UPDATE test_attempts SET (reentered_count, last_reentered_at) = ($1,$2) where id = $3 RETURNING *",
+        [count, new Date(), req.body.id]
+      );
+    })
+    .then(() => {
+      return req.db.any(
+        "SELECT candidate_answers FROM test_attempts where id = $1 limit 1",
+        [req.body.id]
+      );
+    })
     .then(data => {
       return res.send(data);
     });

@@ -132,7 +132,7 @@ class Dashboard extends Component {
                       let resultList = [];
                       _.forOwn(cell.value, (v, k) => {
                         resultList.push(
-                          <div>
+                          <div key={k}>
                             <strong>{typeMap[k]}: </strong>
                             {k === "multipleChoice" && (
                               <span>
