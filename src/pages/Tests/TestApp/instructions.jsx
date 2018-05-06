@@ -27,7 +27,8 @@ class Instructions extends Component {
 
   componentWillMount() {
     const queries = window.location.hash.split("?")[1];
-    const testId = queryString.parse(queries).id;
+    const testId = queryString.parse(queries).testId;
+    const testAttemptId = queryString.parse(queries).id;
     const { candidateId } = queryString.parse(queries);
     axios.get(`users/${candidateId}`).then(d => {
       let candidate = d ? d.data[0] : undefined;
@@ -37,6 +38,7 @@ class Instructions extends Component {
           {
             candidateId: candidateId,
             testId: testId,
+            testAttemptId: testAttemptId,
             candidate: candidate,
             test: test
           },
@@ -49,11 +51,11 @@ class Instructions extends Component {
   }
 
   handleStartTest() {
-    let { candidateId, testId } = this.state;
+    let { candidateId, testAttemptId, testId } = this.state;
     axios
       .post("/testAttempts/start", {
         userId: candidateId,
-        testId: testId
+        testAttemptId: testAttemptId
       })
       .then(d => {
         hashHistory.push(

@@ -7,7 +7,7 @@
   "copyright": "Copyright 2018 creativeLabs Łukasz Holeczek",
   "license": "MIT",
   "private": true,
-  "proxy": "https://test-penguin.herokuapp.com",
+  "proxy": "https://accounting-penguin.herokuapp.com",
   "main": "server.js",
   "devDependencies": {
     "babel-core": "6.26.0",
@@ -90,12 +90,14 @@
     "status-indicator": "^1.0.9"
   },
   "scripts": {
-    "dev": "webpack -d --progress --watch --profile --json > compilation-stats.json --env.dev",
+    "dev":
+      "webpack -d --progress --watch --profile --json > compilation-stats.json --env.dev",
     "web": "webpack-dev-server --progress --color --inline --env.dev",
     "build": "webpack -p --progress --env.prod",
     "clean": "rimraf ./build",
     "start": "node server.js",
-    "local": "CALLBACK_URL=http://localhost:8000/auth/google/return DB_HOST=testpenguin.cwvdzkfscajo.us-east-2.rds.amazonaws.com DB_USER=master DB_PASSWORD=T3stp3nguin! DB_NAME=testpenguin_postgres node server.js",
+    "local":
+      "CALLBACK_URL=http://localhost:8000/auth/google/return DB_HOST=testpenguin.cwvdzkfscajo.us-east-2.rds.amazonaws.com DB_USER=master DB_PASSWORD=T3stp3nguin! DB_NAME=testpenguin_postgres nodemon server.js",
     "heroku-postbuild": "npm run build"
   },
   "engines": {

@@ -44,9 +44,8 @@ router.post("/create", (req, res) => {
 router.post("/start", (req, res) => {
   return req.db
     .any(
-      "UPDATE test_attempts SET (started_at) = ($1) where id = $2 RETURNING *"[
-        (new Date(), req.body.testId)
-      ]
+      "UPDATE test_attempts SET (started_at) = ($1) where id = $2 RETURNING *",
+      [new Date(), req.body.testAttemptId]
     )
     .then(data => {
       return res.send(data);
