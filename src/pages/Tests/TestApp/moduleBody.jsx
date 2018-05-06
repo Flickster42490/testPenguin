@@ -36,14 +36,14 @@ const deepCopy = oldObj => {
 export default class ModuleBody extends Component {
   constructor(props) {
     super(props);
-    let disabled = props.preview || props.review;
     this.state = {
       question: null,
       questionAnswered: null,
       externalDocs: [],
       activeDocIndex: 0,
       width: 0,
-      disabled: disabled
+      disabled: props.preview,
+      review: props.review
     };
     this.handleSubModuleOneUpdate = this.handleSubModuleOneUpdate.bind(this);
     this.handleSubModuleTwoUpdate = this.handleSubModuleTwoUpdate.bind(this);
@@ -218,6 +218,7 @@ export default class ModuleBody extends Component {
                     questionAnswered={questionAnswered}
                     handleSubModuleOneUpdate={this.handleSubModuleOneUpdate}
                     disabled={this.state.disabled}
+                    review={this.state.review}
                   />
                 )}
               <br />
@@ -231,27 +232,44 @@ export default class ModuleBody extends Component {
                       __html: question.module_stem_2
                     }}
                   />
-                  {!this.state.disabled && (
-                    <Input
-                      type="textarea"
-                      name="text"
-                      rows="6"
-                      value={
-                        !questionAnswered.module_stem_2_candidate_answer
-                          ? " "
-                          : questionAnswered.module_stem_2_candidate_answer
-                      }
-                      onChange={value => this.handleSubModuleTwoUpdate(value)}
-                    />
-                  )}
-                  {this.state.disabled && (
-                    <Input
-                      type="textarea"
-                      name="text"
-                      rows="6"
-                      defaultValue={question.module_stem_2_answer}
-                    />
-                  )}
+                  {!this.state.disabled &&
+                    !this.state.review && (
+                      <Input
+                        type="textarea"
+                        name="text"
+                        rows="6"
+                        value={
+                          !questionAnswered.module_stem_2_candidate_answer
+                            ? " "
+                            : questionAnswered.module_stem_2_candidate_answer
+                        }
+                        onChange={value => this.handleSubModuleTwoUpdate(value)}
+                      />
+                    )}
+                  {!this.state.disabled &&
+                    this.state.review && (
+                      <Input
+                        type="textarea"
+                        name="text"
+                        rows="6"
+                        value={
+                          !questionAnswered.module_stem_2_candidate_answer
+                            ? " "
+                            : questionAnswered.module_stem_2_candidate_answer
+                        }
+                        onChange={value => this.handleSubModuleTwoUpdate(value)}
+                      />
+                    )}
+
+                  {this.state.disabled &&
+                    !this.state.review && (
+                      <Input
+                        type="textarea"
+                        name="text"
+                        rows="6"
+                        defaultValue={question.module_stem_2_answer}
+                      />
+                    )}
                 </CardBody>
               </Card>
             </Col>

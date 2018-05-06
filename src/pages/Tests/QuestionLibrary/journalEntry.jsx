@@ -52,7 +52,7 @@ export default class Preview extends Component {
   // }
 
   componentWillReceiveProps(props) {
-    if (props.question && this.state.disabled) {
+    if (props.question && this.state.disabled && !props.review) {
       this.setState(
         {
           journalEntry: deepCopy(props.question.module_answer.segments),

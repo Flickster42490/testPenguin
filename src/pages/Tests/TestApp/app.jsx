@@ -92,6 +92,7 @@ export default class TestApp extends Component {
             review: review
           })
           .then(saved => {
+            console.log(saved.data[0]);
             let candidateAnswers = saved
               ? saved.data[0].candidate_answers
               : null;
@@ -241,7 +242,6 @@ export default class TestApp extends Component {
       currentIdx,
       questionsAnswered[currentIdx]
     );
-    console.log(returnTo);
     return (
       <div>
         <Preloader loading={questions.length < 1}>
