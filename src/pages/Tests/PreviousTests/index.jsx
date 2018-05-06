@@ -50,21 +50,6 @@ export default class QuestionLibrary extends Component {
   render() {
     return (
       <div>
-        {/* <Row style={{ textAlign: "center" }}>
-          <Col xs="12">
-            <ButtonGroup size="lg" block>
-              <Button outline color="default">
-                Settings
-              </Button>
-              <Button outline color="default">
-                Questions
-              </Button>
-              <Button outline color="default">
-                Candidates
-              </Button>
-            </ButtonGroup>
-          </Col>
-        </Row> */}
         <Row>
           <Col xs="12">
             <ReactTable
@@ -152,9 +137,6 @@ export default class QuestionLibrary extends Component {
                       >
                         <Button size="sm" color="primary">
                           Review
-                        </Button>
-                        <Button size="sm" color="success">
-                          Export Test Details
                         </Button>
                         <Button size="sm" color="default">
                           Archive Test

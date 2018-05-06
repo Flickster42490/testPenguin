@@ -51,7 +51,7 @@ class Instructions extends Component {
   handleStartTest() {
     let { candidateId, testId } = this.state;
     axios
-      .post("/testAttempts/create", {
+      .post("/testAttempts/start", {
         userId: candidateId,
         testId: testId
       })

@@ -243,14 +243,15 @@ export default class ReviewResults extends Component {
                       columns={[
                         {
                           Header: "ID",
-                          accessor: "id"
+                          accessor: "id",
+                          maxWidth: 75
                         },
                         {
                           Header: "Type",
                           Cell: cell => {
                             return (
                               <div>
-                                {cell.original.type === module
+                                {cell.original.type === "module"
                                   ? cell.original.module_type
                                   : cell.original.type}
                               </div>
@@ -270,9 +271,16 @@ export default class ReviewResults extends Component {
                                 {typeof correct === "boolean" &&
                                   correct && <span>Correct</span>}
                                 {typeof correct === "object" && (
-                                  <span>
-                                    {correct.correctRows}/{correct.totalRows}
-                                  </span>
+                                  <div>
+                                    <span>
+                                      Part 1: {correct.correctRows}/{
+                                        correct.totalRows
+                                      }{" "}
+                                      Rows
+                                    </span>
+                                    <br />
+                                    <span>Part 2: Manual Review</span>
+                                  </div>
                                 )}
                                 {!correct && (
                                   <span style={{ color: "red" }}>
@@ -284,7 +292,7 @@ export default class ReviewResults extends Component {
                           }
                         },
                         {
-                          Header: "Time",
+                          Header: "Action",
                           Cell: cell => {
                             let reviewIdx;
                             testResults.candidate_answers.forEach((i, idx) => {

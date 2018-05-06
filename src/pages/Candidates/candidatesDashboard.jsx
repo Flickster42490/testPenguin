@@ -9,6 +9,7 @@ import {
   Progress
 } from "reactstrap";
 import axios from "axios";
+import moment from "moment";
 import ReactTable from "react-table";
 import "status-indicator/styles.css";
 import "react-table/react-table.css";
@@ -101,19 +102,27 @@ class Dashboard extends Component {
                           </div>
                           <div>
                             <strong>Test Issued: </strong>
-                            {cell.original.invited_at}
+                            {moment(cell.original.invited_at).format(
+                              "MM/DD/YYYY hh:mm a"
+                            )}
                           </div>
                           <div>
                             <strong>Test Status: </strong>
                             {cell.original.completed_at && (
                               <span>
-                                Completed on {cell.original.completed_at}
+                                Completed on{" "}
+                                {moment(cell.original.completed_at).format(
+                                  "MM/DD/YYYY hh:mm a"
+                                )}
                               </span>
                             )}
                             {cell.original.started_at &&
                               !cell.original.completed_at && (
                                 <span>
-                                  Started on {cell.original.started_at}
+                                  Started on{" "}
+                                  {moment(cell.original.started_at).format(
+                                    "MM/DD/YYYY hh:mm a"
+                                  )}
                                 </span>
                               )}
                             {!cell.original.started_at &&
