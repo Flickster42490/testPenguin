@@ -48,3 +48,14 @@ router.get("/id/:id/questions", (req, res) => {
         });
     });
 });
+
+router.post("/create/testBasics", (req, res) => {
+  return req.db
+    .any(
+      "INSERT INTO tests(name, description, created_at) VALUES($1,$2,$3) RETURNING *",
+      [req.body.name, req.body.description, new Date()]
+    )
+    .then(data => {
+      return res.send(data);
+    });
+});

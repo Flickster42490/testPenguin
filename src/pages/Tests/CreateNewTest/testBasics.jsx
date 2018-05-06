@@ -20,17 +20,52 @@ import {
   InputGroupText
 } from "reactstrap";
 import queryString from "querystring";
+import axios from "axios";
 import Select from "react-select";
 import "react-select/dist/react-select.css";
 
 export default class testBasics extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      name: "",
+      description: ""
+    };
     this.handleNext = this.handleNext.bind(this);
+    this.handleName = this.handleName.bind(this);
+    this.handleDescription = this.handleDescription.bind(this);
+  }
+
+  componentWillMount() {
+    document.body.classList.add("sidebar-hidden");
+  }
+
+  handleName(e) {
+    this.setState({
+      name: e.target.value
+    });
+  }
+
+  handleDescription(e) {
+    this.setState({
+      description: e.target.value
+    });
   }
 
   handleNext() {
-    hashHistory.push("tests/createNewTest/addQuestions");
+    axios
+      .post("/tests/create/testBasics", {
+        name: this.state.name,
+        description: this.state.description
+      })
+      .then(d => {
+        console.log(d);
+        let testId = d.data[0].id;
+        hashHistory.push(
+          `dashboard/tests/createNewTest/addQuestions?id=${testId}`
+        );
+      });
   }
 
   render() {
@@ -41,7 +76,7 @@ export default class testBasics extends Component {
             <Row>
               <Col xs="12">
                 <div className="text-center">
-                  <h3>Test Basics</h3> (<strong>step 1 of 4</strong>)
+                  <h3>Test Basics</h3> (<strong>step 1 of 3</strong>)
                 </div>
               </Col>
               <br />
@@ -50,7 +85,7 @@ export default class testBasics extends Component {
               <Col xs="12">
                 <div className="text-center">
                   <div className="progress">
-                    <Progress bar color="success" value="1" max="4" />
+                    <Progress bar color="success" value="1" max="3" />
                   </div>
                   <br />
                 </div>
@@ -70,7 +105,7 @@ export default class testBasics extends Component {
                       <Label htmlFor="text-input">Test Name</Label>
                     </Col>
                     <Col xs="12" md="9">
-                      <Input type="text" id="text-input" name="text-input" />
+                      <Input type="text" onBlur={this.handleName} />
                     </Col>
                   </FormGroup>
                   <FormGroup row>
@@ -83,6 +118,7 @@ export default class testBasics extends Component {
                         name="textarea-input"
                         id="textarea-input"
                         rows="3"
+                        onBlur={this.handleDescription}
                       />
                       <FormText color="muted">
                         (Only you can see this description)

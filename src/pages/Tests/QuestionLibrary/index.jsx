@@ -22,7 +22,8 @@ export default class QuestionLibrary extends Component {
 
     this.state = {
       questions: [],
-      typeCount: {}
+      typeCount: {},
+      addQuestions: false
     };
 
     this.findTypeCount = this.findTypeCount.bind(this);
@@ -31,7 +32,11 @@ export default class QuestionLibrary extends Component {
   componentWillMount() {
     axios.get("/questions").then(d => {
       let typeCount = this.findTypeCount(d.data);
-      this.setState({ typeCount: typeCount, questions: d.data });
+      this.setState({
+        typeCount: typeCount,
+        questions: d.data,
+        addQuestions: this.props.addQuestions
+      });
     });
   }
 
@@ -137,17 +142,32 @@ export default class QuestionLibrary extends Component {
                           justifyContent: "center"
                         }}
                       >
-                        <ButtonGroup size="sm" vertical>
-                          <Button size="sm" color="primary">
-                            <a
-                              href={`/#/dashboard/tests/questionLibrary/preview?id=${
-                                cell.original.id
-                              }`}
+                        {!this.state.addQuestions && (
+                          <ButtonGroup size="sm" vertical>
+                            <Button size="sm" color="primary">
+                              <a
+                                href={`/#/dashboard/tests/questionLibrary/preview?id=${
+                                  cell.original.id
+                                }`}
+                              >
+                                Preview Question
+                              </a>
+                            </Button>
+                          </ButtonGroup>
+                        )}
+                        {this.state.addQuestions && (
+                          <ButtonGroup size="sm" vertical>
+                            <Button
+                              size="sm"
+                              color="primary"
+                              onClick={() =>
+                                this.props.handleAddQuestion(cell.original)
+                              }
                             >
-                              Preview Question
-                            </a>
-                          </Button>
-                        </ButtonGroup>
+                              Add Question
+                            </Button>
+                          </ButtonGroup>
+                        )}
                       </div>
                     )
                   }
