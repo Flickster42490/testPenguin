@@ -113,7 +113,10 @@ export default class InviteCandidates extends Component {
           },
           () => {
             axios
-              .post("/testAttempts/create", { userId: candidate.id })
+              .post("/testAttempts/create", {
+                userId: candidate.id,
+                testId: this.state.testId
+              })
               .then(() => {
                 this.setState({
                   submitDisable: true
