@@ -38,8 +38,9 @@ passport.use(
       return db
         .any("SELECT * FROM users WHERE google_id = $1", profile.id)
         .then(user => {
-          console.log("user", user);
+          console.log("inside passport use, user: ", user);
           if (user.length > 0) {
+            console.log("user.length > 0");
             return db
               .any("UPDATE users set last_signed_in = $1 where id = $2", [
                 new Date(),
