@@ -42,11 +42,12 @@ passport.use(
           if (user.length > 0) {
             console.log("user.length > 0");
             return db
-              .any("UPDATE users set last_signed_in = $1 where id = $2", [
-                new Date(),
-                user[0].id
-              ])
-              .then(() => {
+              .any(
+                "UPDATE users set last_signed_in = $1 where id = $2 RETURNING *",
+                [new Date(), user[0].id]
+              )
+              .then(u => {
+                console.log(u);
                 return Cache.get(profile.id, (err, value) => {
                   if (!err && !value) {
                     return Cache.set(profile.id, new Date(), (err, data) => {
