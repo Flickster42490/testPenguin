@@ -60,7 +60,11 @@ export default class addQuestions extends Component {
   }
 
   componentWillMount() {
-    document.body.classList.add("sidebar-hidden");
+    document.body.classList.toggle("sidebar-hidden");
+  }
+
+  componentWillUnmount() {
+    document.body.classList.toggle("sidebar-hidden");
   }
 
   handleAddQuestion(v) {

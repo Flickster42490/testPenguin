@@ -41,6 +41,10 @@ export default class testBasics extends Component {
     document.body.classList.add("sidebar-hidden");
   }
 
+  componentWillUnmount() {
+    document.body.classList.toggle("sidebar-hidden");
+  }
+
   handleName(e) {
     this.setState({
       name: e.target.value
