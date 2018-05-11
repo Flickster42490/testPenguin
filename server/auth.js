@@ -62,7 +62,7 @@ passport.use(
           } else {
             return db
               .any(
-                "INSERT INTO users(google_id,first_name,last_name,display_name,image_url, provider, email_address) VALUES($1,$2,$3,$4,$5,$6,$7)",
+                "INSERT INTO users(google_id,first_name,last_name,display_name,image_url, provider, email_address, last_signed_in) VALUES($1,$2,$3,$4,$5,$6,$7,$8)",
                 [
                   profile.id,
                   profile.name.givenName,
@@ -70,7 +70,8 @@ passport.use(
                   profile.displayName,
                   profile.photos[0] ? profile.photos[0].value : "",
                   profile.provider,
-                  profile.emails[0] ? profile.emails[0].value : ""
+                  profile.emails[0] ? profile.emails[0].value : "",
+                  new Date()
                 ]
               )
               .then(() => {

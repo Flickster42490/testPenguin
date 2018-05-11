@@ -59,3 +59,23 @@ router.post("/create/testBasics", (req, res) => {
       return res.send(data);
     });
 });
+
+router.post("/create/addQuestions/:id", (req, res) => {
+  return req.db
+    .any(
+      "UPDATE tests set (question_ids,tags,question_types,estimated_time,type,question_details) = ($1,$2,$3,$4,$5,$6) where id = $7 RETURNING *",
+      [
+        JSON.stringify(req.body.questions),
+        JSON.stringify(req.body.tags),
+        JSON.stringify(req.body.types),
+        req.body.estimatedTime,
+        "custom",
+        JSON.stringify(req.body.questionDetails),
+        req.params.id
+      ]
+    )
+    .then(data => {
+      console.log(data);
+      return res.send(data);
+    });
+});

@@ -19,40 +19,20 @@ import {
   InputGroupAddon,
   InputGroupText
 } from "reactstrap";
+import queryString from "querystring";
+import axios from "axios";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 
 import QuestionLibrary from "../QuestionLibrary/index.jsx";
-
-const mockData = [
-  {
-    questionName: "A/P Clerk",
-    estimatedTime: 3,
-    type: "Multiple Choice",
-    difficulty: "Easy",
-    categories: ["Finance"]
-  },
-  {
-    questionName: "Batch Coding",
-    estimatedTime: 2,
-    type: "Multiple Choice",
-    difficulty: "Medium",
-    categories: ["Accounting"]
-  },
-  {
-    questionName: "ChargeBacks",
-    estimatedTime: 5,
-    type: "Fill In Blank",
-    difficulty: "Hard",
-    categories: ["CPA"]
-  }
-];
+import TestQuestionList from "./testQuestionList.jsx";
 
 export default class addQuestions extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      questionLibraryDisplayed: false
+      testQuestionList: [],
+      testId: undefined
     };
     this.handleNext = this.handleNext.bind(this);
     this.handleOpenLibrary = this.handleOpenLibrary.bind(this);
@@ -61,18 +41,84 @@ export default class addQuestions extends Component {
 
   componentWillMount() {
     document.body.classList.toggle("sidebar-hidden");
+    const queries = window.location.hash.split("?")[1];
+    const { id } = queryString.parse(queries);
+    this.setState({
+      testId: id
+    });
   }
 
   componentWillUnmount() {
     document.body.classList.toggle("sidebar-hidden");
   }
 
+  calculateEstimatedTime(list) {
+    let total = 0;
+    list.forEach(i => (total = total + Number(i.estimated_time)));
+    console.log(total);
+    return total;
+  }
+
+  extractQuestionIds(list) {
+    return list.map(i => {
+      return String(i.id);
+    });
+  }
+
+  extractQuestionTypes(list) {
+    return _.reduce(
+      list,
+      (sum, q) => {
+        if (q.type === "module" && !sum.module) sum.module = 1;
+        else if (q.type === "multiple_choice" && !sum.multiple_choice)
+          sum.multiple_choice = 1;
+        else if (q.type === "module" && sum.module) sum.module++;
+        else if (q.type === "multiple_choice") sum.multiple_choice++;
+        return sum;
+      },
+      {}
+    );
+  }
+
+  extractQuestionTags(list) {
+    let tags = [];
+    list.forEach(i => {
+      if (i.tags) {
+        tags = tags.concat(i.tags.split(","));
+      }
+    });
+    tags.forEach(i => i.trim());
+    return _.uniq(tags);
+  }
+
   handleAddQuestion(v) {
-    console.log(v);
+    let questions = this.state.testQuestionList;
+    questions.push(v);
+    this.setState({
+      testQuestionList: questions
+    });
   }
 
   handleNext() {
-    hashHistory.push("tests/createNewTest/settings");
+    let { testQuestionList } = this.state;
+    let questions = this.extractQuestionIds(testQuestionList);
+    let types = this.extractQuestionTypes(testQuestionList);
+    let tags = this.extractQuestionTags(testQuestionList);
+    let estimatedTime = this.calculateEstimatedTime(testQuestionList);
+    console.log(questions, types, tags);
+    axios
+      .post(`/tests/create/addQuestions/${this.state.testId}`, {
+        questions: questions,
+        questionDetails: testQuestionList,
+        types: types,
+        tags: tags,
+        estimatedTime: estimatedTime
+      })
+      .then(data => {
+        hashHistory.push(
+          `dashboard/tests/createNewTest/review?id=${this.state.testId}`
+        );
+      });
   }
 
   handleOpenLibrary() {
@@ -104,44 +150,51 @@ export default class addQuestions extends Component {
                 </div>
               </Col>
             </Row>
-            {!this.state.questionLibraryDisplayed && (
-              <Row>
+            <div>
+              <hr />
+              <Row style={{ maxHeight: "500px" }}>
                 <Col xs="12">
-                  <div className="text-center">
-                    <ButtonGroup
-                      size="sm"
-                      vertical
-                      style={{
-                        maxWidth: "50%"
-                      }}
-                    >
-                      <Button
-                        size="sm"
-                        color="primary"
-                        onClick={() => this.handleOpenLibrary()}
-                      >
-                        Open Question Library
-                      </Button>
-                    </ButtonGroup>
-                  </div>
+                  <h4>Test Questions</h4>
+                  <TestQuestionList questions={this.state.testQuestionList} />
                 </Col>
               </Row>
-            )}
+            </div>
+            <br />
 
-            {this.state.questionLibraryDisplayed && (
-              <div>
-                <hr />
-                <Row style={{ maxHeight: "500px" }}>
-                  <Col xs="12">
-                    <h4>Question Library</h4>
-                    <QuestionLibrary
-                      addQuestions={true}
-                      handleAddQuestion={this.handleAddQuestion}
-                    />
-                  </Col>
-                </Row>
-              </div>
-            )}
+            <Row>
+              <Col xs="12">
+                <div className="text-center">
+                  <ButtonGroup
+                    size="sm"
+                    vertical
+                    style={{
+                      maxWidth: "50%"
+                    }}
+                  >
+                    <Button
+                      size="sm"
+                      color="primary"
+                      onClick={() => this.handleOpenLibrary()}
+                    >
+                      Open Question Library
+                    </Button>
+                  </ButtonGroup>
+                </div>
+              </Col>
+            </Row>
+
+            <div>
+              <hr />
+              <Row style={{ maxHeight: "500px" }}>
+                <Col xs="12">
+                  <h4>Question Library</h4>
+                  <QuestionLibrary
+                    addQuestions={true}
+                    handleAddQuestion={this.handleAddQuestion}
+                  />
+                </Col>
+              </Row>
+            </div>
             <br />
             <Row style={{ float: "right" }}>
               <Col xs="4">

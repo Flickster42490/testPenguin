@@ -118,7 +118,7 @@ class Sidebar extends Component {
               />
             </Row>
           )}
-          {["previousTests"].includes(this.props.page) && (
+          {["issuedTests"].includes(this.props.page) && (
             <Row className="sidebar-row">
               By name or email: <br />
               <Select
@@ -132,7 +132,7 @@ class Sidebar extends Component {
               />
             </Row>
           )}
-          {["previousTests"].includes(this.props.page) && (
+          {["issuedTests"].includes(this.props.page) && (
             <Row className="sidebar-row">
               <br />
               <label>

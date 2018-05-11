@@ -13,7 +13,7 @@ import Tests from "./pages/Tests/index.jsx";
 import PreBuiltTests from "./pages/Tests/PreBuiltTests/index.jsx";
 import ViewQuestions from "./pages/Tests/PreBuiltTests/viewQuestions.jsx";
 import InviteCandidates from "./pages/Tests/InviteCandidates/index.jsx";
-import PreviousTests from "./pages/Tests/PreviousTests/index.jsx";
+import IssuedTests from "./pages/Tests/IssuedTests/index.jsx";
 import QuestionLibrary from "./pages/Tests/QuestionLibrary/index.jsx";
 import PreviewQuestion from "./pages/Tests/QuestionLibrary/preview.jsx";
 import QuestionDetails from "./pages/Tests/CreateNewQuestion/questionDetails.jsx";
@@ -21,7 +21,7 @@ import QuestionContents from "./pages/Tests/CreateNewQuestion/questionContents.j
 import QuestionReview from "./pages/Tests/CreateNewQuestion/questionReview.jsx";
 import TestBasics from "./pages/Tests/CreateNewTest/testBasics.jsx";
 import AddQuestions from "./pages/Tests/CreateNewTest/addQuestions.jsx";
-import Settings from "./pages/Tests/CreateNewTest/settings.jsx";
+import Review from "./pages/Tests/CreateNewTest/review.jsx";
 import NotFound from "./pages/NotFound/index.jsx";
 
 const AppRouter = () => (
@@ -42,20 +42,14 @@ const AppRouter = () => (
           <Route path="preBuiltTests" component={PreBuiltTests} />
           <Route path="preBuiltTests/viewQuestions" component={ViewQuestions} />
           <Route path="inviteCandidates" component={InviteCandidates} />
-          <Route path="previousTests" component={PreviousTests} />
+          <Route path="issuedTests" component={IssuedTests} />
           <Route path="questionLibrary" component={QuestionLibrary} />
           <Route path="questionLibrary/preview" component={PreviewQuestion} />
           <Route path="createNewTest">
             <IndexRedirect to="testBasics" />
             <Route path="testBasics" component={TestBasics} />
             <Route path="addQuestions" component={AddQuestions} />
-            <Route path="settings" component={Settings} />
-          </Route>
-          <Route path="createNewQuestion">
-            <IndexRedirect to="questionDetails" />
-            <Route path="questionDetails" component={QuestionDetails} />
-            <Route path="questionContents" component={QuestionContents} />
-            <Route path="questionReview" component={QuestionReview} />
+            <Route path="review" component={Review} />
           </Route>
         </Route>
       </Route>

@@ -28,46 +28,6 @@ const typeMap = {
   journalEntry: "Journal Entry",
   multipleChoice: "Multiple Choice"
 };
-
-const mockData = [
-  {
-    id: 1,
-    question:
-      "If I had only 1 statement and wanted to review the overall health of a company, which statement would I use and why?",
-    correct: true,
-    actualTime: 92,
-    expectedTime: 180
-  },
-  {
-    id: 2,
-    question: "What is working capital?",
-    correct: false,
-    actualTime: 92,
-    expectedTime: 180
-  },
-  {
-    id: 3,
-    question: "What does having negative working capital mean?",
-    correct: true,
-    actualTime: 92,
-    expectedTime: 180
-  },
-  {
-    id: 4,
-    question:
-      "If cash collected from customers is not yet recorded as revenue, what happens to it?",
-    correct: true,
-    actualTime: 92,
-    expectedTime: 180
-  },
-  {
-    id: 5,
-    question: "When do you capitalize rather than expense a purchase?",
-    correct: true,
-    actualTime: 92,
-    expectedTime: 180
-  }
-];
 export default class ReviewResults extends Component {
   constructor(props) {
     super(props);

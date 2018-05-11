@@ -101,11 +101,11 @@ class Header extends Component {
           </NavItem>
           <NavItem
             className="px-3"
-            onClick={() => this.handleClick("tests/previousTests")}
+            onClick={() => this.handleClick("tests/issuedTests")}
           >
             <img src={Screen} />
             <br />
-            <span className={this.state.page === "previousTests" ? "bold" : ""}>
+            <span className={this.state.page === "issuedTests" ? "bold" : ""}>
               Review Previous Tests
             </span>
           </NavItem>
