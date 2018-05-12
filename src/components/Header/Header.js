@@ -9,9 +9,12 @@ import {
 } from "reactstrap";
 import { hashHistory } from "react-router";
 import FontAwesome from "react-fontawesome";
+import localForage from "localforage";
+import axios from "axios";
 
 import Users from "../../images/users.svg";
 import Assignment from "../../images/assignment.svg";
+import Folder from "../../images/folder.svg";
 import Alert from "../../images/alert.svg";
 import Screen from "../../images/screen.svg";
 import Lock from "../../images/lock.svg";
@@ -25,15 +28,26 @@ class Header extends Component {
     super(props);
 
     this.state = {
-      page: "candidates"
+      page: "candidates",
+      user: undefined
     };
   }
 
   componentWillMount() {
-    if (this.state.page !== window.location.hash.split("/")[1])
-      this.setState({
-        page: window.location.hash.split("/")[1]
+    localForage.getItem("userId").then(id => {
+      axios.get(`/users/${id}`).then(u => {
+        if (this.state.page !== window.location.hash.split("/")[1]) {
+          this.setState({
+            page: window.location.hash.split("/")[1],
+            user: u.data[0]
+          });
+        } else {
+          this.setState({
+            user: u.data[0]
+          });
+        }
       });
+    });
   }
 
   sidebarToggle(e) {
@@ -68,6 +82,7 @@ class Header extends Component {
   }
 
   render() {
+    console.log(this.state.user);
     return (
       <header className="app-header navbar">
         {/* <NavbarToggler className="d-lg-none" onClick={this.mobileSidebarToggle}>
@@ -103,7 +118,7 @@ class Header extends Component {
             className="px-3"
             onClick={() => this.handleClick("tests/customTests")}
           >
-            <img src={Assignment} />
+            <img src={Folder} />
             <br />
             <span className={this.state.page === "customTests" ? "bold" : ""}>
               Custom Tests
@@ -145,19 +160,17 @@ class Header extends Component {
         <Nav className="ml-auto" navbar>
           {/* on the right side */}
           <NavItem className="d-md-down-none">
-            <a href="#">Upgrade Today</a>
+            <a href="#">Upgrade Today</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           </NavItem>
           <NavItem className="d-md-down-none">
-            <a href="#">
-              <img src={Alert} />
-              <Badge pill color="danger">
-                5 days left
-              </Badge>
-            </a>
+            {this.state.user && (
+              <strong>Hi {this.state.user.first_name}!</strong>
+            )}
+          </NavItem>
+          <NavItem className="d-md-down-none">
+            {this.state.user && <HeaderDropdown />}
           </NavItem>
           <NavItem className="d-md-down-none" />
-          <HeaderDropdown />
-          &nbsp;&nbsp;&nbsp;
         </Nav>
       </header>
     );

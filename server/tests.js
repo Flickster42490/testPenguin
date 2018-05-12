@@ -24,6 +24,17 @@ router.get("/type/:type", (req, res) => {
     });
 });
 
+router.get("/type/:type/:id", (req, res) => {
+  return req.db
+    .any("SELECT * FROM tests where type = $1 and created_by = $2", [
+      req.params.type,
+      req.params.id
+    ])
+    .then(data => {
+      return res.send(data);
+    });
+});
+
 router.get("/id/:id/questions", (req, res) => {
   return req.db
     .any("SELECT * FROM tests where id = $1", [req.params.id])
@@ -52,8 +63,8 @@ router.get("/id/:id/questions", (req, res) => {
 router.post("/create/testBasics", (req, res) => {
   return req.db
     .any(
-      "INSERT INTO tests(name, description, created_at) VALUES($1,$2,$3) RETURNING *",
-      [req.body.name, req.body.description, new Date()]
+      "INSERT INTO tests(name, description, created_at, created_by) VALUES($1,$2,$3,$4) RETURNING *",
+      [req.body.name, req.body.description, new Date(), req.body.userId]
     )
     .then(data => {
       return res.send(data);

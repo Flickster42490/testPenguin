@@ -29,11 +29,6 @@ import NotFound from "./pages/NotFound/index.jsx";
 const AppRouter = () => (
   <Router history={hashHistory}>
     <Route path="/" component={App}>
-      <Route path="testApp" component={TestAppContainer}>
-        <Route path="instructions" component={Instructions} />
-        <Route path="app" component={TestApp} />
-        <Route path="completed" component={Completed} />
-      </Route>
       <IndexRedirect to="dashboard" />
       <Route path="dashboard" component={Dashboard}>
         <IndexRedirect to="candidates" />
@@ -62,6 +57,11 @@ const AppRouter = () => (
             <Route path="review" component={Review} />
           </Route>
         </Route>
+      </Route>
+      <Route path="testApp" component={TestAppContainer}>
+        <Route path="instructions" component={Instructions} />
+        <Route path="app" component={TestApp} />
+        <Route path="completed" component={Completed} />
       </Route>
       <Route path="login" component={Login} />
       <Route path="*" component={NotFound} />

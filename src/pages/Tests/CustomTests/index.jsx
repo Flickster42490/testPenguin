@@ -9,6 +9,7 @@ import {
   Progress
 } from "reactstrap";
 import axios from "axios";
+import localForage from "localforage";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 
@@ -20,16 +21,26 @@ export default class CustomTests extends Component {
 
     this.state = {
       tests: [],
-      loading: true
+      loading: true,
+      userId: undefined
     };
   }
 
   componentWillMount() {
-    axios.get("/tests/type/custom").then(d => {
-      this.setState({
-        tests: d.data,
-        loading: false
-      });
+    localForage.getItem("userId").then(id => {
+      this.setState(
+        {
+          userId: id
+        },
+        () => {
+          axios.get(`/tests/type/custom/${this.state.userId}`).then(d => {
+            this.setState({
+              tests: d.data,
+              loading: false
+            });
+          });
+        }
+      );
     });
   }
 

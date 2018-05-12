@@ -165,9 +165,13 @@ router.get("/google/return", (req, res) =>
       return res.status(400).json(err);
     }
     if (user) {
-      return res.redirect(
-        `/#/dashboard/candidates?id=${encodeURIComponent(user.id)}`
-      );
+      return db
+        .any("SELECT * FROM users WHERE google_id = $1", user.id)
+        .then(user => {
+          return res.redirect(
+            `/#/dashboard/candidates?id=${encodeURIComponent(user[0].id)}`
+          );
+        });
     }
   })(req, res)
 );

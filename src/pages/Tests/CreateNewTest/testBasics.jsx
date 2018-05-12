@@ -22,6 +22,7 @@ import {
 import queryString from "querystring";
 import axios from "axios";
 import Select from "react-select";
+import localForage from "localforage";
 import "react-select/dist/react-select.css";
 
 export default class testBasics extends Component {
@@ -30,7 +31,8 @@ export default class testBasics extends Component {
 
     this.state = {
       name: "",
-      description: ""
+      description: "",
+      userId: undefined
     };
     this.handleNext = this.handleNext.bind(this);
     this.handleName = this.handleName.bind(this);
@@ -39,6 +41,11 @@ export default class testBasics extends Component {
 
   componentWillMount() {
     document.body.classList.add("sidebar-hidden");
+    localForage.getItem("userId").then(id => {
+      this.setState({
+        userId: id
+      });
+    });
   }
 
   componentWillUnmount() {
@@ -61,7 +68,8 @@ export default class testBasics extends Component {
     axios
       .post("/tests/create/testBasics", {
         name: this.state.name,
-        description: this.state.description
+        description: this.state.description,
+        userId: this.state.userId
       })
       .then(d => {
         console.log(d);
