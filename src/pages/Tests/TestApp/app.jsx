@@ -160,20 +160,28 @@ export default class TestApp extends Component {
   }
 
   handleSubmitTest() {
-    let { testId, returnTo, candidateId, questionsAnswered, id } = this.state;
-    axios
-      .post(`/testAttempts/submitTest`, {
-        id: id,
-        candidateAnswers: questionsAnswered
-      })
-      .then(d => {
-        if (d.status == 200) {
-          if (this.state.preview)
-            window.location.href = `${returnTo}?id=${testId}`;
-          else
+    let {
+      testId,
+      preview,
+      returnTo,
+      candidateId,
+      questionsAnswered,
+      id
+    } = this.state;
+    if (preview) {
+      window.location.href = `${returnTo}?id=${testId}`;
+    } else {
+      axios
+        .post(`/testAttempts/submitTest`, {
+          id: id,
+          candidateAnswers: questionsAnswered
+        })
+        .then(d => {
+          if (d.status == 200) {
             window.location.href = `/#/testApp/completed?id=${testId}&candidateId=${candidateId}`;
-        }
-      });
+          }
+        });
+    }
   }
 
   handleNextQuestion() {

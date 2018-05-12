@@ -11,7 +11,9 @@ import Candidates from "./pages/Candidates/index.jsx";
 import ReviewResults from "./pages/Candidates/reviewResults.jsx";
 import Tests from "./pages/Tests/index.jsx";
 import PreBuiltTests from "./pages/Tests/PreBuiltTests/index.jsx";
-import ViewQuestions from "./pages/Tests/PreBuiltTests/viewQuestions.jsx";
+import PreBuiltViewQuestions from "./pages/Tests/PreBuiltTests/viewQuestions.jsx";
+import CustomTests from "./pages/Tests/CustomTests/index.jsx";
+import CustomViewQuestions from "./pages/Tests/CustomTests/viewQuestions.jsx";
 import InviteCandidates from "./pages/Tests/InviteCandidates/index.jsx";
 import IssuedTests from "./pages/Tests/IssuedTests/index.jsx";
 import QuestionLibrary from "./pages/Tests/QuestionLibrary/index.jsx";
@@ -40,7 +42,15 @@ const AppRouter = () => (
         <Route path="tests" component={Tests}>
           <IndexRedirect to="preBuiltTests" />
           <Route path="preBuiltTests" component={PreBuiltTests} />
-          <Route path="preBuiltTests/viewQuestions" component={ViewQuestions} />
+          <Route
+            path="preBuiltTests/viewQuestions"
+            component={PreBuiltViewQuestions}
+          />
+          <Route path="customTests" component={CustomTests} />
+          <Route
+            path="customTests/viewQuestions"
+            component={CustomViewQuestions}
+          />
           <Route path="inviteCandidates" component={InviteCandidates} />
           <Route path="issuedTests" component={IssuedTests} />
           <Route path="questionLibrary" component={QuestionLibrary} />
