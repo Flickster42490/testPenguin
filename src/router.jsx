@@ -16,6 +16,7 @@ import CustomTests from "./pages/Tests/CustomTests/index.jsx";
 import CustomViewQuestions from "./pages/Tests/CustomTests/viewQuestions.jsx";
 import InviteCandidates from "./pages/Tests/InviteCandidates/index.jsx";
 import IssuedTests from "./pages/Tests/IssuedTests/index.jsx";
+import IssuedTestsReview from "./pages/Tests/IssuedTests/review.jsx";
 import QuestionLibrary from "./pages/Tests/QuestionLibrary/index.jsx";
 import PreviewQuestion from "./pages/Tests/QuestionLibrary/preview.jsx";
 import QuestionDetails from "./pages/Tests/CreateNewQuestion/questionDetails.jsx";
@@ -48,6 +49,7 @@ const AppRouter = () => (
           />
           <Route path="inviteCandidates" component={InviteCandidates} />
           <Route path="issuedTests" component={IssuedTests} />
+          <Route path="issuedTests/review" component={IssuedTestsReview} />
           <Route path="questionLibrary" component={QuestionLibrary} />
           <Route path="questionLibrary/preview" component={PreviewQuestion} />
           <Route path="createNewTest">

@@ -47,6 +47,12 @@ export default class QuestionLibrary extends Component {
 
     this.state = {};
   }
+
+  // componentWillMount() {
+  //   axios.get("tests/issued").then(d => {
+  //     console.log(d);
+  //   });
+  // }
   render() {
     return (
       <div>
@@ -136,7 +142,13 @@ export default class QuestionLibrary extends Component {
                         }}
                       >
                         <Button size="sm" color="primary">
-                          Review
+                          <a
+                            href={`/#/dashboard/tests/issuedTests/review?id=${
+                              cell.original.test_id
+                            }`}
+                          >
+                            Review
+                          </a>
                         </Button>
                         <Button size="sm" color="default">
                           Archive Test

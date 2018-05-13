@@ -135,7 +135,7 @@ export default class addQuestions extends Component {
             <Row>
               <Col xs="12">
                 <div className="text-center">
-                  <h3>Add Questions</h3> (<strong>step 2 of 4</strong>)
+                  <h3>Add Questions</h3> (<strong>step 2 of 3</strong>)
                 </div>
               </Col>
               <br />
@@ -160,28 +160,6 @@ export default class addQuestions extends Component {
               </Row>
             </div>
             <br />
-
-            <Row>
-              <Col xs="12">
-                <div className="text-center">
-                  <ButtonGroup
-                    size="sm"
-                    vertical
-                    style={{
-                      maxWidth: "50%"
-                    }}
-                  >
-                    <Button
-                      size="sm"
-                      color="primary"
-                      onClick={() => this.handleOpenLibrary()}
-                    >
-                      Open Question Library
-                    </Button>
-                  </ButtonGroup>
-                </div>
-              </Col>
-            </Row>
 
             <div>
               <hr />

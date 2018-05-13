@@ -35,6 +35,10 @@ router.get("/type/:type/:id", (req, res) => {
     });
 });
 
+router.get("/issued", (req, res) => {
+  return req.db.any("SELECT * FROM test_attempts"); //aggregate by test_id
+});
+
 router.get("/id/:id/questions", (req, res) => {
   return req.db
     .any("SELECT * FROM tests where id = $1", [req.params.id])

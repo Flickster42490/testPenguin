@@ -131,7 +131,7 @@ class Header extends Component {
             <img src={Screen} />
             <br />
             <span className={this.state.page === "issuedTests" ? "bold" : ""}>
-              Review Previous Tests
+              Review Issued Tests
             </span>
           </NavItem>
           <NavItem
