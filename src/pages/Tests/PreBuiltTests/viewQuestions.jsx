@@ -27,6 +27,7 @@ export default class QuestionLibrary extends Component {
   }
 
   componentWillMount() {
+    window.scrollTo(0, 0);
     const queries = window.location.hash.split("?")[1];
     const testId = queryString.parse(queries).id;
     axios.get(`/tests/id/${testId}/questions`).then(d => {

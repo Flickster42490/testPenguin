@@ -41,6 +41,7 @@ export default class ReviewCreatedTest extends Component {
   }
 
   componentWillMount() {
+    window.scrollTo(0, 0);
     document.body.classList.toggle("sidebar-hidden");
     const queries = window.location.hash.split("?")[1];
     const { id } = queryString.parse(queries);
@@ -113,42 +114,44 @@ export default class ReviewCreatedTest extends Component {
                     <Form>
                       <FormGroup row>
                         <Col md="3">
-                          <h4>Test Name:</h4>
+                          <h5>Test Name:</h5>
                         </Col>
                         <Col xs="12" md="9">
-                          {test.name}
+                          <h4>{test.name}</h4>
                         </Col>
                       </FormGroup>
                       <FormGroup row>
                         <Col md="3">
-                          <h4>Description</h4>
+                          <h5>Description:</h5>
                         </Col>
                         <Col xs="12" md="9">
-                          {test.description}
+                          <h5>{test.description}</h5>
                         </Col>
                       </FormGroup>
                       <FormGroup row>
                         <Col md="3">
-                          <h4>Estimated Time</h4>
+                          <h5>Estimated Time:</h5>
                         </Col>
                         <Col xs="12" md="9">
-                          {test.estimated_time} Mins
+                          <h5>{test.estimated_time} Mins</h5>
                         </Col>
                       </FormGroup>
                       <FormGroup row>
                         <Col md="3">
-                          <h4>Tags</h4>
+                          <h5>Tags:</h5>
                         </Col>
                         <Col xs="12" md="9">
-                          {this.stringifyTags(test.tags)}
+                          <h5>{this.stringifyTags(test.tags)}</h5>
                         </Col>
                       </FormGroup>
                       <FormGroup row>
                         <Col md="3">
-                          <h4>Question Types</h4>
+                          <h5>Question Types:</h5>
                         </Col>
                         <Col xs="12" md="9">
-                          {this.stringifyQuestionTypes(test.question_types)}
+                          <h5>
+                            {this.stringifyQuestionTypes(test.question_types)}
+                          </h5>
                         </Col>
                       </FormGroup>
                     </Form>
@@ -158,14 +161,23 @@ export default class ReviewCreatedTest extends Component {
                   <hr />
                   <Row style={{ maxHeight: "500px" }}>
                     <Col xs="12">
-                      <h4>Test Questions</h4>
+                      <h5>Test Questions</h5>
                       <TestQuestionList
                         questions={test.question_details}
+                        hideOrdering
                         disabledArrange
                       />
                     </Col>
                   </Row>
                 </div>
+                <br />
+                <Row style={{ float: "right" }}>
+                  <Col xs="12" s="4">
+                    <a href="/#/dashboard/tests/customTests">
+                      <Button color="success">Finish</Button>
+                    </a>
+                  </Col>
+                </Row>
                 <br />
                 <br />
               </Container>

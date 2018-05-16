@@ -40,6 +40,7 @@ export default class testBasics extends Component {
   }
 
   componentWillMount() {
+    window.scrollTo(0, 0);
     document.body.classList.add("sidebar-hidden");
     localForage.getItem("userId").then(id => {
       this.setState({

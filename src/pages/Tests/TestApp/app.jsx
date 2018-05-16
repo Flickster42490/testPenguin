@@ -45,6 +45,7 @@ export default class TestApp extends Component {
   }
 
   componentWillMount() {
+    window.scrollTo(0, 0);
     const queries = window.location.hash.split("?")[1];
     const preview = Boolean(queryString.parse(queries).preview) || false;
     const review = Boolean(queryString.parse(queries).review) || false;

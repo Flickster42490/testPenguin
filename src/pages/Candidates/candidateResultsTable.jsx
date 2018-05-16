@@ -46,8 +46,7 @@ export default props => (
               </strong>
             </div>
           </div>
-        ),
-        maxWidth: 200
+        )
       },
       {
         Header: "Invitation Details",
@@ -91,6 +90,7 @@ export default props => (
       {
         Header: "Score Results",
         accessor: "results",
+        maxWidth: 250,
         Cell: cell => {
           let resultList = [];
           _.forOwn(cell.value, (v, k) => {

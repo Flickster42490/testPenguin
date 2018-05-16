@@ -33,6 +33,7 @@
     "webpack-dev-server": "2.11.1"
   },
   "dependencies": {
+    "array-move": "^1.0.0",
     "axios": "^0.18.0",
     "babel-polyfill": "^6.26.0",
     "bootstrap": "4.0.0",
@@ -90,16 +91,13 @@
     "status-indicator": "^1.0.9"
   },
   "scripts": {
-    "dev":
-      "webpack -d --progress --watch --profile --json > compilation-stats.json --env.dev",
+    "dev": "webpack -d --progress --watch --profile --json > compilation-stats.json --env.dev",
     "web": "webpack-dev-server --progress --color --inline --env.dev",
     "build": "webpack -p --progress --env.prod",
     "clean": "rimraf ./build",
     "start": "node server.js",
-    "local":
-      "CALLBACK_URL=http://localhost:8000/auth/google/return DB_HOST=localhost DB_USER=maxli DB_PASSWORD=admin DB_NAME=testpenguin_postgres nodemon server.js",
-    "local-rds":
-    "CALLBACK_URL=http://localhost:8000/auth/google/return DB_HOST=testpenguin.cwvdzkfscajo.us-east-2.rds.amazonaws.com DB_USER=master DB_PASSWORD=T3stp3nguin! DB_NAME=testpenguin_postgres nodemon server.js",
+    "local": "CALLBACK_URL=http://localhost:8000/auth/google/return DB_HOST=localhost DB_USER=maxli DB_PASSWORD=admin DB_NAME=testpenguin_postgres nodemon server.js",
+    "local-rds": "CALLBACK_URL=http://localhost:8000/auth/google/return DB_HOST=testpenguin.cwvdzkfscajo.us-east-2.rds.amazonaws.com DB_USER=master DB_PASSWORD=T3stp3nguin! DB_NAME=testpenguin_postgres nodemon server.js",
     "heroku-postbuild": "npm run build"
   },
   "engines": {

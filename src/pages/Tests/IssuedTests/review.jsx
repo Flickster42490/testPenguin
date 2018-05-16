@@ -51,6 +51,7 @@ export default class IssuedTestsReview extends Component {
   }
 
   componentWillMount() {
+    window.scrollTo(0, 0);
     document.body.classList.toggle("sidebar-hidden");
     axios.get("/testAttempts").then(d => {
       this.setState({

@@ -16,6 +16,7 @@ export default class Preview extends Component {
   }
 
   componentWillMount() {
+    window.scrollTo(0, 0);
     document.body.classList.toggle("sidebar-hidden");
     const queries = window.location.hash.split("?")[1];
     const questionId = queryString.parse(queries).id;

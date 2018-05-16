@@ -40,6 +40,20 @@ export default class QuestionLibrary extends Component {
     });
   }
 
+  handleAddQuestion(q) {
+    let updatedQuestions = _.filter(this.state.questions, i => i.id !== q.id);
+    let typeCount = this.findTypeCount(updatedQuestions);
+    this.setState(
+      {
+        typeCount: typeCount,
+        questions: updatedQuestions
+      },
+      () => {
+        this.props.handleAddQuestion(q, updatedQuestions);
+      }
+    );
+  }
+
   findTypeCount(questions) {
     return _.reduce(
       questions,
@@ -92,7 +106,7 @@ export default class QuestionLibrary extends Component {
                           justifyContent: "center"
                         }}
                       >
-                        <div style={{ fontSize: "1rem" }}>
+                        <div style={{ fontSize: "1rem" }} title={cell.value}>
                           <strong>{cell.value}</strong>
                         </div>
                       </div>
@@ -100,6 +114,7 @@ export default class QuestionLibrary extends Component {
                   },
                   {
                     Header: "Question Type",
+                    maxWidth: 200,
                     Cell: cell => (
                       <span>
                         {utils.toUpper(utils.addSpace(cell.original.type))}{" "}
@@ -113,8 +128,9 @@ export default class QuestionLibrary extends Component {
                     )
                   },
                   {
-                    Header: "Estimated Time",
+                    Header: "Est. Time",
                     accessor: "estimated_time",
+                    maxWidth: 100,
                     Cell: cell => (
                       <span>{cell.original.estimated_time} mins</span>
                     )
@@ -122,18 +138,36 @@ export default class QuestionLibrary extends Component {
                   {
                     Header: "Difficulty",
                     accessor: "difficulty",
-                    maxWidth: "100",
+                    maxWidth: 100,
                     Cell: cell => (
                       <span>{utils.toUpper(cell.original.difficulty)}</span>
                     )
                   },
                   {
-                    Header: "Category",
-                    accessor: "tags"
+                    Header: "Categories",
+                    accessor: "tags",
+                    Cell: cell => {
+                      let tags = cell.value && cell.value.split(",");
+                      return tags && tags.length > 0 ? (
+                        <div>
+                          {tags.map((i, idx, arr) => {
+                            if (idx === arr.length - 1) {
+                              return <span>{i}</span>;
+                            }
+                            return (
+                              <span>
+                                {i}
+                                <br />
+                              </span>
+                            );
+                          })}
+                        </div>
+                      ) : null;
+                    }
                   },
                   {
                     Header: "Actions",
-                    maxWidth: 300,
+                    maxWidth: 150,
                     Cell: cell => (
                       <div
                         style={{
@@ -161,7 +195,7 @@ export default class QuestionLibrary extends Component {
                               size="sm"
                               color="primary"
                               onClick={() =>
-                                this.props.handleAddQuestion(cell.original)
+                                this.handleAddQuestion(cell.original)
                               }
                             >
                               Add Question

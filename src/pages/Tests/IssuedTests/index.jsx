@@ -48,11 +48,10 @@ export default class QuestionLibrary extends Component {
     this.state = {};
   }
 
-  // componentWillMount() {
-  //   axios.get("tests/issued").then(d => {
-  //     console.log(d);
-  //   });
-  // }
+  componentWillMount() {
+    window.scrollTo(0, 0);
+  }
+
   render() {
     return (
       <div>

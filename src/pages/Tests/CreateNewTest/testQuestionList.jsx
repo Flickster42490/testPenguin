@@ -12,6 +12,7 @@ import _ from "lodash";
 import axios from "axios";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
+import arrayMove from "array-move";
 
 import utils from "../../../utils";
 import { Preloader } from "../../../components/Preloader.jsx";
@@ -26,15 +27,48 @@ export default class TestQuestionList extends Component {
     };
   }
 
-  componentWillMount() {}
-
   componentWillReceiveProps(props) {
     if (props.questions) this.setState({ questions: props.questions });
   }
 
   handleOneUp(q) {
-    console.log(q, this.state.questions);
-    //need to move it up or down.
+    let { questions } = this.state;
+    let qIdx = undefined;
+    questions.forEach((i, idx) => {
+      if (i.id === q.id) qIdx = idx;
+    });
+    let newQIdx = qIdx - 1;
+    if (qIdx !== 0) {
+      this.setState(
+        {
+          questions: arrayMove(questions, qIdx, newQIdx)
+        },
+        () => {
+          this.props.handleUpdateOrder(arrayMove(questions, qIdx, newQIdx));
+        }
+      );
+    }
+    return;
+  }
+
+  handleOneDown(q) {
+    let { questions } = this.state;
+    let qIdx = undefined;
+    questions.forEach((i, idx) => {
+      if (i.id === q.id) qIdx = idx;
+    });
+    let newQIdx = qIdx + 1;
+    if (qIdx !== questions.length - 1) {
+      this.setState(
+        {
+          questions: arrayMove(questions, qIdx, newQIdx)
+        },
+        () => {
+          this.props.handleUpdateOrder(arrayMove(questions, qIdx, newQIdx));
+        }
+      );
+    }
+    return;
   }
 
   render() {
@@ -51,13 +85,21 @@ export default class TestQuestionList extends Component {
               columns={[
                 {
                   Header: "Order",
+                  maxWidth: 50,
+                  show: this.props.hideOrdering ? false : true,
                   Cell: cell => (
                     <div>
-                      <span onClick={() => this.handleOneUp(cell.original)}>
-                        up
+                      <span
+                        style={{ cursor: "pointer" }}
+                        onClick={() => this.handleOneUp(cell.original)}
+                      >
+                        &#9650;
                       </span>&nbsp;&nbsp;
-                      <span onClick={() => this.handleOneDown(cell.original)}>
-                        down
+                      <span
+                        style={{ cursor: "pointer" }}
+                        onClick={() => this.handleOneDown(cell.original)}
+                      >
+                        &#9660;
                       </span>
                     </div>
                   )
@@ -73,7 +115,7 @@ export default class TestQuestionList extends Component {
                         justifyContent: "center"
                       }}
                     >
-                      <div style={{ fontSize: "1rem" }}>
+                      <div style={{ fontSize: "1rem" }} title={cell.value}>
                         <strong>{cell.value}</strong>
                       </div>
                     </div>
@@ -81,6 +123,7 @@ export default class TestQuestionList extends Component {
                 },
                 {
                   Header: "Question Type",
+                  maxWidth: 200,
                   Cell: cell => (
                     <span>
                       {utils.toUpper(utils.addSpace(cell.original.type))}{" "}
@@ -94,21 +137,40 @@ export default class TestQuestionList extends Component {
                   )
                 },
                 {
-                  Header: "Estimated Time",
+                  Header: "Est. Time",
                   accessor: "estimated_time",
+                  maxWidth: 100,
                   Cell: cell => <span>{cell.original.estimated_time} mins</span>
                 },
                 {
                   Header: "Difficulty",
                   accessor: "difficulty",
-                  maxWidth: "100",
+                  maxWidth: 100,
                   Cell: cell => (
                     <span>{utils.toUpper(cell.original.difficulty)}</span>
                   )
                 },
                 {
-                  Header: "Category",
-                  accessor: "tags"
+                  Header: "Categories",
+                  accessor: "tags",
+                  Cell: cell => {
+                    let tags = cell.value && cell.value.split(",");
+                    return tags && tags.length > 0 ? (
+                      <div>
+                        {tags.map((i, idx, arr) => {
+                          if (idx === arr.length - 1) {
+                            return <span>{i}</span>;
+                          }
+                          return (
+                            <span>
+                              {i}
+                              <br />
+                            </span>
+                          );
+                        })}
+                      </div>
+                    ) : null;
+                  }
                 }
               ]}
               defaultPageSize={5}

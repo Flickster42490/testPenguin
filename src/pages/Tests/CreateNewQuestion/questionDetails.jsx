@@ -42,7 +42,7 @@ export default class questionDetails extends Component {
   }
 
   componentWillMount() {
-    console.log(queryString.parse());
+    window.scrollTo(0, 0);
   }
 
   handleNext() {

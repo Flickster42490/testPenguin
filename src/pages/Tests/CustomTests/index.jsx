@@ -27,6 +27,7 @@ export default class CustomTests extends Component {
   }
 
   componentWillMount() {
+    window.scrollTo(0, 0);
     localForage.getItem("userId").then(id => {
       this.setState(
         {
@@ -98,21 +99,22 @@ export default class CustomTests extends Component {
                   {
                     Header: "Categories",
                     accessor: "tags",
-                    Cell: cell => (
-                      <div>
-                        {cell.value.map((i, idx, arr) => {
-                          if (idx === arr.length - 1) {
-                            return <span>{i}</span>;
-                          }
-                          return (
-                            <span>
-                              {i}
-                              <br />
-                            </span>
-                          );
-                        })}
-                      </div>
-                    )
+                    Cell: cell =>
+                      cell.value && cell.value.length > 0 ? (
+                        <div>
+                          {cell.value.map((i, idx, arr) => {
+                            if (idx === arr.length - 1) {
+                              return <span>{i}</span>;
+                            }
+                            return (
+                              <span>
+                                {i}
+                                <br />
+                              </span>
+                            );
+                          })}
+                        </div>
+                      ) : null
                   },
                   {
                     Header: "Actions",

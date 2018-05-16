@@ -32,14 +32,17 @@ export default class addQuestions extends Component {
     super(props);
     this.state = {
       testQuestionList: [],
-      testId: undefined
+      testId: undefined,
+      questionLibraryList: []
     };
     this.handleNext = this.handleNext.bind(this);
     this.handleOpenLibrary = this.handleOpenLibrary.bind(this);
     this.handleAddQuestion = this.handleAddQuestion.bind(this);
+    this.handleUpdateOrder = this.handleUpdateOrder.bind(this);
   }
 
   componentWillMount() {
+    window.scrollTo(0, 0);
     document.body.classList.toggle("sidebar-hidden");
     const queries = window.location.hash.split("?")[1];
     const { id } = queryString.parse(queries);
@@ -55,7 +58,6 @@ export default class addQuestions extends Component {
   calculateEstimatedTime(list) {
     let total = 0;
     list.forEach(i => (total = total + Number(i.estimated_time)));
-    console.log(total);
     return total;
   }
 
@@ -91,11 +93,18 @@ export default class addQuestions extends Component {
     return _.uniq(tags);
   }
 
-  handleAddQuestion(v) {
+  handleAddQuestion(v, updatedQuestions) {
     let questions = this.state.testQuestionList;
     questions.push(v);
     this.setState({
+      questionLibraryList: updatedQuestions,
       testQuestionList: questions
+    });
+  }
+
+  handleUpdateOrder(q) {
+    this.setState({
+      testQuestionList: q
     });
   }
 
@@ -155,7 +164,10 @@ export default class addQuestions extends Component {
               <Row style={{ maxHeight: "500px" }}>
                 <Col xs="12">
                   <h4>Test Questions</h4>
-                  <TestQuestionList questions={this.state.testQuestionList} />
+                  <TestQuestionList
+                    questions={this.state.testQuestionList}
+                    handleUpdateOrder={this.handleUpdateOrder}
+                  />
                 </Col>
               </Row>
             </div>
@@ -167,6 +179,9 @@ export default class addQuestions extends Component {
                 <Col xs="12">
                   <h4>Question Library</h4>
                   <QuestionLibrary
+                    handleQuestionLibraryUpdate={
+                      this.state.handleQuestionLibraryUpdate
+                    }
                     addQuestions={true}
                     handleAddQuestion={this.handleAddQuestion}
                   />
@@ -175,7 +190,7 @@ export default class addQuestions extends Component {
             </div>
             <br />
             <Row style={{ float: "right" }}>
-              <Col xs="4">
+              <Col xs="12" s="4">
                 <Button color="success" onClick={() => this.handleNext()}>
                   Next
                 </Button>

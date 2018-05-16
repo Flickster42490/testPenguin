@@ -32,6 +32,7 @@ class Dashboard extends Component {
   }
 
   componentWillMount() {
+    window.scrollTo(0, 0);
     axios.get("/testAttempts").then(d => {
       this.setState({
         candidateList: d.data
