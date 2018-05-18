@@ -35,10 +35,6 @@ router.get("/type/:type/:id", (req, res) => {
     });
 });
 
-router.get("/issued", (req, res) => {
-  return req.db.any("SELECT * FROM test_attempts"); //aggregate by test_id
-});
-
 router.get("/id/:id/questions", (req, res) => {
   return req.db
     .any("SELECT * FROM tests where id = $1", [req.params.id])
@@ -91,6 +87,34 @@ router.post("/create/addQuestions/:id", (req, res) => {
     )
     .then(data => {
       console.log(data);
+      return res.send(data);
+    });
+});
+
+router.post("/issued", (req, res) => {
+  return req.db
+    .any(
+      "SELECT a.*, t.* FROM (SELECT count(test_id) as count, test_id FROM test_attempts GROUP BY test_id) a LEFT JOIN tests t ON a.test_id = t.id"
+    )
+    .then(data => {
+      let filteredData = data.filter(i => {
+        if (i.type === "custom") {
+          return i.created_by === req.params.userId;
+        } else {
+          return true;
+        }
+      });
+      return res.send(filteredData);
+    });
+});
+
+router.post("/issued/:id", (req, res) => {
+  return req.db
+    .any(
+      "SELECT a.*, t.* FROM (SELECT count(test_id) as count, test_id FROM test_attempts GROUP BY test_id) a LEFT JOIN tests t ON a.test_id = t.id where a.test_id = $1",
+      [req.params.id]
+    )
+    .then(data => {
       return res.send(data);
     });
 });

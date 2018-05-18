@@ -8,48 +8,35 @@ import {
   ButtonToolbar,
   Progress
 } from "reactstrap";
+import axios from "axios";
+import localForage from "localforage";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 
-const mockData = [
-  {
-    testName: "A/P Clerk",
-    estimatedTime: "60",
-    mcNumber: 6,
-    fbNumber: 12,
-    moduleNumber: 2,
-    candidatesTested: 44,
-    testType: "Pre-Built"
-  },
-  {
-    testName: "BookKeeper",
-    estimatedTime: "60",
-    mcNumber: 6,
-    fbNumber: 12,
-    moduleNumber: 2,
-    candidatesTested: 5,
-    testType: "Custom"
-  },
-  {
-    testName: "Assistant Controller",
-    estimatedTime: "60",
-    mcNumber: 6,
-    fbNumber: 12,
-    moduleNumber: 2,
-    candidatesTested: 88,
-    testType: "Custom"
-  }
-];
+const typeMap = {
+  custom: "Custom",
+  pre_built: "Pre-Built"
+};
 
-export default class QuestionLibrary extends Component {
+export default class IssuedTests extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {};
+    this.state = {
+      tests: undefined
+    };
   }
 
   componentWillMount() {
     window.scrollTo(0, 0);
+    localForage.getItem("userId").then(id => {
+      axios.post("/tests/issued", { userId: id }).then(d => {
+        console.log(d);
+        this.setState({
+          tests: d.data
+        });
+      });
+    });
   }
 
   render() {
@@ -59,12 +46,12 @@ export default class QuestionLibrary extends Component {
           <Col xs="12">
             <ReactTable
               style={{ backgroundColor: "white" }}
-              data={mockData}
+              data={this.state.tests}
               sortable={false}
               columns={[
                 {
                   Header: "Name",
-                  accessor: "testName",
+                  accessor: "name",
                   Cell: cell => (
                     <div
                       style={{
@@ -87,35 +74,32 @@ export default class QuestionLibrary extends Component {
                       <div>
                         <div>
                           <strong>Estimated Time: </strong>
-                          {cell.original.estimatedTime} mins
+                          {cell.original.estimated_time} mins
                           {/* will want to use moment duration fomrat */}
                         </div>
                         <div>
                           <strong>Questions: </strong>
-                          {cell.original.mcNumber} Multiple Choice,
-                          {cell.original.fbNumber} Fill In Blank,
-                          {cell.original.moduleNumber} Modules
+                          {cell.original.question_types.multiple_choice ||
+                            "0"}{" "}
+                          Multiple Choice,
+                          {cell.original.question_types.module || "0"} Modules
                         </div>
                         <div>
                           <strong>Type : </strong>
-                          {cell.original.testType}
+                          {typeMap[cell.original.type]}
                         </div>
                       </div>
                     );
                   }
                 },
                 {
-                  Header: "Details",
+                  Header: "Candidates",
                   Cell: cell => {
                     return (
                       <div>
                         <div>
                           <strong>Candidates Tested: </strong>
-                          {cell.original.candidatesTested}
-                        </div>
-                        <div>
-                          <strong>Type : </strong>
-                          {cell.original.testType}
+                          {cell.original.count}
                         </div>
                       </div>
                     );
