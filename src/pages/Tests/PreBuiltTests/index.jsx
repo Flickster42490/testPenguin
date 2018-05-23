@@ -19,16 +19,18 @@ export default class PreBuiltTests extends Component {
     super(props);
 
     this.state = {
-      tests: []
+      tests: [],
+      loading: true
     };
   }
 
   componentWillMount() {
     window.scrollTo(0, 0);
-    axios.get("/tests/type/pre_built").then(d => {
+    axios.post("/tests/type/pre_built").then(d => {
       this.setState(
         {
-          tests: d.data
+          tests: d.data,
+          loading: false
         },
         () => {
           let page = window.location.hash.split("tests/")[1];
@@ -38,17 +40,35 @@ export default class PreBuiltTests extends Component {
     });
   }
 
+  componentWillReceiveProps(np) {
+    if (np.filters && Object.keys(np.filters).length > 0) {
+      axios.post("/tests/type/pre_built", { filters: np.filters }).then(d => {
+        this.setState({
+          tests: d.data,
+          loading: false
+        });
+      });
+    }
+  }
+
   render() {
-    const { tests } = this.state;
+    const { tests, loading } = this.state;
     return (
       <div>
-        <Preloader loading={tests.length < 1}>
+        <div style={{ paddingBottom: "10px" }}>
+          <h2 style={{ display: "inline" }}>&nbsp;Pre-Built Tests</h2>&nbsp;&nbsp;&nbsp;&nbsp;
+          <h6 style={{ display: "inline" }}>
+            These are the system generated pre-built tests
+          </h6>
+        </div>
+        <Preloader loading={loading}>
           <Row>
             <Col xs="12">
               <ReactTable
                 style={{ backgroundColor: "white" }}
                 data={tests}
                 sortable={false}
+                noDataText={`No Pre-Built Tests Matched Your Criteria. Please Try Again.`}
                 columns={[
                   {
                     Header: "Test Name",

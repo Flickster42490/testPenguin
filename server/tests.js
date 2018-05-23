@@ -16,22 +16,54 @@ router.get("/:id", (req, res) => {
     });
 });
 
-router.get("/type/:type", (req, res) => {
+router.post("/type/:type", (req, res) => {
+  let filters = req.body.filters || undefined;
   return req.db
     .any("SELECT * FROM tests where type = $1", [req.params.type])
     .then(data => {
-      return res.send(data);
+      let d = data;
+      if (
+        filters &&
+        filters.preBuiltTests &&
+        filters.preBuiltTests.length > 0
+      ) {
+        d = d.filter(i => {
+          return filters.preBuiltTests.includes(i.name);
+        });
+      }
+      if (filters && filters.testCategory && filters.testCategory !== "all") {
+        d = d.filter(i => {
+          if (i.tags) {
+            return i.tags.includes(filters.testCategory.trim());
+          }
+        });
+      }
+      return res.send(d);
     });
 });
 
-router.get("/type/:type/:id", (req, res) => {
+router.post("/type/:type/:id", (req, res) => {
+  let filters = req.body.filters || undefined;
   return req.db
     .any("SELECT * FROM tests where type = $1 and created_by = $2", [
       req.params.type,
       req.params.id
     ])
     .then(data => {
-      return res.send(data);
+      let d = data;
+      if (filters && filters.customTests && filters.customTests.length > 0) {
+        d = d.filter(i => {
+          return filters.customTests.includes(i.name);
+        });
+      }
+      if (filters && filters.testCategory && filters.testCategory !== "all") {
+        d = d.filter(i => {
+          if (i.tags) {
+            return i.tags.includes(filters.testCategory.trim());
+          }
+        });
+      }
+      return res.send(d);
     });
 });
 
@@ -98,7 +130,7 @@ router.post("/issued", (req, res) => {
       "SELECT a.*, t.* FROM (SELECT count(test_id) as count, test_id FROM test_attempts GROUP BY test_id) a LEFT JOIN tests t ON a.test_id = t.id"
     )
     .then(data => {
-      d = data.filter(i => {
+      let d = data.filter(i => {
         if (i.type === "custom") {
           return i.created_by === req.params.userId;
         } else {

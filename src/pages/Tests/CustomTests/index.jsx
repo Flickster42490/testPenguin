@@ -34,21 +34,51 @@ export default class CustomTests extends Component {
           userId: id
         },
         () => {
-          axios.get(`/tests/type/custom/${this.state.userId}`).then(d => {
-            this.setState({
-              tests: d.data,
-              loading: false
-            });
+          axios.post(`/tests/type/custom/${this.state.userId}`).then(d => {
+            this.setState(
+              {
+                tests: d.data,
+                loading: false
+              },
+              () => {
+                let page = window.location.hash.split("tests/")[1];
+                this.props.handlePageUpdate(page);
+              }
+            );
           });
         }
       );
     });
   }
 
+  componentWillReceiveProps(np) {
+    if (np.filters && Object.keys(np.filters).length > 0 && this.state.userId) {
+      axios
+        .post(`/tests/type/custom/${this.state.userId}`, {
+          filters: np.filters
+        })
+        .then(d => {
+          this.setState({
+            tests: d.data,
+            loading: false
+          });
+        });
+    }
+  }
+
   render() {
     const { tests, loading } = this.state;
     return (
       <div>
+        <div style={{ paddingBottom: "10px" }}>
+          {" "}
+          <h2 style={{ display: "inline" }}>
+            &nbsp;Custom Tests
+          </h2>&nbsp;&nbsp;&nbsp;&nbsp;
+          <h6 style={{ display: "inline" }}>
+            You will find your custom-built tests here
+          </h6>
+        </div>
         <Preloader loading={loading}>
           <Row>
             <Col xs="12">
@@ -56,7 +86,7 @@ export default class CustomTests extends Component {
                 style={{ backgroundColor: "white" }}
                 data={tests}
                 sortable={false}
-                noDataText={`Please go to the Create New Tests tab to create a custom test`}
+                noDataText={`No Custom Tests Matched Your Criteria. Please Try Again Or Go To 'Create New Test'.`}
                 columns={[
                   {
                     Header: "Test Name",

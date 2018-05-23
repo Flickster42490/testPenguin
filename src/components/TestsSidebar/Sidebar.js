@@ -87,6 +87,18 @@ class Sidebar extends Component {
     });
   }
 
+  componentWillReceiveProps(np) {
+    localForage.getItem("userId").then(id => {
+      axios
+        .post("/sidebar/tests", { page: this.props.page, userId: id })
+        .then(d => {
+          this.setState({
+            options: d.data
+          });
+        });
+    });
+  }
+
   handleAddFilters(type, value) {
     let newFilter = {};
     newFilter[type] = value;
@@ -225,7 +237,16 @@ class Sidebar extends Component {
             this.state.options && (
               <Row className="sidebar-row">
                 Categories: <br />
-                <ButtonGroup size="sm" vertical block>
+                <ButtonGroup
+                  size="sm"
+                  vertical
+                  block
+                  style={{
+                    marginTop: "5px",
+                    marginBottom: "10px",
+                    width: "160px"
+                  }}
+                >
                   <Button
                     outline
                     color="secondary"
@@ -245,7 +266,7 @@ class Sidebar extends Component {
             this.state.options && (
               <div>
                 <Row className="sidebar-row">
-                  By Difficulty <br />
+                  By Difficulty: <br />
                   <Select
                     options={this.state.options.difficulty}
                     clearable
@@ -258,26 +279,6 @@ class Sidebar extends Component {
                 </Row>
                 <br />
               </div>
-            )}
-          {["preBuiltTests", "customTests"].includes(this.props.page) &&
-            this.state.options && (
-              <Row className="sidebar-row">
-                Categories: <br />
-                <ButtonGroup size="sm" vertical block>
-                  <Button
-                    outline
-                    color="secondary"
-                    active={this.state.testCategoryValue === "all"}
-                    onClick={() => this.updateTestCategoryValue("all")}
-                  >
-                    All
-                  </Button>
-                  {this.renderTestCategoryButtons(
-                    this.state.options.testCategories
-                  )}
-                </ButtonGroup>
-                <br />
-              </Row>
             )}
           {["issuedTests"].includes(this.props.page) &&
             this.state.options && (
@@ -333,18 +334,35 @@ class Sidebar extends Component {
                 <br />
               </div>
             )}
-          {/* {["issuedTests"].includes(this.props.page) && (
-            <div>
+          {["preBuiltTests", "customTests"].includes(this.props.page) &&
+            this.state.options && (
               <Row className="sidebar-row">
+                Categories: <br />
+                <ButtonGroup
+                  size="sm"
+                  vertical
+                  block
+                  style={{
+                    marginTop: "5px",
+                    marginBottom: "10px",
+                    width: "160px"
+                  }}
+                >
+                  <Button
+                    outline
+                    color="secondary"
+                    active={this.state.testCategoryValue === "all"}
+                    onClick={() => this.updateTestCategoryValue("all")}
+                  >
+                    All
+                  </Button>
+                  {this.renderTestCategoryButtons(
+                    this.state.options.testCategories
+                  )}
+                </ButtonGroup>
                 <br />
-                <label>
-                  Search Archived: <br />
-                  <Toggle defaultChecked />
-                </label>
               </Row>
-              <br />
-            </div>
-          )} */}
+            )}
         </Container>
       </div>
     );

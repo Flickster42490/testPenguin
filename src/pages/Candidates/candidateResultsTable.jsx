@@ -29,6 +29,7 @@ export default props => (
     style={{ backgroundColor: "white" }}
     data={props.candidateList}
     sortable={false}
+    noDataText={`No Candidates Matched Your Criteria. Please Try Again.`}
     columns={[
       {
         Header: "Candidate",

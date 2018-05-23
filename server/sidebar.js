@@ -101,8 +101,8 @@ router.post("/tests", (req, res) => {
       testCategories.forEach(i => {
         tCat = tCat.concat(i.tags);
       });
-      console.log(testCategories, tCat);
-      result.testCategories = tCat.map(i => ({
+      let filteredTCat = _.uniqBy(tCat);
+      result.testCategories = filteredTCat.map(i => ({
         value: i,
         label: i
       }));

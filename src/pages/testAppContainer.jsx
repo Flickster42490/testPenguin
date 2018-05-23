@@ -71,7 +71,6 @@ export default class TestAppContainer extends Component {
   }
 
   render() {
-    console.log("state.loggedIn", this.state.loggedIn);
     return (
       <div className="app">
         {/* {this.state.loggedIn && ( */}

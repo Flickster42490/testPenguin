@@ -126,7 +126,16 @@ class Sidebar extends Component {
           </Row>
           <Row className="sidebar-row">
             By Test Status: <br />
-            <ButtonGroup size="sm" vertical block>
+            <ButtonGroup
+              size="sm"
+              vertical
+              block
+              style={{
+                marginTop: "5px",
+                marginBottom: "10px",
+                width: "160px"
+              }}
+            >
               <Button
                 outline
                 color="secondary"

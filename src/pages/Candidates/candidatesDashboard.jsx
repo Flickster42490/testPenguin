@@ -26,7 +26,8 @@ class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      candidateList: []
+      candidateList: [],
+      loading: true
     };
   }
 
@@ -34,7 +35,8 @@ class Dashboard extends Component {
     window.scrollTo(0, 0);
     axios.post("/testAttempts").then(d => {
       this.setState({
-        candidateList: d.data
+        candidateList: d.data,
+        loading: false
       });
     });
   }
@@ -43,7 +45,8 @@ class Dashboard extends Component {
     axios.post("/testAttempts", { filters: np.filters || {} }).then(d => {
       this.setState(
         {
-          candidateList: d.data
+          candidateList: d.data,
+          loading: false
         },
         () => this.forceUpdate()
       );
@@ -51,10 +54,19 @@ class Dashboard extends Component {
   }
 
   render() {
-    const { candidateList } = this.state;
+    const { candidateList, loading } = this.state;
     return (
       <div>
-        <Preloader loading={candidateList.length < 1}>
+        <div style={{ paddingBottom: "10px" }}>
+          {" "}
+          <h2 style={{ display: "inline" }}>
+            &nbsp;Candidates
+          </h2>&nbsp;&nbsp;&nbsp;&nbsp;
+          <h6 style={{ display: "inline" }}>
+            You will find your active candidates here
+          </h6>
+        </div>
+        <Preloader loading={loading}>
           <Row>
             <Col xs="12">
               <CandidateResults candidateList={candidateList} />

@@ -27,6 +27,7 @@ export default class App extends Component {
   }
 
   handlePageUpdate(e) {
+    console.log("page ------>", e);
     this.setState({
       page: e
     });

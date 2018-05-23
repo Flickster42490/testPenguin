@@ -4,8 +4,7 @@ module.exports = router;
 router.post("/", (req, res) => {
   const filters = req.body.filters || undefined;
   return req.db.any("SELECT * FROM questions").then(data => {
-    d = data;
-    console.log(filters);
+    let d = data;
     if (
       filters &&
       filters.questionCategory &&
