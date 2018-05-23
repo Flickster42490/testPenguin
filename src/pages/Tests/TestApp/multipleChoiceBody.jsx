@@ -19,10 +19,12 @@ import FontAwesome from "react-fontawesome";
 export default class MultipleChoiceBody extends Component {
   constructor(props) {
     super(props);
-
+    console.log(props);
     this.state = {
       question: props.question,
-      preview: props.preview || props.review,
+      questionAnswered: props.questionAnswered || undefined,
+      preview: props.preview,
+      review: props.review,
       currentSelectedIdx: null
     };
   }
@@ -30,7 +32,8 @@ export default class MultipleChoiceBody extends Component {
   componentWillReceiveProps(props) {
     this.setState(
       {
-        question: this.props.question
+        question: this.props.question,
+        questionAnswered: this.props.questionAnswered
       },
       () => {
         this.forceUpdate();
@@ -52,7 +55,13 @@ export default class MultipleChoiceBody extends Component {
   }
 
   render() {
-    const { question, preview, currentSelectedIdx } = this.state;
+    const {
+      question,
+      questionAnswered,
+      preview,
+      review,
+      currentSelectedIdx
+    } = this.state;
     return (
       <div>
         <CardBody>
@@ -65,20 +74,67 @@ export default class MultipleChoiceBody extends Component {
               />
             </CardHeader>
             <CardBody className="transparent-card-body">
-              {question.mc_choices.map((i, idx) => (
-                <Button
-                  color="secondary"
-                  active={currentSelectedIdx === idx}
-                  outline
-                  block
-                  key={idx}
-                  data-id={i.id}
-                  onClick={() => this.toggleSelected(idx, i)}
-                >
-                  {i.value}
-                </Button>
-              ))}
+              {!preview &&
+                !review &&
+                question.mc_choices.map((i, idx) => {
+                  return (
+                    <div className="radio">
+                      <label>
+                        <input
+                          type="radio"
+                          value={i.id}
+                          checked={
+                            questionAnswered &&
+                            questionAnswered.mc_candidate_answer === i.id
+                          }
+                          onChange={() => this.toggleSelected(idx, i)}
+                        />
+                        &nbsp;&nbsp;{i.value}
+                      </label>
+                    </div>
+                  );
+                })}
               {preview && (
+                <div>
+                  {question.mc_choices.map((i, idx) => {
+                    return (
+                      <div className="radio">
+                        <label>
+                          <input
+                            type="radio"
+                            value={i.id}
+                            checked={question.mc_answer === i.id}
+                            disabled
+                          />
+                          &nbsp;&nbsp;{i.value}
+                        </label>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {review && (
+                <div>
+                  {question.mc_choices.map((i, idx) => {
+                    return (
+                      <div className="radio">
+                        <label>
+                          <input
+                            type="radio"
+                            value={i.id}
+                            checked={
+                              questionAnswered.mc_candidate_answer === i.id
+                            }
+                            disabled
+                          />
+                          &nbsp;&nbsp;{i.value}
+                        </label>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {(preview || review) && (
                 <div>
                   <br />
                   <strong>Correct Answer:&nbsp;</strong>

@@ -23,8 +23,11 @@ export default class PreviewMultipleChoice extends Component {
     this.state = {
       question: this.props.question[0],
       returnTo: null,
-      returnToTestId: null
+      returnToTestId: null,
+      selectedOption: undefined
     };
+
+    this.handleOptionChange = this.handleOptionChange.bind(this);
   }
 
   componentWillMount() {
@@ -38,6 +41,13 @@ export default class PreviewMultipleChoice extends Component {
       returnToTestId: returnToTestId
     });
   }
+
+  handleOptionChange(e) {
+    this.setState({
+      selectedOption: e.target.value
+    });
+  }
+
   render() {
     const { question, returnTo, returnToTestId } = this.state;
     return (
@@ -81,15 +91,17 @@ export default class PreviewMultipleChoice extends Component {
               </CardHeader>
               <CardBody className="transparent-card-body">
                 {question.mc_choices.map((i, idx) => (
-                  <Button
-                    color="secondary"
-                    outline
-                    block
-                    key={idx}
-                    data-id={i.id}
-                  >
-                    {i.value}
-                  </Button>
+                  <div className="radio">
+                    <label>
+                      <input
+                        type="radio"
+                        value={i.id}
+                        checked={this.state.selectedOption === i.id}
+                        onChange={this.handleOptionChange}
+                      />
+                      &nbsp;&nbsp;{i.value}
+                    </label>
+                  </div>
                 ))}
                 <br />
                 <strong>Correct Answer:&nbsp;</strong>

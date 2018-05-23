@@ -75,7 +75,6 @@ export default class testBasics extends Component {
         userId: this.state.userId
       })
       .then(d => {
-        console.log(d);
         let testId = d.data[0].id;
         hashHistory.push(
           `dashboard/tests/createNewTest/addQuestions?id=${testId}`

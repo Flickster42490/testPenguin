@@ -97,6 +97,7 @@ export default class TestApp extends Component {
             let candidateAnswers = saved
               ? saved.data[0].candidate_answers
               : null;
+            console.log("REVIEW AND PREVIEW", review, preview);
             this.setState(
               {
                 questions: d.data,
@@ -258,7 +259,7 @@ export default class TestApp extends Component {
             <Card className="module-container-card">
               <CardHeader className="preview-title">
                 <Row>
-                  <Col md="5">
+                  <Col md="4">
                     {preview &&
                       !review && (
                         <h3>
@@ -293,7 +294,7 @@ export default class TestApp extends Component {
                         />
                       )}
                   </Col>
-                  <Col md="3">
+                  <Col md="4">
                     {currentIdx !== lastIdx &&
                       !review && (
                         <Button
