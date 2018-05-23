@@ -93,6 +93,11 @@ export default class QuestionLibrary extends Component {
     const { questions, typeCount, loading } = this.state;
     return (
       <div>
+        {!this.props.addQuestions && (
+          <div style={{ paddingBottom: "10px" }}>
+            <h2 style={{ display: "inline" }}>&nbsp;Question Library</h2>&nbsp;&nbsp;&nbsp;&nbsp;
+          </div>
+        )}
         <Preloader loading={loading}>
           <Row>
             <Col xs="12">

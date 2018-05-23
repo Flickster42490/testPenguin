@@ -77,6 +77,7 @@ export default class Dashboard extends Component {
           <div>
             <Header />
             {this.props.children}
+            <Footer class="footer" />
           </div>
         )}
       </div>

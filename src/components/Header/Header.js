@@ -159,9 +159,9 @@ class Header extends Component {
         </Nav>
         <Nav className="ml-auto" navbar>
           {/* on the right side */}
-          <NavItem className="d-md-down-none">
+          {/* <NavItem className="d-md-down-none">
             <a href="#">Upgrade Today</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          </NavItem>
+          </NavItem> */}
           <NavItem className="d-md-down-none">
             {this.state.user && (
               <strong>Hi {this.state.user.first_name}!</strong>

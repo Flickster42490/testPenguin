@@ -143,15 +143,21 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+.app-body {
+  margin-bottom: 60px;
+}
+.app-footer {
+  position: fixed !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 40px !important;
+}
+
 .btn {
   z-index: 0 !important;
 }
 .card-footer {
   background-color: #fff;
-}
-
-.text-align-center {
-  text-align: center;
 }
 
 .float-right {
@@ -205,6 +211,10 @@
       color: slategray;
     }
   }
+}
+
+.text-align-center {
+  text-align: center;
 }
 
 .transparent-card {

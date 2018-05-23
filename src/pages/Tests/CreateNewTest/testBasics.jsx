@@ -32,7 +32,8 @@ export default class testBasics extends Component {
     this.state = {
       name: "",
       description: "",
-      userId: undefined
+      userId: undefined,
+      disableNext: true
     };
     this.handleNext = this.handleNext.bind(this);
     this.handleName = this.handleName.bind(this);
@@ -55,7 +56,8 @@ export default class testBasics extends Component {
 
   handleName(e) {
     this.setState({
-      name: e.target.value
+      name: e.target.value,
+      disableNext: e.target.value ? false : true
     });
   }
 
@@ -144,7 +146,11 @@ export default class testBasics extends Component {
             <br />
             <Row style={{ float: "right" }}>
               <Col xs="4">
-                <Button color="success" onClick={() => this.handleNext()}>
+                <Button
+                  color="success"
+                  onClick={() => this.handleNext()}
+                  disabled={this.state.disableNext}
+                >
                   Next
                 </Button>
               </Col>

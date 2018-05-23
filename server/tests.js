@@ -34,7 +34,7 @@ router.post("/type/:type", (req, res) => {
       if (filters && filters.testCategory && filters.testCategory !== "all") {
         d = d.filter(i => {
           if (i.tags) {
-            return i.tags.includes(filters.testCategory.trim());
+            return i.tags.includes(filters.testCategory);
           }
         });
       }
@@ -59,7 +59,7 @@ router.post("/type/:type/:id", (req, res) => {
       if (filters && filters.testCategory && filters.testCategory !== "all") {
         d = d.filter(i => {
           if (i.tags) {
-            return i.tags.includes(filters.testCategory.trim());
+            return i.tags.includes(filters.testCategory);
           }
         });
       }
