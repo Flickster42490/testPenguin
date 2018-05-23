@@ -1,10 +1,28 @@
 const router = require("express").Router();
 module.exports = router;
 
-router.get("/", (req, res) => {
+router.post("/", (req, res) => {
+  const filters = req.body.filters || undefined;
   return req.db.any("SELECT * FROM questions").then(data => {
-    console.log("number of results: ", data.length);
-    return res.send(data);
+    d = data;
+    console.log(filters);
+    if (
+      filters &&
+      filters.questionCategory &&
+      filters.questionCategory !== "all"
+    ) {
+      d = d.filter(i => {
+        if (i.tags) {
+          return i.tags.includes(filters.questionCategory.trim());
+        }
+      });
+    }
+    if (filters && filters.difficulty && filters.difficulty.length > 0) {
+      d = d.filter(i => {
+        return filters.difficulty.includes(i.difficulty);
+      });
+    }
+    return res.send(d);
   });
 });
 

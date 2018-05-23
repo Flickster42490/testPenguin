@@ -23,21 +23,43 @@ export default class QuestionLibrary extends Component {
     this.state = {
       questions: [],
       typeCount: {},
-      addQuestions: false
+      addQuestions: false,
+      loading: true
     };
 
     this.findTypeCount = this.findTypeCount.bind(this);
   }
 
   componentWillMount() {
-    axios.get("/questions").then(d => {
+    axios.post("/questions").then(d => {
       let typeCount = this.findTypeCount(d.data);
-      this.setState({
-        typeCount: typeCount,
-        questions: d.data,
-        addQuestions: this.props.addQuestions
-      });
+      this.setState(
+        {
+          typeCount: typeCount,
+          questions: d.data,
+          addQuestions: this.props.addQuestions,
+          loading: false
+        },
+        () => {
+          let page = window.location.hash.split("tests/")[1];
+          this.props.handlePageUpdate(page);
+        }
+      );
     });
+  }
+
+  componentWillReceiveProps(np) {
+    if (np.filters && Object.keys(np.filters).length > 0) {
+      axios.post("/questions", { filters: np.filters }).then(d => {
+        let typeCount = this.findTypeCount(d.data);
+        this.setState({
+          typeCount: typeCount,
+          questions: d.data,
+          addQuestions: this.props.addQuestions,
+          loading: false
+        });
+      });
+    }
   }
 
   handleAddQuestion(q) {
@@ -68,32 +90,17 @@ export default class QuestionLibrary extends Component {
   }
 
   render() {
-    const { questions, typeCount } = this.state;
+    const { questions, typeCount, loading } = this.state;
     return (
       <div>
-        <Preloader loading={questions.length < 1}>
-          <Row style={{ textAlign: "center" }}>
-            <Col xs="12">
-              <ButtonGroup size="lg" block>
-                <Button outline color="default">
-                  All Question Types ({typeCount.total})
-                </Button>
-                <Button outline color="default">
-                  Multiple Choice ({typeCount.mc})
-                </Button>
-                <Button outline color="default">
-                  Module ({typeCount.module})
-                </Button>
-              </ButtonGroup>
-            </Col>
-          </Row>
-          <br />
+        <Preloader loading={loading}>
           <Row>
             <Col xs="12">
               <ReactTable
                 style={{ backgroundColor: "white" }}
                 data={questions}
                 sortable={false}
+                noDataText={`No Questions Matched Your Criteria. Please Try Again.`}
                 columns={[
                   {
                     Header: "Question Name",
@@ -146,6 +153,7 @@ export default class QuestionLibrary extends Component {
                   {
                     Header: "Categories",
                     accessor: "tags",
+                    maxWidth: 200,
                     Cell: cell => {
                       let tags = cell.value && cell.value.split(",");
                       return tags && tags.length > 0 ? (

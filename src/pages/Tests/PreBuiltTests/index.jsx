@@ -26,9 +26,15 @@ export default class PreBuiltTests extends Component {
   componentWillMount() {
     window.scrollTo(0, 0);
     axios.get("/tests/type/pre_built").then(d => {
-      this.setState({
-        tests: d.data
-      });
+      this.setState(
+        {
+          tests: d.data
+        },
+        () => {
+          let page = window.location.hash.split("tests/")[1];
+          this.props.handlePageUpdate(page);
+        }
+      );
     });
   }
 

@@ -32,9 +32,15 @@ export default class IssuedTests extends Component {
     localForage.getItem("userId").then(id => {
       axios.post("/tests/issued", { userId: id }).then(d => {
         console.log(d);
-        this.setState({
-          tests: d.data
-        });
+        this.setState(
+          {
+            tests: d.data
+          },
+          () => {
+            let page = window.location.hash.split("tests/")[1];
+            this.props.handlePageUpdate(page);
+          }
+        );
       });
     });
   }

@@ -33,7 +33,7 @@ class Sidebar extends Component {
       emailValue: "",
       startDate: undefined,
       endDate: undefined,
-      statusValue: "active",
+      statusValue: "all",
       filters: props.filters || {},
       options: undefined
     };
@@ -130,8 +130,8 @@ class Sidebar extends Component {
               <Button
                 outline
                 color="secondary"
-                active={this.state.statusValue == "active"}
-                onClick={() => this.updateStatusValue("active")}
+                active={this.state.statusValue == "all"}
+                onClick={() => this.updateStatusValue("all")}
               >
                 All Tests
               </Button>
