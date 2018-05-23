@@ -69,6 +69,15 @@ router.post("/tests", (req, res) => {
         label: i.name
       }));
       return req.db.any(
+        "SELECT a.*, t.* FROM (SELECT count(test_id) as count, test_id FROM test_attempts GROUP BY test_id) a LEFT JOIN tests t ON a.test_id = t.id"
+      );
+    })
+    .then(issued => {
+      result.issuedTests = issued.map(i => ({
+        value: i.name,
+        label: i.name
+      }));
+      return req.db.any(
         `SELECT DISTINCT name FROM tests where type = 'pre_built'`
       );
     })

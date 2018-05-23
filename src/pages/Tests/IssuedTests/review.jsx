@@ -46,7 +46,7 @@ export default class IssuedTestsReview extends Component {
     const queries = window.location.hash.split("?")[1];
     const { id } = queryString.parse(queries);
     axios.post(`/tests/issued/${id}`).then(d => {
-      axios.get("/testAttempts").then(a => {
+      axios.post("/testAttempts").then(a => {
         this.setState({
           test: d.data[0],
           completedCandidates: a.data.filter(i => i.completed_at) || [],

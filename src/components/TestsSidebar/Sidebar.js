@@ -54,6 +54,9 @@ class Sidebar extends Component {
       difficultyValue: undefined,
       testCategoryValue: "all",
       questionCategoryValue: "all",
+      issuedTestsValue: undefined,
+      customTestsValue: undefined,
+      preBuiltTestsValue: undefined,
       sliderValue: 50,
       statusValue: "all",
       filters: props.filters || {},
@@ -65,6 +68,9 @@ class Sidebar extends Component {
     this.updateQuestionCategoryValue = this.updateQuestionCategoryValue.bind(
       this
     );
+    this.updateCustomTestsValue = this.updateCustomTestsValue.bind(this);
+    this.updateIssuedTestsValue = this.updateIssuedTestsValue.bind(this);
+    this.updatePreBuiltTestsValue = this.updatePreBuiltTestsValue.bind(this);
     this.updateStatusValue = this.updateStatusValue.bind(this);
     this.handleAddFilters = this.handleAddFilters.bind(this);
   }
@@ -101,6 +107,39 @@ class Sidebar extends Component {
       },
       () => {
         this.handleAddFilters("difficulty", this.state.difficultyValue);
+      }
+    );
+  }
+
+  updateCustomTestsValue(newValue) {
+    this.setState(
+      {
+        customTestsValue: newValue.map(i => i.value)
+      },
+      () => {
+        this.handleAddFilters("customTests", this.state.customTestsValue);
+      }
+    );
+  }
+
+  updateIssuedTestsValue(newValue) {
+    this.setState(
+      {
+        issuedTestsValue: newValue.map(i => i.value)
+      },
+      () => {
+        this.handleAddFilters("issuedTests", this.state.issuedTestsValue);
+      }
+    );
+  }
+
+  updatePreBuiltTestsValue(newValue) {
+    this.setState(
+      {
+        preBuiltTestsValue: newValue.map(i => i.value)
+      },
+      () => {
+        this.handleAddFilters("preBuiltTests", this.state.preBuiltTestsValue);
       }
     );
   }
@@ -182,40 +221,6 @@ class Sidebar extends Component {
           >
             <h4>Search Filters</h4>
           </Row>
-          {/* {["issuedTests"].includes(this.props.page) && (
-            <div>
-              <Row className="sidebar-row">
-                By Test Status: <br />
-                <ButtonGroup size="sm" vertical block>
-                  <Button
-                    outline
-                    color="secondary"
-                    active={this.state.statusValue == "all"}
-                    onClick={() => this.updateStatusValue("all")}
-                  >
-                    All Tests
-                  </Button>
-                  <Button
-                    outline
-                    color="secondary"
-                    active={this.state.statusValue == "waiting"}
-                    onClick={() => this.updateStatusValue("waiting")}
-                  >
-                    Waiting For Test Results
-                  </Button>
-                  <Button
-                    outline
-                    color="secondary"
-                    active={this.state.statusValue == "completed"}
-                    onClick={() => this.updateStatusValue("completed")}
-                  >
-                    Tests Completed
-                  </Button>
-                </ButtonGroup>
-              </Row>
-              <br />
-            </div>
-          )} */}
           {["questionLibrary"].includes(this.props.page) &&
             this.state.options && (
               <Row className="sidebar-row">
@@ -274,25 +279,60 @@ class Sidebar extends Component {
                 <br />
               </Row>
             )}
-          {["issuedTests", "preBuiltTests", "customTests"].includes(
-            this.props.page
-          ) && (
-            <div>
-              <Row className="sidebar-row">
-                By Test Name: <br />
-                <Select
-                  options={userOptions}
-                  clearable
-                  searchable
-                  value={this.state.catValue}
-                  onChange={this.updateCatValue}
-                  multi
-                  removeSelected
-                />
-              </Row>
-              <br />
-            </div>
-          )}
+          {["issuedTests"].includes(this.props.page) &&
+            this.state.options && (
+              <div>
+                <Row className="sidebar-row">
+                  By Test Name: <br />
+                  <Select
+                    options={this.state.options.issuedTests}
+                    clearable
+                    searchable
+                    value={this.state.issuedTestsValue}
+                    onChange={this.updateIssuedTestsValue}
+                    multi
+                    removeSelected
+                  />
+                </Row>
+                <br />
+              </div>
+            )}
+          {["preBuiltTests"].includes(this.props.page) &&
+            this.state.options && (
+              <div>
+                <Row className="sidebar-row">
+                  By Test Name: <br />
+                  <Select
+                    options={this.state.options.preBuiltTests}
+                    clearable
+                    searchable
+                    value={this.state.preBuiltTestsValue}
+                    onChange={this.updatePreBuiltTestsValue}
+                    multi
+                    removeSelected
+                  />
+                </Row>
+                <br />
+              </div>
+            )}
+          {["customTests"].includes(this.props.page) &&
+            this.state.options && (
+              <div>
+                <Row className="sidebar-row">
+                  By Test Name: <br />
+                  <Select
+                    options={this.state.options.customTests}
+                    clearable
+                    searchable
+                    value={this.state.customTestsValue}
+                    onChange={this.updateCustomTestsValue}
+                    multi
+                    removeSelected
+                  />
+                </Row>
+                <br />
+              </div>
+            )}
           {/* {["issuedTests"].includes(this.props.page) && (
             <div>
               <Row className="sidebar-row">

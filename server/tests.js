@@ -92,19 +92,25 @@ router.post("/create/addQuestions/:id", (req, res) => {
 });
 
 router.post("/issued", (req, res) => {
+  let filters = req.body.filters || undefined;
   return req.db
     .any(
       "SELECT a.*, t.* FROM (SELECT count(test_id) as count, test_id FROM test_attempts GROUP BY test_id) a LEFT JOIN tests t ON a.test_id = t.id"
     )
     .then(data => {
-      let filteredData = data.filter(i => {
+      d = data.filter(i => {
         if (i.type === "custom") {
           return i.created_by === req.params.userId;
         } else {
           return true;
         }
       });
-      return res.send(filteredData);
+      if (filters && filters.issuedTests && filters.issuedTests.length > 0) {
+        d = d.filter(i => {
+          return filters.issuedTests.includes(i.name);
+        });
+      }
+      return res.send(d);
     });
 });
 

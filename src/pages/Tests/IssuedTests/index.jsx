@@ -45,6 +45,16 @@ export default class IssuedTests extends Component {
     });
   }
 
+  componentWillReceiveProps(np) {
+    if (np.filters && Object.keys(np.filters).length > 0) {
+      axios.post("/tests/issued", { filters: np.filters }).then(d => {
+        this.setState({
+          tests: d.data
+        });
+      });
+    }
+  }
+
   render() {
     return (
       <div>
