@@ -19,15 +19,12 @@ import FontAwesome from "react-fontawesome";
 export default class PreviewMultipleChoice extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
-      question: this.props.question[0],
+      question: props.question,
       returnTo: null,
       returnToTestId: null,
-      selectedOption: undefined
+      module: props.module
     };
-
-    this.handleOptionChange = this.handleOptionChange.bind(this);
   }
 
   componentWillMount() {
@@ -41,90 +38,111 @@ export default class PreviewMultipleChoice extends Component {
       returnToTestId: returnToTestId
     });
   }
-
-  handleOptionChange(e) {
-    this.setState({
-      selectedOption: e.target.value
-    });
-  }
-
   render() {
-    const { question, returnTo, returnToTestId } = this.state;
+    const { question, returnTo, returnToTestId, module } = this.state;
     return (
       <div>
-        <Card className="module-container-card">
-          <CardHeader className="preview-title">
-            <Row>
-              <Col md="10">
-                <h3>{question.name}</h3>
-              </Col>
-              <Col md="2">
-                {!returnTo && (
-                  <a
-                    href="#/dashboard/tests/questionLibrary"
-                    className="float-right"
-                  >
-                    <FontAwesome name="chevron-circle-left" size="2x" /> &nbsp;
-                    Go Back
-                  </a>
-                )}
-                {returnTo && (
-                  <a
-                    href={`${returnTo}?id=${returnToTestId}`}
-                    className="float-right"
-                  >
-                    <FontAwesome name="chevron-circle-left" size="2x" /> &nbsp;
-                    Go Back
-                  </a>
-                )}
-              </Col>
-            </Row>
-          </CardHeader>
-          <CardBody>
-            <Card className="transparent-card">
-              <CardHeader className="transparent-card-header">
-                <h4
-                  dangerouslySetInnerHTML={{
-                    __html: question.mc_stem
-                  }}
-                />
-              </CardHeader>
-              <CardBody className="transparent-card-body">
-                {question.mc_choices.map((i, idx) => (
-                  <div className="radio">
-                    <label>
-                      <input
-                        type="radio"
-                        value={i.id}
-                        checked={this.state.selectedOption === i.id}
-                        onChange={this.handleOptionChange}
-                      />
-                      &nbsp;&nbsp;{i.value}
-                    </label>
-                  </div>
-                ))}
-                <br />
-                <strong>Correct Answer:&nbsp;</strong>
-                {_.find(question.mc_choices, { id: question.mc_answer }).value}
-              </CardBody>
-            </Card>
-            <br />
-          </CardBody>
-          <CardFooter>
-            <Card className="transparent-card">
-              <CardHeader className="transparent-card-header">
-                <strong>Question Notes:</strong>
-              </CardHeader>
-              <CardBody className="transparent-card-body">
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html: question.notes
-                  }}
-                />
-              </CardBody>
-            </Card>
-          </CardFooter>
-        </Card>
+        {!module && (
+          <Card className="module-container-card">
+            <CardHeader className="preview-title">
+              <Row>
+                <Col md="10">
+                  <h3>{question.name}</h3>
+                </Col>
+                <Col md="2">
+                  {!returnTo && (
+                    <a
+                      href="#/dashboard/tests/questionLibrary"
+                      className="float-right"
+                    >
+                      <FontAwesome name="chevron-circle-left" size="2x" />{" "}
+                      &nbsp; Go Back
+                    </a>
+                  )}
+                  {returnTo && (
+                    <a
+                      href={`${returnTo}?id=${returnToTestId}`}
+                      className="float-right"
+                    >
+                      <FontAwesome name="chevron-circle-left" size="2x" />{" "}
+                      &nbsp; Go Back
+                    </a>
+                  )}
+                </Col>
+              </Row>
+            </CardHeader>
+            <CardBody>
+              <Card className="transparent-card">
+                <CardHeader className="transparent-card-header">
+                  <h4
+                    dangerouslySetInnerHTML={{
+                      __html: question.mc_stem
+                    }}
+                  />
+                </CardHeader>
+                <CardBody className="transparent-card-body">
+                  {question.mc_choices.map((i, idx) => (
+                    <div className="radio">
+                      <label>
+                        <input
+                          type="radio"
+                          value={i.id}
+                          checked={question.mc_answer === i.id}
+                          disabled
+                        />
+                        &nbsp;&nbsp;{i.value}
+                      </label>
+                    </div>
+                  ))}
+                  <br />
+                  <strong>Correct Answer:&nbsp;</strong>
+                  {
+                    _.find(question.mc_choices, { id: question.mc_answer })
+                      .value
+                  }
+                </CardBody>
+              </Card>
+              <br />
+            </CardBody>
+            <CardFooter>
+              <Card className="transparent-card">
+                <CardHeader className="transparent-card-header">
+                  <strong>Question Notes:</strong>
+                </CardHeader>
+                <CardBody className="transparent-card-body">
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: question.notes
+                    }}
+                  />
+                </CardBody>
+              </Card>
+            </CardFooter>
+          </Card>
+        )}
+        {module && (
+          <div>
+            <h5
+              dangerouslySetInnerHTML={{
+                __html: question.mc_stem
+              }}
+            />
+            {question.mc_choices.map((i, idx) => (
+              <div className="radio">
+                <label>
+                  <input
+                    type="radio"
+                    value={i.id}
+                    checked={question.mc_answer === i.id}
+                    disabled
+                  />
+                  &nbsp;&nbsp;{i.value}
+                </label>
+              </div>
+            ))}
+          </div>
+        )}
+        <br />
       </div>
     );
   }

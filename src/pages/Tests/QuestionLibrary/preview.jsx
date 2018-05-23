@@ -23,7 +23,6 @@ export default class Preview extends Component {
     axios.get(`/questions/id/${questionId}`).then(d => {
       this.setState({ question: d.data }, () => {
         console.log(this.state.question);
-        this.forceUpdate();
       });
     });
   }
@@ -43,7 +42,7 @@ export default class Preview extends Component {
             )}
           {question[0] &&
             question[0].type === "multiple_choice" && (
-              <MultipleChoice question={question} />
+              <MultipleChoice question={question[0]} />
             )}
         </Preloader>
       </div>
