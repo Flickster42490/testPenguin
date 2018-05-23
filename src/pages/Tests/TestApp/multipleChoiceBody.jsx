@@ -25,6 +25,7 @@ export default class MultipleChoiceBody extends Component {
       questionAnswered: props.questionAnswered || undefined,
       preview: props.preview,
       review: props.review,
+      module: props.module || false,
       currentSelectedIdx: null
     };
   }
@@ -60,62 +61,25 @@ export default class MultipleChoiceBody extends Component {
       questionAnswered,
       preview,
       review,
+      module,
       currentSelectedIdx
     } = this.state;
     return (
       <div>
-        <CardBody>
-          <Card className="transparent-card">
-            <CardHeader className="transparent-card-header">
-              <h4
-                dangerouslySetInnerHTML={{
-                  __html: question.mc_stem
-                }}
-              />
-            </CardHeader>
-            <CardBody className="transparent-card-body">
-              {!preview &&
-                !review &&
-                question.mc_choices.map((i, idx) => {
-                  return (
-                    <div className="radio">
-                      <label>
-                        <input
-                          type="radio"
-                          value={i.id}
-                          checked={
-                            questionAnswered &&
-                            questionAnswered.mc_candidate_answer === i.id
-                          }
-                          onChange={() => this.toggleSelected(idx, i)}
-                        />
-                        &nbsp;&nbsp;{i.value}
-                      </label>
-                    </div>
-                  );
-                })}
-              {preview && (
-                <div>
-                  {question.mc_choices.map((i, idx) => {
-                    return (
-                      <div className="radio">
-                        <label>
-                          <input
-                            type="radio"
-                            value={i.id}
-                            checked={question.mc_answer === i.id}
-                            disabled
-                          />
-                          &nbsp;&nbsp;{i.value}
-                        </label>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-              {review && (
-                <div>
-                  {question.mc_choices.map((i, idx) => {
+        {!module && (
+          <CardBody>
+            <Card className="transparent-card">
+              <CardHeader className="transparent-card-header">
+                <h4
+                  dangerouslySetInnerHTML={{
+                    __html: question.mc_stem
+                  }}
+                />
+              </CardHeader>
+              <CardBody className="transparent-card-body">
+                {!preview &&
+                  !review &&
+                  question.mc_choices.map((i, idx) => {
                     return (
                       <div className="radio">
                         <label>
@@ -123,31 +87,94 @@ export default class MultipleChoiceBody extends Component {
                             type="radio"
                             value={i.id}
                             checked={
+                              questionAnswered &&
                               questionAnswered.mc_candidate_answer === i.id
                             }
-                            disabled
+                            onChange={() => this.toggleSelected(idx, i)}
                           />
                           &nbsp;&nbsp;{i.value}
                         </label>
                       </div>
                     );
                   })}
-                </div>
-              )}
-              {(preview || review) && (
-                <div>
-                  <br />
-                  <strong>Correct Answer:&nbsp;</strong>
-                  {
-                    _.find(question.mc_choices, { id: question.mc_answer })
-                      .value
-                  }
-                </div>
-              )}
-            </CardBody>
-          </Card>
-          <br />
-        </CardBody>
+                {preview && (
+                  <div>
+                    {question.mc_choices.map((i, idx) => {
+                      return (
+                        <div className="radio">
+                          <label>
+                            <input
+                              type="radio"
+                              value={i.id}
+                              checked={question.mc_answer === i.id}
+                              disabled
+                            />
+                            &nbsp;&nbsp;{i.value}
+                          </label>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+                {review && (
+                  <div>
+                    {question.mc_choices.map((i, idx) => {
+                      return (
+                        <div className="radio">
+                          <label>
+                            <input
+                              type="radio"
+                              value={i.id}
+                              checked={
+                                questionAnswered.mc_candidate_answer === i.id
+                              }
+                              disabled
+                            />
+                            &nbsp;&nbsp;{i.value}
+                          </label>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+                {(preview || review) && (
+                  <div>
+                    <br />
+                    <strong>Correct Answer:&nbsp;</strong>
+                    {
+                      _.find(question.mc_choices, { id: question.mc_answer })
+                        .value
+                    }
+                  </div>
+                )}
+              </CardBody>
+            </Card>
+            <br />
+          </CardBody>
+        )}
+        {module && (
+          <div>
+            <h5
+              dangerouslySetInnerHTML={{
+                __html: question.mc_stem
+              }}
+            />
+            {question.mc_choices.map((i, idx) => (
+              <div className="radio">
+                <label>
+                  <input
+                    type="radio"
+                    value={i.id}
+                    checked={question.mc_answer === i.id}
+                    disabled
+                  />
+                  &nbsp;&nbsp;{i.value}
+                </label>
+              </div>
+            ))}
+          </div>
+        )}
+        <br />
       </div>
     );
   }
