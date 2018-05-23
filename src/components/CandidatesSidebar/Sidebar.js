@@ -2,28 +2,20 @@ import React, { Component } from "react";
 import { NavLink } from "react-router-dom";
 import {
   Badge,
+  Button,
+  ButtonGroup,
+  ButtonToolbar,
   Nav,
   NavItem,
   NavLink as RsNavLink,
   Container,
   Row,
-  Col,
-  Button
+  Col
 } from "reactstrap";
+import axios from "axios";
 import Select from "react-select";
-import Slider from "react-rangeslider";
-import "react-rangeslider/lib/index.css";
-import "react-select/dist/react-select.css";
-
 import { DatePickerBasic } from "../DateRangePicker.jsx";
-
-const options = [
-  { value: 2, label: "John Smith" },
-  { value: 3, label: "Max Li" },
-  { value: 5, label: "Jane Smith" },
-  { value: 4, label: "Lesley Little" },
-  { value: 6, label: "Drew Tevrizian" }
-];
+import "react-select/dist/react-select.css";
 
 const catOptions = [
   { value: 2, label: "Accounting" },
@@ -37,36 +29,93 @@ class Sidebar extends Component {
     super(props);
 
     this.state = {
-      value: "",
-      catValue: "",
-      sliderValue: 50
+      userValue: "",
+      emailValue: "",
+      startDate: undefined,
+      endDate: undefined,
+      statusValue: "active",
+      filters: props.filters || {},
+      options: undefined
     };
 
-    this.updateValue = this.updateValue.bind(this);
-    this.updateCatValue = this.updateCatValue.bind(this);
-    this.handleSliderChange = this.handleSliderChange.bind(this);
+    this.updateUserValue = this.updateUserValue.bind(this);
+    this.updateEmailValue = this.updateEmailValue.bind(this);
+    this.updateStatusValue = this.updateStatusValue.bind(this);
+    this.handleAddFilters = this.handleAddFilters.bind(this);
+    this.handleDateRangeApply = this.handleDateRangeApply.bind(this);
   }
 
-  handleSliderChange(value) {
-    this.setState({
-      sliderValue: value
+  componentWillMount() {
+    axios.post("/sidebar/candidates").then(d => {
+      this.setState({
+        options: d.data
+      });
     });
   }
 
-  updateValue(newValue) {
-    this.setState({
-      value: newValue
-    });
+  handleAddFilters(type, value) {
+    let newFilter = {};
+    newFilter[type] = value;
+    this.setState(
+      {
+        filters: Object.assign(this.state.filters, newFilter)
+      },
+      () => {
+        this.props.handleAddFilters(this.state.filters);
+      }
+    );
   }
 
-  updateCatValue(newValue) {
-    this.setState({
-      catValue: newValue
-    });
+  handleDateRangeApply(e, t) {
+    this.setState(
+      {
+        startDate: t.startDate.format("MM/DD/YY"),
+        endDate: t.endDate.format("MM/DD/YY")
+      },
+      () => {
+        this.handleAddFilters("daterange", {
+          startDate: this.state.startDate,
+          endDate: this.state.endDate
+        });
+      }
+    );
+  }
+
+  updateUserValue(newValue) {
+    this.setState(
+      {
+        userValue: newValue
+      },
+      () => {
+        this.handleAddFilters("user", this.state.userValue);
+      }
+    );
+  }
+
+  updateEmailValue(newValue) {
+    this.setState(
+      {
+        emailValue: newValue
+      },
+      () => {
+        this.handleAddFilters("email", this.state.emailValue);
+      }
+    );
+  }
+
+  updateStatusValue(newValue) {
+    this.setState(
+      {
+        statusValue: newValue
+      },
+      () => {
+        this.handleAddFilters("status", this.state.statusValue);
+      }
+    );
   }
 
   render() {
-    return (
+    return this.state.options ? (
       <div className="sidebar">
         <Container>
           <Row
@@ -76,49 +125,69 @@ class Sidebar extends Component {
             <h4>Search Filters</h4>
           </Row>
           <Row className="sidebar-row">
-            By name or email: <br />
+            By Test Status: <br />
+            <ButtonGroup size="sm" vertical block>
+              <Button
+                outline
+                color="secondary"
+                active={this.state.statusValue == "active"}
+                onClick={() => this.updateStatusValue("active")}
+              >
+                All Tests
+              </Button>
+              <Button
+                outline
+                color="secondary"
+                active={this.state.statusValue == "waiting"}
+                onClick={() => this.updateStatusValue("waiting")}
+              >
+                Waiting For Test Results
+              </Button>
+              <Button
+                outline
+                color="secondary"
+                active={this.state.statusValue == "completed"}
+                onClick={() => this.updateStatusValue("completed")}
+              >
+                Tests Completed
+              </Button>
+            </ButtonGroup>
+          </Row>
+          <br />
+          <Row className="sidebar-row">
+            By name: <br />
             <Select
-              options={options}
+              options={this.state.options.users}
               clearable
               searchable
-              value={this.state.value}
-              onChange={this.updateValue}
+              value={this.state.userValue}
+              onChange={this.updateUserValue}
             />
           </Row>
           <br />
           <Row className="sidebar-row">
-            By Tested Period: <br />
-            <DatePickerBasic />
+            By email: <br />
+            <Select
+              options={this.state.options.emails}
+              clearable
+              searchable
+              value={this.state.emailValue}
+              onChange={this.updateEmailValue}
+            />
           </Row>
           <br />
           <Row className="sidebar-row">
-            By Test Score:&nbsp;
-            <strong>Greater than {this.state.sliderValue}</strong>
-            <Slider
-              style={{ width: "100%" }}
-              min={0}
-              max={100}
-              value={this.state.sliderValue}
-              // onChangeStart={this.handleChangeStart}
-              onChange={this.handleSliderChange}
-              // onChangeComplete={this.handleChangeComplete}
+            By Test Issued Period: <br />
+            <DatePickerBasic
+              startDate={this.state.startDate || "01/01/2018"}
+              endDate={this.state.endDate || new Date()}
+              handleApply={this.handleDateRangeApply}
             />
           </Row>
-          <Row className="sidebar-row">
-            By Test Categories: <br />
-            <Select
-              options={catOptions}
-              clearable
-              searchable
-              value={this.state.catValue}
-              onChange={this.updateCatValue}
-              multi
-              removeSelected
-            />
-          </Row>
+          <br />
         </Container>
       </div>
-    );
+    ) : null;
   }
 }
 

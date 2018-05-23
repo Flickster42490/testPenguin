@@ -27,7 +27,6 @@ module.exports = {
     );
     return newResult;
   },
-
   checkJournalEntryAnswers: q => {
     let question = {
       id: q.id,

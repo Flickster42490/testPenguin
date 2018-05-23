@@ -1,17 +1,41 @@
 const router = require("express").Router();
 const _ = require("lodash");
-
+const moment = require("moment");
 const TestAttempts = require("./testAttemptsDAO");
 module.exports = router;
 
-router.get("/", (req, res) => {
+router.post("/", (req, res) => {
+  let filters = req.body.filters || undefined;
   return req.db
     .any(
-      `SELECT u.first_name, u.last_name, t.*, a.*, a.id as test_attempt_id FROM "test_attempts" as a 
+      `SELECT u.first_name, u.last_name, u.email_address, CONCAT(u.first_name,(' '||u.last_name)) as display_name, t.*, a.*, a.id as test_attempt_id FROM "test_attempts" as a 
     left join "users" as u on a.user_id = u.id 
     left  join "tests" as t on t.id = a.test_id`
     )
     .then(d => {
+      if (filters && filters.user) {
+        d = d.filter(i => i.display_name === filters.user.value);
+      }
+      if (filters && filters.email) {
+        d = d.filter(i => i.email_address === filters.email.value);
+      }
+      if (filters && filters.status && filters.status === "completed") {
+        d = d.filter(i => i.completed_at);
+      } else if (filters && filters.status && filters.status === "waiting") {
+        d = d.filter(i => !i.completed_at);
+      }
+      if (filters && filters.daterange) {
+        d = d.filter(i => {
+          return (
+            moment(i.invited_at).isAfter(
+              moment(filters.daterange.startDate).startOf("day")
+            ) &&
+            moment(i.invited_at).isBefore(
+              moment(filters.daterange.endDate).endOf("day")
+            )
+          );
+        });
+      }
       return res.send(d);
     });
 });

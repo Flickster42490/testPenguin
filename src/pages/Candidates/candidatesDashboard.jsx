@@ -25,7 +25,6 @@ const typeMap = {
 class Dashboard extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       candidateList: []
     };
@@ -33,10 +32,21 @@ class Dashboard extends Component {
 
   componentWillMount() {
     window.scrollTo(0, 0);
-    axios.get("/testAttempts").then(d => {
+    axios.post("/testAttempts").then(d => {
       this.setState({
         candidateList: d.data
       });
+    });
+  }
+
+  componentWillReceiveProps(np) {
+    axios.post("/testAttempts", { filters: np.filters || {} }).then(d => {
+      this.setState(
+        {
+          candidateList: d.data
+        },
+        () => this.forceUpdate()
+      );
     });
   }
 
@@ -45,22 +55,6 @@ class Dashboard extends Component {
     return (
       <div>
         <Preloader loading={candidateList.length < 1}>
-          <Row style={{ textAlign: "center" }}>
-            <Col xs="12">
-              <ButtonGroup size="lg" block>
-                <Button outline color="default">
-                  All Tests
-                </Button>
-                <Button outline color="default">
-                  Waiting For Test Results
-                </Button>
-                <Button outline color="default">
-                  Tests Completed
-                </Button>
-              </ButtonGroup>
-            </Col>
-          </Row>
-          <br />
           <Row>
             <Col xs="12">
               <CandidateResults candidateList={candidateList} />

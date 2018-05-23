@@ -28,14 +28,12 @@ export default class DatePicker extends React.Component {
           onEvent={this.props.onEvent}
         >
           <div className="inner-container">
-            Filter by Date:&nbsp;&nbsp;
             <input
               type="text"
               placeholder="Choose a Date Range"
-              style={{ width: "13em" }}
-              value={`${moment(from).format("MMM DD, YYYY")} - ${moment(
-                to
-              ).format("MMM DD, YYYY")}`}
+              value={`${moment(from).format("MM/DD/YY")} - ${moment(to).format(
+                "MM/DD/YY"
+              )}`}
             />
           </div>
         </DateRangePicker>
@@ -49,34 +47,27 @@ export const DatePickerBasic = props => {
     <div className="date-container">
       <DateRangePicker
         startDate={
-          props.filters
-            ? moment(props.filters.startDate)
+          props.startDate
+            ? moment(props.startDate)
             : moment()
                 .subtract("6", "month")
-                .format("MM/DD/YYYY")
+                .format("MM/DD/YY")
         }
         endDate={
-          props.filters
-            ? moment(props.filters.endDate)
-            : moment().format("MM/DD/YYYY")
+          props.endDate ? moment(props.endDate) : moment().format("MM/DD/YY")
         }
-        // onApply={(e, d) =>
-        //   props.onAddFilter("date", {
-        //     startDate: d.startDate,
-        //     endDate: d.endDate
-        //   })
-        // }
+        onApply={(e, t) => props.handleApply(e, t)}
       >
         <input
           className="Select-input"
           type="text"
           placeholder="Choose a Date Range"
-          style={{ width: "100%", fontSize: ".8rem" }}
+          style={{ width: "160px", height: "35px" }}
           value={
-            props.filters
-              ? `${moment(props.filters.startDate).format(
-                  "MM/DD/YYYY"
-                )} - ${moment(props.filters.endDate).format("MM/DD/YYYY")}`
+            props.startDate && props.endDate
+              ? `${moment(props.startDate).format("MM/DD/YY")} - ${moment(
+                  props.endDate
+                ).format("MM/DD/YY")}`
               : `${moment()
                   .subtract("6", "month")
                   .format("MM/DD/YY")} - ${moment().format("MM/DD/YY")}`
