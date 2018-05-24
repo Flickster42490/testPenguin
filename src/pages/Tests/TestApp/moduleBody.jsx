@@ -22,6 +22,8 @@ import PDF from "react-pdf-js";
 import FontAwesome from "react-fontawesome";
 
 import JournalEntry from "../QuestionLibrary/journalEntry.jsx";
+import MultipleChoiceContainer from "./moduleMultipleChoiceContainer.jsx";
+
 const deepCopy = oldObj => {
   var newObj = oldObj;
   if (oldObj && typeof oldObj === "object") {
@@ -220,6 +222,19 @@ export default class ModuleBody extends Component {
                     disabled={this.state.disabled}
                     review={this.state.review}
                   />
+                )}
+              {question &&
+                question.type === "module" &&
+                question.module_type === "multiple_choice" && (
+                  <div>
+                    <MultipleChoiceContainer
+                      question={question}
+                      questionAnswered={questionAnswered}
+                      handleSubModuleOneUpdate={this.handleSubModuleOneUpdate}
+                      disabled={this.state.disabled}
+                      review={this.state.review}
+                    />
+                  </div>
                 )}
               <br />
               <Card className="transparent-card">

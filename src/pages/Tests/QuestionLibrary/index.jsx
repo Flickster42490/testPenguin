@@ -42,7 +42,9 @@ export default class QuestionLibrary extends Component {
         },
         () => {
           let page = window.location.hash.split("tests/")[1];
-          this.props.handlePageUpdate(page);
+          if (page == "questionLibrary") {
+            this.props.handlePageUpdate(page);
+          }
         }
       );
     });

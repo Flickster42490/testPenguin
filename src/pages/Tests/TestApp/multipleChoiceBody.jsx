@@ -165,8 +165,17 @@ export default class MultipleChoiceBody extends Component {
                   <input
                     type="radio"
                     value={i.id}
-                    checked={question.mc_answer === i.id}
-                    disabled
+                    checked={
+                      questionAnswered &&
+                      questionAnswered.mc_candidate_answer === i.id
+                    }
+                    onChange={() =>
+                      this.props.handleMultipleChoiceUpdate(
+                        question.mc_segment_id,
+                        i
+                      )
+                    }
+                    disabled={this.props.review || this.props.preview}
                   />
                   &nbsp;&nbsp;{i.value}
                 </label>
