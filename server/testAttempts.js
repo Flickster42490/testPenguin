@@ -152,8 +152,13 @@ router.post("/submitTest", (req, res) => {
           let question = TestAttempts.checkJournalEntryAnswers(q);
           q.correct = question;
           results.push(question);
+        } else if (q.type === "module" && q.module_type === "multiple_choice") {
+          let question = TestAttempts.checkMultipleChoiceModuleAnswers(q);
+          q.correct = question;
+          results.push(question);
         }
       });
+      console.log("results ---->", results);
       results = TestAttempts.aggregateResults(results);
       return req.db.any(
         "UPDATE test_attempts SET (results, completed_at, candidate_answers) = ($1,$2,$3) where id = $4 RETURNING *",

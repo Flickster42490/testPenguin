@@ -26,7 +26,9 @@ import History from "../../images/history.svg";
 
 const typeMap = {
   journalEntry: "Journal Entry",
-  multipleChoice: "Multiple Choice"
+  multipleChoice: "Multiple Choice",
+  journal_entry: "Journal Entry",
+  multiple_choice: "Multiple Choice"
 };
 export default class ReviewResults extends Component {
   constructor(props) {
@@ -184,13 +186,8 @@ export default class ReviewResults extends Component {
                 </Row>
                 <hr />
                 <Row>
-                  <Col xs={7}>
+                  <Col>
                     <h4>Review Candidate's Answers</h4>
-                  </Col>
-                  <Col xs={3}>
-                    <div style={{ float: "right" }}>
-                      <Button color="info">Export as CSV</Button>
-                    </div>
                   </Col>
                 </Row>
                 <br />
@@ -212,8 +209,8 @@ export default class ReviewResults extends Component {
                             return (
                               <div>
                                 {cell.original.type === "module"
-                                  ? cell.original.module_type
-                                  : cell.original.type}
+                                  ? typeMap[cell.original.module_type]
+                                  : typeMap[cell.original.type]}
                               </div>
                             );
                           }
@@ -225,23 +222,46 @@ export default class ReviewResults extends Component {
                         {
                           Header: "Score",
                           Cell: cell => {
-                            let { correct } = cell.original;
+                            console.log(cell.original);
+                            let { correct, module_stem_2 } = cell.original;
                             return (
                               <div>
                                 {typeof correct === "boolean" &&
                                   correct && <span>Correct</span>}
-                                {typeof correct === "object" && (
-                                  <div>
-                                    <span>
-                                      Part 1: {correct.correctRows}/{
-                                        correct.totalRows
-                                      }{" "}
-                                      Rows
-                                    </span>
-                                    <br />
-                                    <span>Part 2: Manual Review</span>
-                                  </div>
-                                )}
+                                {typeof correct === "object" &&
+                                  correct.module_type !== "multiple_choice" && (
+                                    <div>
+                                      <span>
+                                        Part 1: {correct.correctRows}/{
+                                          correct.totalRows
+                                        }{" "}
+                                        Rows
+                                      </span>
+                                      {module_stem_2 && (
+                                        <div>
+                                          <br />
+                                          <span>Part 2: Manual Review</span>
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
+                                {typeof correct === "object" &&
+                                  correct.module_type === "multiple_choice" && (
+                                    <div>
+                                      <span>
+                                        Part 1: {correct.correctQuestions}/{
+                                          correct.totalQuestions
+                                        }{" "}
+                                        Questions
+                                      </span>
+                                      {module_stem_2 && (
+                                        <div>
+                                          <br />
+                                          <span>Part 2: Manual Review</span>
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
                                 {!correct && (
                                   <span style={{ color: "red" }}>
                                     Incorrect

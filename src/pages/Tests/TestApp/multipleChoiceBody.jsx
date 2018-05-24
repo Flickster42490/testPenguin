@@ -19,7 +19,7 @@ import FontAwesome from "react-fontawesome";
 export default class MultipleChoiceBody extends Component {
   constructor(props) {
     super(props);
-    console.log(props);
+
     this.state = {
       question: props.question,
       questionAnswered: props.questionAnswered || undefined,
@@ -64,6 +64,7 @@ export default class MultipleChoiceBody extends Component {
       module,
       currentSelectedIdx
     } = this.state;
+
     return (
       <div>
         {!module && (
@@ -152,37 +153,40 @@ export default class MultipleChoiceBody extends Component {
             <br />
           </CardBody>
         )}
-        {module && (
-          <div>
-            <h5
-              dangerouslySetInnerHTML={{
-                __html: question.mc_stem
-              }}
-            />
-            {question.mc_choices.map((i, idx) => (
-              <div className="radio">
-                <label>
-                  <input
-                    type="radio"
-                    value={i.id}
-                    checked={
-                      questionAnswered &&
-                      questionAnswered.mc_candidate_answer === i.id
-                    }
-                    onChange={() =>
-                      this.props.handleMultipleChoiceUpdate(
-                        question.mc_segment_id,
-                        i
-                      )
-                    }
-                    disabled={this.props.review || this.props.preview}
-                  />
-                  &nbsp;&nbsp;{i.value}
-                </label>
-              </div>
-            ))}
-          </div>
-        )}
+        {module &&
+          questionAnswered && (
+            <div>
+              <h5
+                dangerouslySetInnerHTML={{
+                  __html: question.mc_stem
+                }}
+              />
+              {question.mc_choices.map((i, idx) => (
+                <div className="radio">
+                  <label>
+                    <input
+                      type="radio"
+                      value={i.id}
+                      checked={
+                        questionAnswered &&
+                        questionAnswered.module_candidate_answer.segments[
+                          this.props.segmentIndex
+                        ].mc_candidate_answer === i.id
+                      }
+                      onChange={() =>
+                        this.props.handleMultipleChoiceUpdate(
+                          question.mc_segment_id,
+                          i
+                        )
+                      }
+                      disabled={this.props.review || this.props.preview}
+                    />
+                    &nbsp;&nbsp;{i.value}
+                  </label>
+                </div>
+              ))}
+            </div>
+          )}
         <br />
       </div>
     );

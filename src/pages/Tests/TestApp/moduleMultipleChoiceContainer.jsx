@@ -34,7 +34,6 @@ export default class ModuleMultipleChoiceContainer extends Component {
   }
 
   handleMultipleChoiceUpdate(id, value) {
-    console.log(this.state.questionAnswered, id, value);
     let segmentIdx;
     this.state.questionAnswered.module_candidate_answer.segments.forEach(
       (i, idx) => {
@@ -47,15 +46,25 @@ export default class ModuleMultipleChoiceContainer extends Component {
     );
     segmentsCopy[segmentIdx].mc_candidate_answer = value.id;
     segmentsCopy = Object.values(segmentsCopy);
-    console.log(Object.values(segmentsCopy));
-    // this.props.handleSubModuleOneUpdate(segmentsCopy);
+    this.setState(
+      {
+        questionAnswered: Object.assign(this.state.questionAnswered, {
+          module_candidate_answer: {
+            segments: segmentsCopy
+          }
+        })
+      },
+      () => {
+        this.props.handleSubModuleOneUpdate(segmentsCopy);
+      }
+    );
   }
 
   render() {
     let { question, questionAnswered, disabled, review } = this.state;
     return (
       <div>
-        {question.module_answer.segments.map(i => {
+        {question.module_answer.segments.map((i, idx) => {
           let q = Object.assign({}, question, {
             mc_answer: i.mc_answer,
             mc_stem: i.mc_stem,
@@ -69,6 +78,7 @@ export default class ModuleMultipleChoiceContainer extends Component {
               handleMultipleChoiceUpdate={this.handleMultipleChoiceUpdate}
               disabled={this.state.disabled}
               review={this.state.review}
+              segmentIndex={idx}
               module
             />
           );

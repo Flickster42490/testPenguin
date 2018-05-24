@@ -20,6 +20,14 @@ module.exports = {
           obj.journalEntry.correctRows =
             obj.journalEntry.correctRows + i.correctRows;
           obj.journalEntry.wrongRows = obj.journalEntry.wrongRows + i.wrongRows;
+        } else if (i.type === "module" && i.module_type === "multiple_choice") {
+          if (!obj.multipleChoice) {
+            obj.multipleChoice = { correct: 0, wrong: 0 };
+          }
+          obj.multipleChoice.correct =
+            obj.multipleChoice.correct + i.correctQuestions;
+          obj.multipleChoice.wrong =
+            obj.multipleChoice.wrong + i.wrongQuestions;
         }
         return obj;
       },
@@ -47,6 +55,25 @@ module.exports = {
         if (rowCorrect) question.correctRows = question.correctRows + 1;
         else question.wrongRows = question.wrongRows + 1;
       });
+    });
+    return question;
+  },
+  checkMultipleChoiceModuleAnswers: q => {
+    let question = {
+      id: q.id,
+      type: q.type,
+      module_type: q.module_type,
+      totalQuestions: q.module_candidate_answer.segments.length,
+      correctQuestions: 0,
+      wrongQuestions: 0
+    };
+    q.module_answer.segments.forEach((s, sIdx) => {
+      if (
+        s.mc_answer ===
+        q.module_candidate_answer.segments[sIdx].mc_candidate_answer
+      )
+        question.correctQuestions = question.correctQuestions + 1;
+      else question.wrongQuestions = question.wrongQuestions + 1;
     });
     return question;
   }

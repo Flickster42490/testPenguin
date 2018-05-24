@@ -237,56 +237,62 @@ export default class ModuleBody extends Component {
                   </div>
                 )}
               <br />
-              <Card className="transparent-card">
-                <CardHeader className="transparent-card-header">
-                  <strong>Part 2:</strong>
-                </CardHeader>
-                <CardBody className="transparent-card-body">
-                  <span
-                    dangerouslySetInnerHTML={{
-                      __html: question.module_stem_2
-                    }}
-                  />
-                  {!this.state.disabled &&
-                    !this.state.review && (
-                      <Input
-                        type="textarea"
-                        name="text"
-                        rows="6"
-                        value={
-                          !questionAnswered.module_stem_2_candidate_answer
-                            ? " "
-                            : questionAnswered.module_stem_2_candidate_answer
-                        }
-                        onChange={value => this.handleSubModuleTwoUpdate(value)}
-                      />
-                    )}
-                  {!this.state.disabled &&
-                    this.state.review && (
-                      <Input
-                        type="textarea"
-                        name="text"
-                        rows="6"
-                        value={
-                          !questionAnswered.module_stem_2_candidate_answer
-                            ? " "
-                            : questionAnswered.module_stem_2_candidate_answer
-                        }
-                        onChange={value => this.handleSubModuleTwoUpdate(value)}
-                      />
-                    )}
+              {question.module_stem_2 && (
+                <Card className="transparent-card">
+                  <CardHeader className="transparent-card-header">
+                    <strong>Part 2:</strong>
+                  </CardHeader>
+                  <CardBody className="transparent-card-body">
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: question.module_stem_2
+                      }}
+                    />
+                    {!this.state.disabled &&
+                      !this.state.review && (
+                        <Input
+                          type="textarea"
+                          name="text"
+                          rows="6"
+                          value={
+                            !questionAnswered.module_stem_2_candidate_answer
+                              ? " "
+                              : questionAnswered.module_stem_2_candidate_answer
+                          }
+                          onChange={value =>
+                            this.handleSubModuleTwoUpdate(value)
+                          }
+                        />
+                      )}
+                    {!this.state.disabled &&
+                      this.state.review && (
+                        <Input
+                          type="textarea"
+                          name="text"
+                          rows="6"
+                          value={
+                            !questionAnswered.module_stem_2_candidate_answer
+                              ? " "
+                              : questionAnswered.module_stem_2_candidate_answer
+                          }
+                          onChange={value =>
+                            this.handleSubModuleTwoUpdate(value)
+                          }
+                        />
+                      )}
 
-                  {this.state.disabled &&
-                    !this.state.review && (
-                      <Input
-                        type="textarea"
-                        name="text"
-                        rows="6"
-                        defaultValue={question.module_stem_2_answer}
-                      />
-                    )}
-                </CardBody>
-              </Card>
+                    {this.state.disabled &&
+                      !this.state.review && (
+                        <Input
+                          type="textarea"
+                          name="text"
+                          rows="6"
+                          defaultValue={question.module_stem_2_answer}
+                        />
+                      )}
+                  </CardBody>
+                </Card>
+              )}
             </Col>
           </Row>
         </CardBody>
