@@ -78,7 +78,7 @@ passport.use(
           } else {
             return db
               .any(
-                "INSERT INTO users(google_id,first_name,last_name,display_name,image_url, provider, email_address, last_signed_in) VALUES($1,$2,$3,$4,$5,$6,$7,$8)",
+                "INSERT INTO users(google_id,first_name,last_name,display_name,image_url, provider, email_address, last_signed_in, created_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)",
                 [
                   profile.id,
                   profile.name.givenName,
@@ -87,6 +87,7 @@ passport.use(
                   profile.photos[0] ? profile.photos[0].value : "",
                   profile.provider,
                   profile.emails[0] ? profile.emails[0].value : "",
+                  new Date(),
                   new Date()
                 ]
               )
@@ -172,7 +173,46 @@ router.post("/logout", (req, res) => {
 router.post("/local", passport.authenticate("local"), (req, res) => {
   console.log(req.user);
   if (req.user) return res.send(req.user);
-  if (!req.user) return res.send(false);
+  if (!req.user) return res.status(401).send(false);
+});
+
+router.post("/local/register", (req, res) => {
+  const missing = [];
+  if (!req.body.firstName) missing.push("First Name");
+  if (!req.body.lastName) missing.push("Last Name");
+  if (!req.body.username) missing.push("Username");
+  if (!req.body.password) missing.push("Password");
+  if (missing.length > 0) return res.status(400).send({ missing: missing });
+  return db
+    .any("SELECT * FROM users where email_address = $1", req.body.username)
+    .then(d => {
+      if (d && d.length > 0) return res.status(400).send("found");
+      else {
+        return db
+          .any(
+            "INSERT INTO users(first_name, last_name, email_address, display_name, provider, last_signed_in, created_at, password) VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *",
+            [
+              req.body.firstName,
+              req.body.lastName,
+              req.body.username,
+              `${req.body.firstName} ${req.body.lastName}`,
+              "local",
+              new Date(),
+              new Date(),
+              req.body.password
+            ]
+          )
+          .then(u => {
+            console.log(u[0]);
+            if (u && u.length > 0) return res.send(u[0]);
+            else return res.status(401).send(false);
+          });
+      }
+    })
+    .catch(err => {
+      console.log(err);
+      return res.status(401).send(false);
+    });
 });
 
 router.get(

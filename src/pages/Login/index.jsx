@@ -20,13 +20,72 @@ class Login extends Component {
     super(props);
 
     this.state = {
-      username: "admin@testpenguin.com",
-      password: "T3stp3nguin!",
-      loginError: false
+      username: undefined,
+      password: undefined,
+      firstName: undefined,
+      lastName: undefined,
+      loginError: false,
+      registerError: false,
+      missingInfoError: false,
+      displayRegistration: false
     };
 
     this.handleLocalSignIn = this.handleLocalSignIn.bind(this);
+    this.handleLocalRegistration = this.handleLocalRegistration.bind(this);
+    this.displayRegisterForm = this.displayRegisterForm.bind(this);
   }
+
+  displayRegisterForm() {
+    this.setState(
+      {
+        displayRegistration: true
+      }
+      // () => {
+      //   this.forceUpdate();
+      // }
+    );
+  }
+
+  handleLocalRegistration() {
+    console.log(this.state);
+    axios
+      .post("/auth/local/register", {
+        firstName: this.state.firstName,
+        lastName: this.state.lastName,
+        username: this.state.username,
+        password: this.state.password
+      })
+      .then(u => {
+        console.log(u);
+        if (u.data)
+          window.location.href = `/#/dashboard/candidates?id=${u.data.id}`;
+      })
+      .catch(err => {
+        this.setState(
+          {
+            userExistError: false,
+            loginError: false,
+            missingInfoError: false
+          },
+          () => {
+            if (err.response.data === "found") {
+              this.setState({
+                userExistError: true
+              });
+            } else if (err.response.data && err.response.data.missing) {
+              this.setState({
+                missingInfoError: err.response.data.missing
+              });
+            } else {
+              this.setState({
+                registerError: true
+              });
+            }
+          }
+        );
+      });
+  }
+
   handleLocalSignIn() {
     console.log("posting", this.state.username, this.state.password);
     axios
@@ -48,7 +107,6 @@ class Login extends Component {
   }
 
   handleInputChange(type, e) {
-    console.log(type, e);
     this.setState({
       [type]: e.target.value
     });
@@ -102,8 +160,78 @@ class Login extends Component {
                     </Row>
                     <hr />
                     <Row className="justify-content-center">
-                      First Time User?{"  "} <a href="">Register Here</a>
+                      First Time User?&nbsp;&nbsp;<span
+                        className="link"
+                        onClick={this.displayRegisterForm}
+                      >
+                        Register Here
+                      </span>
                     </Row>
+                    <br />
+                    {this.state.registerError && (
+                      <Alert color="danger">
+                        The user cannot be created at this time. Please try
+                        again.
+                      </Alert>
+                    )}
+                    {this.state.userExistError && (
+                      <Alert color="danger">
+                        The user already exists in the system. Please sign in
+                        above.
+                      </Alert>
+                    )}
+                    {this.state.missingInfoError && (
+                      <Alert color="danger">
+                        Please fill in the following missing fields:{" "}
+                        {this.state.missingInfoError.toString()}
+                      </Alert>
+                    )}
+                    {this.state.displayRegistration && (
+                      <Row className="justify-content-center">
+                        <Col md="6">
+                          <Input
+                            placeholder="First Name"
+                            onChange={e =>
+                              this.handleInputChange("firstName", e)
+                            }
+                          />
+                        </Col>
+                        <Col md="6">
+                          <Input
+                            placeholder="Last Name"
+                            onChange={e =>
+                              this.handleInputChange("lastName", e)
+                            }
+                          />
+                        </Col>
+                        <br />
+                        <br />
+                        <Col md="6">
+                          <Input
+                            placeholder="Email"
+                            onChange={e =>
+                              this.handleInputChange("username", e)
+                            }
+                          />
+                        </Col>
+                        <Col md="6">
+                          <Input
+                            placeholder="Password"
+                            type="password"
+                            onChange={e =>
+                              this.handleInputChange("password", e)
+                            }
+                          />
+                        </Col>
+                        <Button
+                          color="secondary"
+                          className="mt-3"
+                          onClick={this.handleLocalRegistration}
+                        >
+                          Register
+                        </Button>
+                      </Row>
+                    )}
                   </CardBody>
                 </Card>
               </CardGroup>
