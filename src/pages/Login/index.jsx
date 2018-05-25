@@ -47,7 +47,6 @@ class Login extends Component {
   }
 
   handleLocalRegistration() {
-    console.log(this.state);
     axios
       .post("/auth/local/register", {
         firstName: this.state.firstName,
@@ -56,7 +55,6 @@ class Login extends Component {
         password: this.state.password
       })
       .then(u => {
-        console.log(u);
         if (u.data)
           window.location.href = `/#/dashboard/candidates?id=${u.data.id}`;
       })
