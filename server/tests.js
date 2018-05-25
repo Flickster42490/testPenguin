@@ -127,7 +127,7 @@ router.post("/issued", (req, res) => {
   let filters = req.body.filters || undefined;
   return req.db
     .any(
-      "SELECT a.*, t.* FROM (SELECT count(test_id) as count, test_id FROM test_attempts where invited_by= $1GROUP BY test_id) a LEFT JOIN tests t ON a.test_id = t.id",
+      "SELECT a.*, t.* FROM (SELECT count(test_id) as count, test_id FROM test_attempts where invited_by= $1 GROUP BY test_id) a LEFT JOIN tests t ON a.test_id = t.id",
       [req.body.userId]
     )
     .then(data => {
@@ -150,8 +150,8 @@ router.post("/issued", (req, res) => {
 router.post("/issued/:id", (req, res) => {
   return req.db
     .any(
-      "SELECT a.*, t.* FROM (SELECT count(test_id) as count, test_id FROM test_attempts GROUP BY test_id) a LEFT JOIN tests t ON a.test_id = t.id where a.test_id = $1",
-      [req.params.id]
+      "SELECT a.*, t.* FROM (SELECT count(test_id) as count, test_id FROM test_attempts where invited_by= $1 GROUP BY test_id) a LEFT JOIN tests t ON a.test_id = t.id where a.test_id = $2",
+      [req.body.userId, req.params.id]
     )
     .then(data => {
       return res.send(data);

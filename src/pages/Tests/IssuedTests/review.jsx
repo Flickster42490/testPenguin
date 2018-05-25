@@ -17,6 +17,7 @@ import moment from "moment";
 import queryString from "querystring";
 import momentDurationFormatSetup from "moment-duration-format";
 import ReactTable from "react-table";
+import localForage from "localforage";
 import "react-table/react-table.css";
 import "status-indicator/styles.css";
 
@@ -45,12 +46,15 @@ export default class IssuedTestsReview extends Component {
     document.body.classList.toggle("sidebar-hidden");
     const queries = window.location.hash.split("?")[1];
     const { id } = queryString.parse(queries);
-    axios.post(`/tests/issued/${id}`).then(d => {
-      axios.post("/testAttempts").then(a => {
-        this.setState({
-          test: d.data[0],
-          completedCandidates: a.data.filter(i => i.completed_at) || [],
-          waitingCandidates: a.data.filter(i => !i.completed_at) || []
+    localForage.getItem("userId").then(userId => {
+      axios.post(`/tests/issued/${id}`, { userId: userId }).then(d => {
+        axios.post("/testAttempts", { userId: userId, testId: id }).then(a => {
+          console.log(a);
+          this.setState({
+            test: d.data[0],
+            completedCandidates: a.data.filter(i => i.completed_at) || [],
+            waitingCandidates: a.data.filter(i => !i.completed_at) || []
+          });
         });
       });
     });

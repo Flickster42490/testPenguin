@@ -120,7 +120,7 @@ export default class IssuedTests extends Component {
                     return (
                       <div>
                         <div>
-                          <strong>Candidates Tested: </strong>
+                          <strong>Candidates Invited: </strong>
                           {cell.original.count}
                         </div>
                       </div>

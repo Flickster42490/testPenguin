@@ -6,40 +6,47 @@ module.exports = router;
 
 router.post("/", (req, res) => {
   let filters = req.body.filters || undefined;
-  return req.db
-    .any(
-      `SELECT u.first_name, u.last_name, u.email_address, CONCAT(u.first_name,(' '||u.last_name)) as display_name, t.*, a.*, a.id as test_attempt_id FROM "test_attempts" as a 
+  let q, qVars;
+  if (req.body.testId) {
+    q = `SELECT u.first_name, u.last_name, u.email_address, CONCAT(u.first_name,(' '||u.last_name)) as display_name, t.*, a.*, a.id as test_attempt_id FROM "test_attempts" as a 
     left join "users" as u on a.user_id = u.id 
     left  join "tests" as t on t.id = a.test_id
-    where a.invited_by = $1`,
-      [req.body.userId]
-    )
-    .then(d => {
-      if (filters && filters.user) {
-        d = d.filter(i => i.display_name === filters.user.value);
-      }
-      if (filters && filters.email) {
-        d = d.filter(i => i.email_address === filters.email.value);
-      }
-      if (filters && filters.status && filters.status === "completed") {
-        d = d.filter(i => i.completed_at);
-      } else if (filters && filters.status && filters.status === "waiting") {
-        d = d.filter(i => !i.completed_at);
-      }
-      if (filters && filters.daterange) {
-        d = d.filter(i => {
-          return (
-            moment(i.invited_at).isAfter(
-              moment(filters.daterange.startDate).startOf("day")
-            ) &&
-            moment(i.invited_at).isBefore(
-              moment(filters.daterange.endDate).endOf("day")
-            )
-          );
-        });
-      }
-      return res.send(d);
-    });
+    where a.invited_by = $1 and t.id = $2`;
+    qVars = [req.body.userId, req.body.testId];
+  } else {
+    q = `SELECT u.first_name, u.last_name, u.email_address, CONCAT(u.first_name,(' '||u.last_name)) as display_name, t.*, a.*, a.id as test_attempt_id FROM "test_attempts" as a 
+  left join "users" as u on a.user_id = u.id 
+  left  join "tests" as t on t.id = a.test_id
+  where a.invited_by = $1`;
+    qVars = [req.body.userId];
+  }
+
+  return req.db.any(q, qVars).then(d => {
+    if (filters && filters.user) {
+      d = d.filter(i => i.display_name === filters.user.value);
+    }
+    if (filters && filters.email) {
+      d = d.filter(i => i.email_address === filters.email.value);
+    }
+    if (filters && filters.status && filters.status === "completed") {
+      d = d.filter(i => i.completed_at);
+    } else if (filters && filters.status && filters.status === "waiting") {
+      d = d.filter(i => !i.completed_at);
+    }
+    if (filters && filters.daterange) {
+      d = d.filter(i => {
+        return (
+          moment(i.invited_at).isAfter(
+            moment(filters.daterange.startDate).startOf("day")
+          ) &&
+          moment(i.invited_at).isBefore(
+            moment(filters.daterange.endDate).endOf("day")
+          )
+        );
+      });
+    }
+    return res.send(d);
+  });
 });
 
 router.get("/findOne/:id", (req, res) => {
