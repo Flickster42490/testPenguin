@@ -22,6 +22,7 @@ import PDF from "react-pdf-js";
 import FontAwesome from "react-fontawesome";
 
 import JournalEntry from "../QuestionLibrary/journalEntry.jsx";
+import Reconciliation from "../QuestionLibrary/reconciliation.jsx";
 import MultipleChoiceContainer from "./moduleMultipleChoiceContainer.jsx";
 
 const deepCopy = oldObj => {
@@ -219,8 +220,17 @@ export default class ModuleBody extends Component {
                     question={question}
                     questionAnswered={questionAnswered}
                     handleSubModuleOneUpdate={this.handleSubModuleOneUpdate}
-                    disabled={this.state.disabled}
-                    review={this.state.review}
+                    disabled={this.state.disabled || this.state.review}
+                  />
+                )}
+              {question &&
+                question.type === "module" &&
+                question.module_type === "reconciliation" && (
+                  <Reconciliation
+                    question={question}
+                    questionAnswered={questionAnswered}
+                    handleSubModuleOneUpdate={this.handleSubModuleOneUpdate}
+                    disabled={this.state.disabled || this.state.review}
                   />
                 )}
               {question &&

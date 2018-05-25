@@ -23,6 +23,7 @@ import queryString from "querystring";
 import FontAwesome from "react-fontawesome";
 
 import JournalEntry from "./journalEntry.jsx";
+import Reconciliation from "./reconciliation.jsx";
 import MultipleChoice from "./multipleChoice.jsx";
 
 export default class ModuleContainer extends Component {
@@ -190,6 +191,14 @@ export default class ModuleContainer extends Component {
                   question[0].type === "module" &&
                   question[0].module_type === "journal_entry" && (
                     <JournalEntry
+                      question={question[0]}
+                      disabled={this.state.disabled}
+                    />
+                  )}
+                {question[0] &&
+                  question[0].type === "module" &&
+                  question[0].module_type === "reconciliation" && (
+                    <Reconciliation
                       question={question[0]}
                       disabled={this.state.disabled}
                     />

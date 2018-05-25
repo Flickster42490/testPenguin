@@ -57,6 +57,7 @@ router.get("/findOne/:id", (req, res) => {
 });
 
 router.post("/create", (req, res) => {
+  console.log(req.body);
   return req.db
     .any(
       "INSERT INTO test_attempts(invited_at, user_id, test_id, invited_by) VALUES($1,$2, $3, $4) RETURNING *",
@@ -152,6 +153,10 @@ router.post("/submitTest", (req, res) => {
           results.push(question);
         } else if (q.type === "module" && q.module_type === "journal_entry") {
           let question = TestAttempts.checkJournalEntryAnswers(q);
+          q.correct = question;
+          results.push(question);
+        } else if (q.type === "module" && q.module_type === "reconciliation") {
+          let question = TestAttempts.checkReconciliationAnswers(q);
           q.correct = question;
           results.push(question);
         } else if (q.type === "module" && q.module_type === "multiple_choice") {

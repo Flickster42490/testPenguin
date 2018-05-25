@@ -15,7 +15,8 @@ import "react-table/react-table.css";
 
 const typeMap = {
   journalEntry: "Journal Entry",
-  multipleChoice: "Multiple Choice"
+  multipleChoice: "Multiple Choice",
+  reconciliation: "Reconciliation"
 };
 const getStatusColor = value => {
   value = value * 100;
@@ -105,6 +106,14 @@ export default props => (
                   </span>
                 )}
                 {k === "journalEntry" && (
+                  <span>
+                    {v.correctRows}/{v.correctRows + v.wrongRows}{" "}
+                    {getStatusColor(
+                      v.correctRows / (v.correctRows + v.wrongRows)
+                    )}
+                  </span>
+                )}
+                {k === "reconciliation" && (
                   <span>
                     {v.correctRows}/{v.correctRows + v.wrongRows}{" "}
                     {getStatusColor(

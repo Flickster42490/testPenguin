@@ -96,16 +96,21 @@ export default class InviteCandidates extends Component {
 
   handleEmail(e) {
     let { candidate } = this.state;
-    this.setState({
-      candidate: Object.assign(candidate, {
-        email: e.target.value
-      }),
-      submitDisable: !(
-        candidate.firstName &&
-        candidate.lastName &&
-        candidate.email
-      )
-    });
+    this.setState(
+      {
+        candidate: Object.assign(candidate, {
+          email: e.target.value
+        }),
+        submitDisable: !(
+          candidate.firstName &&
+          candidate.lastName &&
+          candidate.email
+        )
+      },
+      () => {
+        console.log("candidate", this.state.candidate);
+      }
+    );
   }
 
   handleSubmit() {
@@ -121,7 +126,7 @@ export default class InviteCandidates extends Component {
               .post("/testAttempts/create", {
                 userId: candidate.id,
                 testId: this.state.testId,
-                invitedBy: candidate.invitedBy
+                invitedBy: this.state.candidate.invitedBy
               })
               .then(() => {
                 this.setState({

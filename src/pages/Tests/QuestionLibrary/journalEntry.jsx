@@ -34,7 +34,7 @@ const deepCopy = oldObj => {
   }
   return newObj;
 };
-export default class Preview extends Component {
+export default class JournalEntry extends Component {
   constructor(props) {
     super(props);
     this.state = {

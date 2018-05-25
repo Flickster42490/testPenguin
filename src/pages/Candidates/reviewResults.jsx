@@ -28,7 +28,8 @@ const typeMap = {
   journalEntry: "Journal Entry",
   multipleChoice: "Multiple Choice",
   journal_entry: "Journal Entry",
-  multiple_choice: "Multiple Choice"
+  multiple_choice: "Multiple Choice",
+  reconciliation: "Reconciliation"
 };
 export default class ReviewResults extends Component {
   constructor(props) {
@@ -87,6 +88,14 @@ export default class ReviewResults extends Component {
                 )}
               </span>
             )}
+            {k === "reconciliation" && (
+              <span>
+                {v.correctRows}/{v.correctRows + v.wrongRows}{" "}
+                {this.getStatusColor(
+                  v.correctRows / (v.correctRows + v.wrongRows)
+                )}
+              </span>
+            )}
           </div>
         </li>
       );
@@ -97,7 +106,6 @@ export default class ReviewResults extends Component {
 
   render() {
     const { testResults } = this.state;
-    console.log(testResults);
     return (
       <Preloader loading={!testResults}>
         <div className="app-body">
