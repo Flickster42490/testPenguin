@@ -131,7 +131,7 @@ router.post("/check", (req, res) => {
     Cache.get(req.body.userId, (err, value) => {
       console.log(err, value);
       if (!err) {
-        if (value === undefined) {
+        if (value === undefined || value === "undefined") {
           console.log("cant get value, will redirect back to login ");
           return res.redirect(`/#/login`);
         } else {

@@ -23,7 +23,7 @@ export default class Dashboard extends Component {
     localForage
       .getItem("userId")
       .then(value => {
-        console.log(value);
+        if (value === "undefined") value = false;
         //if localForage doesn't find value, then check to see if userId is in the url, if not, redirect to login
         //if there is userId in url, then set the id in localForage.
         if (!value) {
