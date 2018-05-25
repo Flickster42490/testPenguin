@@ -65,49 +65,7 @@ class Header extends Component {
   render() {
     return (
       <header className="app-header navbar">
-        {/* <NavbarToggler className="d-lg-none" onClick={this.mobileSidebarToggle}>
-          <span className="navbar-toggler-icon" />
-        </NavbarToggler> */}
         <NavbarBrand href="#" />
-        {/* <NavbarToggler className="d-md-down-none" onClick={this.sidebarToggle}>
-          <span className="navbar-toggler-icon" />
-        </NavbarToggler> */}
-        {/* <Nav className="d-md-down-none" navbar>
-          <NavItem
-            className="px-3"
-            onClick={() => this.handleClick("candidates")}
-          >
-            <img src={Users} />
-            <br />
-            <span className={this.state.page === "candidates" ? "bold" : ""}>
-              Candidates
-            </span>
-          </NavItem>
-          <NavItem className="px-3" onClick={() => this.handleClick("tests")}>
-            <img src={Assignment} />
-            <br />
-            <span className={this.state.page === "tests" ? "bold" : ""}>
-              Tests
-            </span>
-          </NavItem>
-        </Nav> */}
-        <Nav className="ml-auto" navbar>
-          {/* on the right side */}
-          {/* <NavItem className="d-md-down-none">
-            <a href="#">Upgrade Today</a>
-          </NavItem>
-          <NavItem className="d-md-down-none">
-            <a href="#">
-              <img src={Alert} />
-              <Badge pill color="danger">
-                5 days left
-              </Badge>
-            </a>
-          </NavItem> */}
-          <NavItem className="d-md-down-none" />
-          <HeaderDropdown />
-          &nbsp;&nbsp;&nbsp;
-        </Nav>
       </header>
     );
   }

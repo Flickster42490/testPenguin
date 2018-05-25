@@ -127,12 +127,13 @@ router.post("/issued", (req, res) => {
   let filters = req.body.filters || undefined;
   return req.db
     .any(
-      "SELECT a.*, t.* FROM (SELECT count(test_id) as count, test_id FROM test_attempts GROUP BY test_id) a LEFT JOIN tests t ON a.test_id = t.id"
+      "SELECT a.*, t.* FROM (SELECT count(test_id) as count, test_id FROM test_attempts where invited_by= $1GROUP BY test_id) a LEFT JOIN tests t ON a.test_id = t.id",
+      [req.body.userId]
     )
     .then(data => {
       let d = data.filter(i => {
         if (i.type === "custom") {
-          return i.created_by === req.params.userId;
+          return i.created_by === req.body.userId;
         } else {
           return true;
         }

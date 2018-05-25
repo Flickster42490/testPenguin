@@ -23,29 +23,6 @@ import "react-select/dist/react-select.css";
 
 import { DatePickerBasic } from "../DateRangePicker.jsx";
 
-const difficultyOptions = [
-  { value: 2, label: "Easy" },
-  { value: 3, label: "Medium" },
-  { value: 5, label: "Difficult" }
-];
-
-const catOptions = [
-  { value: 2, label: "Treasury" },
-  { value: 3, label: "Payroll" },
-  { value: 5, label: "Fixed Assets" },
-  { value: 4, label: "Controls" },
-  { value: 6, label: "ERM" },
-  { value: 7, label: "Closing" }
-];
-
-const userOptions = [
-  { value: 2, label: "John Smith" },
-  { value: 3, label: "Max Li" },
-  { value: 5, label: "Jane Doe" },
-  { value: 4, label: "Lesley Little" },
-  { value: 6, label: "Drew Tevrizian" }
-];
-
 class Sidebar extends Component {
   constructor(props) {
     super(props);
@@ -60,7 +37,8 @@ class Sidebar extends Component {
       sliderValue: 50,
       statusValue: "all",
       filters: props.filters || {},
-      options: undefined
+      options: undefined,
+      userId: undefined
     };
 
     this.updateDifficultyValue = this.updateDifficultyValue.bind(this);

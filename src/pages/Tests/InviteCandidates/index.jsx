@@ -21,6 +21,7 @@ import {
 } from "reactstrap";
 import queryString from "querystring";
 import axios from "axios";
+import localForage from "localforage";
 import Select from "react-select";
 import "react-select/dist/react-select.css";
 import { Alert } from "reactstrap";
@@ -41,16 +42,19 @@ export default class InviteCandidates extends Component {
     const queries = window.location.hash.split("?")[1];
     const testId = queryString.parse(queries).id;
     const testName = queryString.parse(queries).name;
-    this.setState({
-      testId: testId,
-      testName: testName,
-      showSuccessToaster: false,
-      candidate: {
-        firstName: null,
-        lastName: null,
-        email: null
-      },
-      submitDisable: true
+    localForage.getItem("userId").then(id => {
+      this.setState({
+        testId: testId,
+        testName: testName,
+        showSuccessToaster: false,
+        candidate: {
+          firstName: null,
+          lastName: null,
+          email: null,
+          invitedBy: id
+        },
+        submitDisable: true
+      });
     });
 
     this.handleEmail = this.handleEmail.bind(this);
@@ -116,7 +120,8 @@ export default class InviteCandidates extends Component {
             axios
               .post("/testAttempts/create", {
                 userId: candidate.id,
-                testId: this.state.testId
+                testId: this.state.testId,
+                invitedBy: candidate.invitedBy
               })
               .then(() => {
                 this.setState({

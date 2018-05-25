@@ -10,7 +10,9 @@ router.post("/", (req, res) => {
     .any(
       `SELECT u.first_name, u.last_name, u.email_address, CONCAT(u.first_name,(' '||u.last_name)) as display_name, t.*, a.*, a.id as test_attempt_id FROM "test_attempts" as a 
     left join "users" as u on a.user_id = u.id 
-    left  join "tests" as t on t.id = a.test_id`
+    left  join "tests" as t on t.id = a.test_id
+    where a.invited_by = $1`,
+      [req.body.userId]
     )
     .then(d => {
       if (filters && filters.user) {
@@ -57,8 +59,8 @@ router.get("/findOne/:id", (req, res) => {
 router.post("/create", (req, res) => {
   return req.db
     .any(
-      "INSERT INTO test_attempts(invited_at, user_id, test_id) VALUES($1,$2, $3) RETURNING *",
-      [new Date(), req.body.userId, req.body.testId]
+      "INSERT INTO test_attempts(invited_at, user_id, test_id, invited_by) VALUES($1,$2, $3, $4) RETURNING *",
+      [new Date(), req.body.userId, req.body.testId, req.body.invitedBy]
     )
     .then(data => {
       return res.send(data);

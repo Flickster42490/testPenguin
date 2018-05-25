@@ -36,6 +36,7 @@
     "array-move": "^1.0.0",
     "axios": "^0.18.0",
     "babel-polyfill": "^6.26.0",
+    "bcrypt": "^2.0.1",
     "bootstrap": "4.0.0",
     "bootstrap-daterangepicker": "^2.1.30",
     "chart.js": "2.7.1",
@@ -60,6 +61,7 @@
     "passport-facebook": "^2.1.1",
     "passport-google-oauth": "^1.0.0",
     "passport-google-oauth20": "^1.0.0",
+    "passport-local": "^1.0.0",
     "pg-promise": "^8.2.2",
     "prop-types": "^15.6.1",
     "query-string": "^6.0.0",
@@ -72,6 +74,7 @@
     "react-day-picker": "^7.1.5",
     "react-dom": "16.2.0",
     "react-fontawesome": "^1.6.1",
+    "react-form-material-ui": "^1.2.0",
     "react-onclickoutside": "^6.7.1",
     "react-pdf": "^3.0.4",
     "react-pdf-js": "^3.0.7",
@@ -91,16 +94,13 @@
     "status-indicator": "^1.0.9"
   },
   "scripts": {
-    "dev":
-      "webpack -d --progress --watch --profile --json > compilation-stats.json --env.dev",
+    "dev": "webpack -d --progress --watch --profile --json > compilation-stats.json --env.dev",
     "web": "webpack-dev-server --progress --color --inline --env.dev",
     "build": "webpack -p --progress --env.prod",
     "clean": "rimraf ./build",
     "start": "node server.js",
-    "local":
-      "CALLBACK_URL=http://localhost:8000/auth/google/return DB_HOST=localhost DB_USER=maxli DB_PASSWORD=admin DB_NAME=testpenguin_postgres nodemon server.js",
-    "local-rds":
-      "CALLBACK_URL=http://localhost:8000/auth/google/return DB_HOST=testpenguin.cwvdzkfscajo.us-east-2.rds.amazonaws.com DB_USER=master DB_PASSWORD=T3stp3nguin! DB_NAME=testpenguin_postgres nodemon server.js",
+    "local": "CALLBACK_URL=http://localhost:8000/auth/google/return DB_HOST=localhost DB_USER=maxli DB_PASSWORD=admin DB_NAME=testpenguin_postgres nodemon server.js",
+    "local-rds": "CALLBACK_URL=http://localhost:8000/auth/google/return DB_HOST=testpenguin.cwvdzkfscajo.us-east-2.rds.amazonaws.com DB_USER=master DB_PASSWORD=T3stp3nguin! DB_NAME=testpenguin_postgres nodemon server.js",
     "heroku-postbuild": "npm run build"
   },
   "engines": {

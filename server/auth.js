@@ -1,5 +1,6 @@
-var passport = require("passport");
-var GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
+const passport = require("passport");
+const GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
+const LocalStrategy = require("passport-local").Strategy;
 const cors = require("cors");
 const router = require("express").Router();
 const NodeCache = require("node-cache");
@@ -17,10 +18,25 @@ const cn = {
 console.log(cn);
 var db = pgp(cn);
 
-// Configure the Facebook strategy for use by Passport.
+//local strategy
+passport.use(
+  new LocalStrategy(function(username, password, done) {
+    console.log(username, password, "!!!!!!!!!!!!!!!!!!!!");
+    return db
+      .any("SELECT * FROM users WHERE email_address = $1", username)
+      .then(user => {
+        if (!user || user.length < 1) return done(null, false);
+        if (user.length > 0 && user[0].password != password)
+          return done(null, false);
+        return done(null, user[0]);
+      });
+  })
+);
+
+// Configure the Google strategy for use by Passport.
 //
 // OAuth 2.0-based strategies require a `verify` function which receives the
-// credential (`accessToken`) for accessing the Facebook API on the user's
+// credential (`accessToken`) for accessing the Google API on the user's
 // behalf, along with the user's profile.  The function must invoke `cb`
 // with a user object, which will be set at `req.user` in route handlers after
 // authentication.
@@ -151,6 +167,12 @@ router.post("/logout", (req, res) => {
   } else {
     return res.status(500).send(false);
   }
+});
+
+router.post("/local", passport.authenticate("local"), (req, res) => {
+  console.log(req.user);
+  if (req.user) return res.send(req.user);
+  if (!req.user) return res.send(false);
 });
 
 router.get(

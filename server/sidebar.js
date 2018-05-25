@@ -12,7 +12,8 @@ router.post("/candidates", (req, res) => {
   return req.db
     .any(
       `SELECT u.first_name, u.last_name FROM "test_attempts" as a 
-  join "users" as u on a.user_id = u.id`
+  join "users" as u on a.user_id = u.id where a.invited_by = $1`,
+      [req.body.userId]
     )
     .then(users => {
       result.users = users.map(i => ({
@@ -22,7 +23,8 @@ router.post("/candidates", (req, res) => {
       return req.db
         .any(
           `SELECT distinct u.email_address FROM "test_attempts" as a 
-        join "users" as u on a.user_id = u.id`
+        join "users" as u on a.user_id = u.id where a.invited_by = $1`,
+          [req.body.userId]
         )
         .then(emails => {
           result.emails = emails.map(i => ({
@@ -69,7 +71,8 @@ router.post("/tests", (req, res) => {
         label: i.name
       }));
       return req.db.any(
-        "SELECT a.*, t.* FROM (SELECT count(test_id) as count, test_id FROM test_attempts GROUP BY test_id) a LEFT JOIN tests t ON a.test_id = t.id"
+        "SELECT a.*, t.* FROM (SELECT count(test_id) as count, test_id FROM test_attempts where invited_by = $1 GROUP BY test_id) a LEFT JOIN tests t ON a.test_id = t.id",
+        [req.body.userId]
       );
     })
     .then(issued => {

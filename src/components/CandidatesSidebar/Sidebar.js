@@ -13,16 +13,10 @@ import {
   Col
 } from "reactstrap";
 import axios from "axios";
+import localForage from "localforage";
 import Select from "react-select";
 import { DatePickerBasic } from "../DateRangePicker.jsx";
 import "react-select/dist/react-select.css";
-
-const catOptions = [
-  { value: 2, label: "Accounting" },
-  { value: 3, label: "Finance" },
-  { value: 5, label: "CPA (Custom)" },
-  { value: 4, label: "Finance II" }
-];
 
 class Sidebar extends Component {
   constructor(props) {
@@ -35,7 +29,8 @@ class Sidebar extends Component {
       endDate: undefined,
       statusValue: "all",
       filters: props.filters || {},
-      options: undefined
+      options: undefined,
+      userId: undefined
     };
 
     this.updateUserValue = this.updateUserValue.bind(this);
@@ -46,9 +41,12 @@ class Sidebar extends Component {
   }
 
   componentWillMount() {
-    axios.post("/sidebar/candidates").then(d => {
-      this.setState({
-        options: d.data
+    localForage.getItem("userId").then(id => {
+      axios.post("/sidebar/candidates", { userId: id }).then(d => {
+        this.setState({
+          userId: id,
+          options: d.data
+        });
       });
     });
   }

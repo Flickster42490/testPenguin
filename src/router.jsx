@@ -6,6 +6,7 @@ import TestApp from "./pages/Tests/TestApp/app.jsx";
 import Completed from "./pages/Tests/TestApp/completed.jsx";
 import Instructions from "./pages/Tests/TestApp/instructions.jsx";
 import Dashboard from "./pages/dashboard.jsx";
+import LoginContainer from "./pages/loginContainer.jsx";
 import Login from "./pages/Login/index.jsx";
 import Candidates from "./pages/Candidates/index.jsx";
 import ReviewResults from "./pages/Candidates/reviewResults.jsx";
@@ -65,8 +66,10 @@ const AppRouter = () => (
         <Route path="app" component={TestApp} />
         <Route path="completed" component={Completed} />
       </Route>
-      <Route path="login" component={Login} />
-      <Route path="*" component={NotFound} />
+      <Route component={LoginContainer}>
+        <Route path="login" component={Login} />
+        <Route path="*" component={NotFound} />
+      </Route>
     </Route>
   </Router>
 );

@@ -11,6 +11,7 @@ import {
 import axios from "axios";
 import moment from "moment";
 import ReactTable from "react-table";
+import localForage from "localforage";
 import "status-indicator/styles.css";
 import "react-table/react-table.css";
 
@@ -27,30 +28,39 @@ class Dashboard extends Component {
     super(props);
     this.state = {
       candidateList: [],
-      loading: true
+      loading: true,
+      userId: undefined
     };
   }
 
   componentWillMount() {
     window.scrollTo(0, 0);
-    axios.post("/testAttempts").then(d => {
-      this.setState({
-        candidateList: d.data,
-        loading: false
+    localForage.getItem("userId").then(id => {
+      axios.post("/testAttempts", { userId: id }).then(d => {
+        this.setState({
+          candidateList: d.data,
+          userId: id,
+          loading: false
+        });
       });
     });
   }
 
   componentWillReceiveProps(np) {
-    axios.post("/testAttempts", { filters: np.filters || {} }).then(d => {
-      this.setState(
-        {
-          candidateList: d.data,
-          loading: false
-        },
-        () => this.forceUpdate()
-      );
-    });
+    axios
+      .post("/testAttempts", {
+        userId: this.state.userId,
+        filters: np.filters || {}
+      })
+      .then(d => {
+        this.setState(
+          {
+            candidateList: d.data,
+            loading: false
+          },
+          () => this.forceUpdate()
+        );
+      });
   }
 
   render() {
