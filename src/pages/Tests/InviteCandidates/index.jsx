@@ -41,6 +41,7 @@ export default class InviteCandidates extends Component {
 
   componentWillMount() {
     window.scrollTo(0, 0);
+    document.body.classList.toggle("sidebar-hidden");
     const queries = window.location.hash.split("?")[1];
     const testId = queryString.parse(queries).id;
     const testName = queryString.parse(queries).name;
@@ -59,6 +60,10 @@ export default class InviteCandidates extends Component {
     });
 
     this.handleEmail = this.handleEmail.bind(this);
+  }
+
+  componentWillUnmount() {
+    document.body.classList.toggle("sidebar-hidden");
   }
 
   handleReload() {
