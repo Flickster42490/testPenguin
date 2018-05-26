@@ -29,8 +29,10 @@ class Dashboard extends Component {
     this.state = {
       candidateList: [],
       loading: true,
-      userId: undefined
+      userId: undefined,
+      filters: {}
     };
+    this.handleRefetch = this.handleRefetch.bind(this);
   }
 
   componentWillMount() {
@@ -51,6 +53,24 @@ class Dashboard extends Component {
       .post("/testAttempts", {
         userId: this.state.userId,
         filters: np.filters || {}
+      })
+      .then(d => {
+        this.setState(
+          {
+            candidateList: d.data,
+            loading: false,
+            filters: np.filters
+          },
+          () => this.forceUpdate()
+        );
+      });
+  }
+
+  handleRefetch() {
+    axios
+      .post("/testAttempts", {
+        userId: this.state.userId,
+        filters: this.state.filters || {}
       })
       .then(d => {
         this.setState(
@@ -79,7 +99,11 @@ class Dashboard extends Component {
         <Preloader loading={loading}>
           <Row>
             <Col xs="12">
-              <CandidateResults candidateList={candidateList} />
+              <CandidateResults
+                candidateList={candidateList}
+                userId={this.state.userId}
+                handleRefetch={this.handleRefetch}
+              />
             </Col>
           </Row>
         </Preloader>

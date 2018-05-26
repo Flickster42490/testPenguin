@@ -37,8 +37,10 @@ export default class IssuedTestsReview extends Component {
     this.state = {
       test: undefined,
       completedCandidates: undefined,
-      waitingCandidates: undefined
+      waitingCandidates: undefined,
+      userId: undefined
     };
+    this.handleRefetch = this.handleRefetch.bind(this);
   }
 
   componentWillMount() {
@@ -51,6 +53,7 @@ export default class IssuedTestsReview extends Component {
         axios.post("/testAttempts", { userId: userId, testId: id }).then(a => {
           console.log(a);
           this.setState({
+            userId: userId,
             test: d.data[0],
             completedCandidates: a.data.filter(i => i.completed_at) || [],
             waitingCandidates: a.data.filter(i => !i.completed_at) || []
@@ -64,8 +67,24 @@ export default class IssuedTestsReview extends Component {
     document.body.classList.toggle("sidebar-hidden");
   }
 
+  handleRefetch() {
+    axios
+      .post("/testAttempts", {
+        userId: this.state.userId
+      })
+      .then(d => {
+        this.setState(
+          {
+            candidateList: d.data,
+            loading: false
+          },
+          () => this.forceUpdate()
+        );
+      });
+  }
+
   render() {
-    const { completedCandidates, waitingCandidates, test } = this.state;
+    const { completedCandidates, waitingCandidates, test, userId } = this.state;
     console.log(test);
     return (
       <div className="app-body">
@@ -150,7 +169,11 @@ export default class IssuedTestsReview extends Component {
                     <br />
                     <Row>
                       <Col xs={12}>
-                        <CandidateResults candidateList={completedCandidates} />
+                        <CandidateResults
+                          candidateList={completedCandidates}
+                          userId={userId}
+                          handleRefetch={this.handleRefetch}
+                        />
                       </Col>
                     </Row>
                     <br />
@@ -162,7 +185,11 @@ export default class IssuedTestsReview extends Component {
                     <br />
                     <Row>
                       <Col xs={12}>
-                        <CandidateResults candidateList={waitingCandidates} />
+                        <CandidateResults
+                          candidateList={waitingCandidates}
+                          userId={userId}
+                          handleRefetch={this.handleRefetch}
+                        />
                       </Col>
                     </Row>
                     <br />

@@ -5,7 +5,7 @@ const TestAttempts = require("./testAttemptsDAO");
 // using SendGrid's v3 Node.js Library
 // https://github.com/sendgrid/sendgrid-nodejs
 const sgMail = require("@sendgrid/mail");
-
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 module.exports = router;
 
 router.post("/", (req, res) => {
@@ -67,6 +67,53 @@ router.get("/findOne/:id", (req, res) => {
     });
 });
 
+router.post("/sendReminder", (req, res) => {
+  let { userId, candidateId, candidateEmail, testAttemptId, testId } = req.body;
+  console.log(req.body);
+  return req.db.any("SELECT * FROM users WHERE id=$1", [userId]).then(u => {
+    let user = u[0];
+    let msg = {
+      to: candidateEmail,
+      from: "admin@testpenguin.com",
+      templateId: "0dde1f97-fa38-47ad-997d-383b9ad7e7e4",
+      substitutions: {
+        user_first_name: user.first_name,
+        user_last_name: user.last_name,
+        company: "AccountingPenguin",
+        user_email: user.email_address,
+        test_expiration_date: "5/27/2019",
+        candidate_id: candidateId,
+        test_attempt_id: testAttemptId,
+        test_id: testId
+      }
+    };
+    sgMail
+      .send(msg)
+      .then(d => {
+        //Celebrate
+        console.log("celebrate. its sent", d);
+        return req.db
+          .any(
+            "UPDATE test_attempts SET last_reminder_sent = $1 WHERE id = $2 RETURNING *",
+            [new Date(), testAttemptId]
+          )
+          .then(d => {
+            return res.status(200).send(d);
+          });
+      })
+      .catch(error => {
+        //Log friendly error
+        console.error(error.toString());
+
+        //Extract error msg
+        const { message, code, response } = error;
+
+        //Extract response msg
+        const { headers, body } = response;
+      });
+  });
+});
+
 router.post("/create", (req, res) => {
   console.log(req.body);
   let { userIds } = req.body;
@@ -98,7 +145,6 @@ router.post("/create", (req, res) => {
         let attempts = all[0];
         let user = all[1][0];
         let candidates = all[2];
-        sgMail.setApiKey(process.env.SENDGRID_API_KEY);
         let emails = [];
         attempts.forEach(a => {
           let candidateInfo = _.find(candidates, { id: a.user_id });
