@@ -11,14 +11,16 @@ router.post("/candidates", (req, res) => {
   let result = {};
   return req.db
     .any(
-      `SELECT u.first_name, u.last_name FROM "test_attempts" as a 
+      `SELECT CONCAT(u.first_name,' ', u.last_name) as full_name FROM "test_attempts" as a 
   join "users" as u on a.user_id = u.id where a.invited_by = $1`,
       [req.body.userId]
     )
     .then(users => {
+      users = users.map(i => i.full_name);
+      users = _.uniq(users);
       result.users = users.map(i => ({
-        value: `${i.first_name} ${i.last_name}`,
-        label: `${i.first_name} ${i.last_name}`
+        value: i,
+        label: i
       }));
       return req.db
         .any(
