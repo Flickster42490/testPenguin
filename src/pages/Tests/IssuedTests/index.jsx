@@ -146,15 +146,15 @@ export default class IssuedTests extends Component {
                           maxWidth: "50%"
                         }}
                       >
-                        <Button size="sm" color="primary">
-                          <a
-                            href={`/#/dashboard/tests/issuedTests/review?id=${
-                              cell.original.test_id
-                            }`}
-                          >
+                        <a
+                          href={`/#/dashboard/tests/issuedTests/review?id=${
+                            cell.original.test_id
+                          }`}
+                        >
+                          <Button size="sm" color="primary">
                             Review
-                          </a>
-                        </Button>
+                          </Button>
+                        </a>
                         <Button size="sm" color="default">
                           Archive Test
                         </Button>

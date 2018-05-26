@@ -151,9 +151,11 @@ class Login extends Component {
                           </Button>
                         </a>
                         &nbsp;&nbsp;&nbsp;&nbsp;
-                        <Button color="primary" className="mt-3">
-                          Sign In with LinkedIn
-                        </Button>
+                        <a href="/auth/linkedin">
+                          <Button color="primary" className="mt-3">
+                            Sign In with LinkedIn
+                          </Button>
+                        </a>
                       </Col>
                     </Row>
                     <hr />

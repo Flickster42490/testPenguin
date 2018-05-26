@@ -228,33 +228,33 @@ export default class Dashboard extends Component {
                 >
                   <ButtonGroup size="sm" vertical>
                     {cell.original.completed_at && (
-                      <Button size="sm" color="primary">
-                        <a
-                          href={`#/dashboard/candidates/reviewResults?id=${
-                            cell.original.test_attempt_id
-                          }`}
-                          style={{ color: "#fff" }}
-                        >
+                      <a
+                        href={`#/dashboard/candidates/reviewResults?id=${
+                          cell.original.test_attempt_id
+                        }`}
+                        style={{ color: "#fff" }}
+                      >
+                        <Button size="sm" color="primary">
                           Review Results
-                        </a>
-                      </Button>
+                        </Button>
+                      </a>
                     )}
                     {!cell.original.completed_at && (
-                      <Button size="sm" color="danger">
-                        <a
-                          onClick={() =>
-                            this.handleSendReminder(
-                              cell.original.user_id,
-                              cell.original.email_address,
-                              cell.original.id,
-                              cell.original.test_id
-                            )
-                          }
-                          style={{ color: "#fff" }}
-                        >
+                      <a
+                        onClick={() =>
+                          this.handleSendReminder(
+                            cell.original.user_id,
+                            cell.original.email_address,
+                            cell.original.id,
+                            cell.original.test_id
+                          )
+                        }
+                        style={{ color: "#fff" }}
+                      >
+                        <Button size="sm" color="danger">
                           Send Reminder
-                        </a>
-                      </Button>
+                        </Button>
+                      </a>
                     )}
                   </ButtonGroup>
                 </div>

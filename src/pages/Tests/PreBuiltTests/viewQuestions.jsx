@@ -111,21 +111,19 @@ export default class QuestionLibrary extends Component {
                         }}
                       >
                         <ButtonGroup size="sm" vertical>
-                          <Button size="sm" color="primary">
-                            <a
-                              href={`/#/dashboard/tests/questionLibrary/preview?id=${
-                                cell.original.id
-                              }&returnTo=${
-                                window.location.hash
-                              }&returnToTestId=${
-                                queryString.parse(
-                                  window.location.hash.split("?")[1]
-                                ).id
-                              }`}
-                            >
+                          <a
+                            href={`/#/dashboard/tests/questionLibrary/preview?id=${
+                              cell.original.id
+                            }&returnTo=${window.location.hash}&returnToTestId=${
+                              queryString.parse(
+                                window.location.hash.split("?")[1]
+                              ).id
+                            }`}
+                          >
+                            <Button size="sm" color="primary">
                               Preview Question
-                            </a>
-                          </Button>
+                            </Button>
+                          </a>
                         </ButtonGroup>
                       </div>
                     )

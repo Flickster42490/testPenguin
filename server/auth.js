@@ -109,26 +109,72 @@ passport.use(
   )
 );
 
-// passport.use(
-//   new LinkedInStrategy(
-//     {
-//       clientID: LINKEDIN_KEY,
-//       clientSecret: LINKEDIN_SECRET,
-//       callbackURL: process.env.LINKEDIN_CALLBACK_URL,
-//       scope: ["r_emailaddress", "r_basicprofile"]
-//     },
-//     function(accessToken, refreshToken, profile, done) {
-//       // asynchronous verification, for effect...
-//       process.nextTick(function() {
-//         // To keep the example simple, the user's LinkedIn profile is returned to
-//         // represent the logged-in user. In a typical application, you would want
-//         // to associate the LinkedIn account with a user record in your database,
-//         // and return that user instead.
-//         return done(null, profile);
-//       });
-//     }
-//   )
-// );
+passport.use(
+  new LinkedInStrategy(
+    {
+      clientID: "86bdzivhtlsou0",
+      clientSecret: "KOaIuLYNGbG1WKXY",
+      callbackURL: process.env.LINKEDIN_CALLBACK_URL,
+      scope: ["r_emailaddress", "r_basicprofile"]
+    },
+    function(accessToken, refreshToken, profile, done) {
+      console.log(profile);
+      return db
+        .any("SELECT * FROM users WHERE linkedin_id = $1", profile.id)
+        .then(user => {
+          console.log("inside passport use, user: ", user);
+          if (user.length > 0) {
+            console.log("user.length > 0");
+            return db
+              .any(
+                "UPDATE users set last_signed_in = $1 where id = $2 RETURNING *",
+                [new Date(), user[0].id]
+              )
+              .then(u => {
+                console.log(u);
+                return Cache.get(profile.id, (err, value) => {
+                  if (!err && !value) {
+                    return Cache.set(profile.id, new Date(), (err, data) => {
+                      console.log("err", err, "data", data);
+                      return done(null, profile);
+                    });
+                  } else {
+                    return done(null, profile);
+                  }
+                });
+              });
+          } else {
+            return db
+              .any(
+                "INSERT INTO users(linkedin_id,first_name,last_name,display_name,image_url, provider, email_address, last_signed_in, created_at,type) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
+                [
+                  profile.id,
+                  profile.name.givenName,
+                  profile.name.familyName,
+                  profile.displayName,
+                  profile.photos[0] ? profile.photos[0].value : "",
+                  profile.provider,
+                  profile.emails[0] ? profile.emails[0].value : "",
+                  new Date(),
+                  new Date(),
+                  "admin"
+                ]
+              )
+              .then(() => {
+                return Cache.set(profile.id, new Date(), (err, data) => {
+                  console.log("err", err, "data", data);
+                  return done(null, profile);
+                });
+              });
+          }
+        })
+        .catch(err => {
+          console.log(err);
+          return done(err);
+        });
+    }
+  )
+);
 
 // Configure Passport authenticated session persistence.
 //
@@ -245,6 +291,8 @@ router.get(
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
+router.get("/linkedin", passport.authenticate("linkedin"));
+
 router.get("/google/return", (req, res) =>
   passport.authenticate("google", (err, user, info) => {
     console.log("err: ", err, "user: ", user, "info : ", info);
@@ -254,6 +302,24 @@ router.get("/google/return", (req, res) =>
     if (user) {
       return db
         .any("SELECT * FROM users WHERE google_id = $1", user.id)
+        .then(user => {
+          return res.redirect(
+            `/#/dashboard/candidates?id=${encodeURIComponent(user[0].id)}`
+          );
+        });
+    }
+  })(req, res)
+);
+
+router.get("/linkedin/return", (req, res) =>
+  passport.authenticate("linkedin", (err, user, info) => {
+    console.log("err: ", err, "user: ", user, "info : ", info);
+    if (err) {
+      return res.status(400).json(err);
+    }
+    if (user) {
+      return db
+        .any("SELECT * FROM users WHERE linkedin_id = $1", user.id)
         .then(user => {
           return res.redirect(
             `/#/dashboard/candidates?id=${encodeURIComponent(user[0].id)}`
