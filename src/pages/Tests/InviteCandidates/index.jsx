@@ -32,7 +32,9 @@ export default class InviteCandidates extends Component {
 
     this.state = {
       testName: "Demo",
-      testId: null
+      testId: null,
+      submitted: false,
+      showSuccessToaster: false
     };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -47,94 +49,55 @@ export default class InviteCandidates extends Component {
         testId: testId,
         testName: testName,
         showSuccessToaster: false,
-        candidate: {
-          firstName: null,
-          lastName: null,
-          email: null,
+        candidates: {
+          emails: null,
           invitedBy: id
         },
-        submitDisable: true
+        submitDisable: true,
+        submitted: false
       });
     });
 
     this.handleEmail = this.handleEmail.bind(this);
-    this.handleFirstName = this.handleFirstName.bind(this);
-    this.handleLastName = this.handleLastName.bind(this);
   }
 
   handleReload() {
     console.log(window.location.hash);
   }
 
-  handleFirstName(e) {
-    let { candidate } = this.state;
-    this.setState({
-      candidate: Object.assign(candidate, {
-        firstName: e.target.value
-      }),
-      submitDisable: !(
-        candidate.firstName &&
-        candidate.lastName &&
-        candidate.email
-      )
-    });
-  }
-
-  handleLastName(e) {
-    let { candidate } = this.state;
-    this.setState({
-      candidate: Object.assign(candidate, {
-        lastName: e.target.value
-      }),
-      submitDisable: !(
-        candidate.firstName &&
-        candidate.lastName &&
-        candidate.email
-      )
-    });
-  }
-
   handleEmail(e) {
-    let { candidate } = this.state;
+    let { candidates } = this.state;
+    console.log(e.target.value, candidates);
     this.setState(
       {
-        candidate: Object.assign(candidate, {
-          email: e.target.value
+        candidates: Object.assign(candidates, {
+          emails: e.target.value
         }),
-        submitDisable: !(
-          candidate.firstName &&
-          candidate.lastName &&
-          candidate.email
-        )
+        submitDisable: !e.target.value
       },
       () => {
-        console.log("candidate", this.state.candidate);
+        console.log("candidates", this.state.candidates);
       }
     );
   }
 
   handleSubmit() {
-    axios.post("/users/candidate/invite", this.state.candidate).then(d => {
-      const candidate = d.data ? d.data[0] : null;
-      if (d.status === 200 && candidate) {
-        this.setState(
-          {
-            showSuccessToaster: true
-          },
-          () => {
-            axios
-              .post("/testAttempts/create", {
-                userId: candidate.id,
-                testId: this.state.testId,
-                invitedBy: this.state.candidate.invitedBy
-              })
-              .then(() => {
-                this.setState({
-                  submitDisable: true
-                });
-              });
-          }
-        );
+    axios.post("/users/candidate/invite", this.state.candidates).then(d => {
+      const candidates = d.data ? d.data : null;
+      if (d.status === 200 && candidates) {
+        axios
+          .post("/testAttempts/create", {
+            userIds: candidates.map(i => i.id),
+            testId: this.state.testId,
+            invitedBy: this.state.candidates.invitedBy
+          })
+          .then(() => {
+            this.setState({
+              submitDisable: true,
+              submitted: true,
+              showSuccessToaster: true
+            });
+          });
       }
     });
   }
@@ -150,13 +113,12 @@ export default class InviteCandidates extends Component {
               <Row>
                 <Col>
                   <Alert type="success">
-                    Invitation Sent to {candidate.firstName}{" "}
-                    {candidate.lastName}!{" "}
+                    Invitations Sent
                     <span
                       onClick={() => window.location.reload()}
                       className="link"
                     >
-                      (Invite Another?)
+                      (Invite Others?)
                     </span>
                   </Alert>
                 </Col>
@@ -165,7 +127,7 @@ export default class InviteCandidates extends Component {
             <Row>
               <Col xs="12">
                 <div className="text-center">
-                  <h3>Send Invitation to Candidate for: {testName} Test</h3>
+                  <h3>Send Invitations for: {testName} Test</h3>
                 </div>
               </Col>
               <br />
@@ -174,34 +136,21 @@ export default class InviteCandidates extends Component {
             <Row>
               <Col xs="1" />
               <Col xs="10">
-                <Form
-                  action=""
-                  method="post"
-                  encType="multipart/form-data"
-                  className="form-horizontal"
-                >
+                <Form action="" className="form-horizontal">
                   <FormGroup row>
                     <Col md="3">
-                      <Label htmlFor="textarea-input">First Name</Label>
+                      <Label htmlFor="textarea-input">Candidate Emails</Label>
                     </Col>
                     <Col xs="12" md="6">
-                      <Input type="text" onBlur={this.handleFirstName} />
-                    </Col>
-                  </FormGroup>
-                  <FormGroup row>
-                    <Col md="3">
-                      <Label htmlFor="textarea-input">Last Name</Label>
-                    </Col>
-                    <Col xs="12" md="6">
-                      <Input type="text" onBlur={this.handleLastName} />
-                    </Col>
-                  </FormGroup>
-                  <FormGroup row>
-                    <Col md="3">
-                      <Label htmlFor="textarea-input">Email</Label>
-                    </Col>
-                    <Col xs="12" md="6">
-                      <Input type="text" onBlur={this.handleEmail} />
+                      <Input
+                        type="text"
+                        onBlur={this.handleEmail}
+                        disabled={this.state.submitted}
+                      />
+                      <FormText color="muted">
+                        Please separate emails with a comma. <br />
+                        (eg. john@test.com,mary@test.com,tracy@test.com)
+                      </FormText>
                     </Col>
                   </FormGroup>
                 </Form>

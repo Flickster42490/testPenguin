@@ -2,6 +2,10 @@ const router = require("express").Router();
 const _ = require("lodash");
 const moment = require("moment");
 const TestAttempts = require("./testAttemptsDAO");
+// using SendGrid's v3 Node.js Library
+// https://github.com/sendgrid/sendgrid-nodejs
+const sgMail = require("@sendgrid/mail");
+
 module.exports = router;
 
 router.post("/", (req, res) => {
@@ -65,13 +69,74 @@ router.get("/findOne/:id", (req, res) => {
 
 router.post("/create", (req, res) => {
   console.log(req.body);
+  let { userIds } = req.body;
+  let subQ = ``;
+  userIds.forEach((i, idx) => {
+    if (idx !== userIds.length - 1)
+      subQ =
+        subQ +
+        `($1, $${idx + 2}, '${req.body.testId}', '${req.body.invitedBy}'),`;
+    else
+      subQ =
+        subQ +
+        `($1, $${idx + 2}, '${req.body.testId}', '${req.body.invitedBy}')`;
+  });
+  let vars = [new Date()].concat(userIds);
+  console.log("subQ and vars", subQ, vars);
   return req.db
     .any(
-      "INSERT INTO test_attempts(invited_at, user_id, test_id, invited_by) VALUES($1,$2, $3, $4) RETURNING *",
-      [new Date(), req.body.userId, req.body.testId, req.body.invitedBy]
+      `INSERT INTO test_attempts(invited_at, user_id, test_id, invited_by) VALUES ${subQ} RETURNING *`,
+      vars
     )
     .then(data => {
-      return res.send(data);
+      let candidates = data.map(i => i.user_id);
+      return Promise.all([
+        data,
+        req.db.any(`SELECT * FROM users WHERE id = $1`, req.body.invitedBy),
+        req.db.any("SELECT * FROM users WHERE id IN ($1:csv) ", [candidates])
+      ]).then(all => {
+        let attempts = all[0];
+        let user = all[1][0];
+        let candidates = all[2];
+        sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+        let emails = [];
+        attempts.forEach(a => {
+          let candidateInfo = _.find(candidates, { id: a.user_id });
+          let tempMsg = {
+            to: candidateInfo.email_address,
+            from: "admin@testpenguin.com",
+            templateId: "0dde1f97-fa38-47ad-997d-383b9ad7e7e4",
+            substitutions: {
+              user_first_name: user.first_name,
+              user_last_name: user.last_name,
+              company: "AccountingPenguin",
+              user_email: user.email_address,
+              test_expiration_date: "5/27/2019",
+              candidate_id: a.user_id,
+              test_attempt_id: a.id,
+              test_id: a.test_id
+            }
+          };
+          emails.push(tempMsg);
+        });
+        sgMail
+          .send(emails)
+          .then(d => {
+            //Celebrate
+            console.log("celebrate. its sent", d);
+            return res.send(attempts);
+          })
+          .catch(error => {
+            //Log friendly error
+            console.error(error.toString());
+
+            //Extract error msg
+            const { message, code, response } = error;
+
+            //Extract response msg
+            const { headers, body } = response;
+          });
+      });
     });
 });
 
