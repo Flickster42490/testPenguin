@@ -103,9 +103,9 @@
     "clean": "rimraf ./build",
     "start": "node server.js",
     "local":
-      "CALLBACK_URL=http://localhost:8000/auth/google/return SENDGRID_API_KEY=process.env.SENDGRID_API_KEY LINKEDIN_CALLBACK_URL=http://localhost:8000/auth/linkedin/return DB_HOST=localhost DB_USER=maxli DB_PASSWORD=admin DB_NAME=testpenguin_postgres nodemon server.js",
+      "CALLBACK_URL=http://localhost:8000/auth/google/return LINKEDIN_CALLBACK_URL=http://localhost:8000/auth/linkedin/return DB_HOST=localhost DB_USER=maxli DB_PASSWORD=admin DB_NAME=testpenguin_postgres nodemon server.js",
     "local-rds":
-      "CALLBACK_URL=http://localhost:8000/auth/google/return SENDGRID_API_KEY=process.env.SENDGRID_API_KEY LINKEDIN_CALLBACK_URL=http://localhost:8000/auth/linkedin/return DB_HOST=testpenguin.cwvdzkfscajo.us-east-2.rds.amazonaws.com DB_USER=master DB_PASSWORD=T3stp3nguin! DB_NAME=testpenguin_postgres nodemon server.js",
+      "CALLBACK_URL=http://localhost:8000/auth/google/return LINKEDIN_CALLBACK_URL=http://localhost:8000/auth/linkedin/return nodemon server.js",
     "heroku-postbuild": "npm run build"
   },
   "engines": {
