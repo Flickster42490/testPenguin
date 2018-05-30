@@ -55,7 +55,9 @@ class HeaderDropdown extends Component {
         </DropdownToggle>
         <DropdownMenu right>
           <DropdownItem>
-            <i className="fa fa-user" /> Account
+            <a href="/#/dashboard/profile">
+              <i className="fa fa-user" /> Profile
+            </a>
           </DropdownItem>
           <DropdownItem>
             <i className="fa fa-usd" /> Payments<Badge color="secondary">

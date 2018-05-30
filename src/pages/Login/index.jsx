@@ -24,6 +24,7 @@ class Login extends Component {
       password: undefined,
       firstName: undefined,
       lastName: undefined,
+      company: undefined,
       loginError: false,
       registerError: false,
       missingInfoError: false,
@@ -52,7 +53,8 @@ class Login extends Component {
         firstName: this.state.firstName,
         lastName: this.state.lastName,
         username: this.state.username,
-        password: this.state.password
+        password: this.state.password,
+        company: this.state.company
       })
       .then(u => {
         if (u.data)
@@ -132,6 +134,7 @@ class Login extends Component {
                           placeholder="Email"
                           onChange={e => this.handleInputChange("username", e)}
                         />
+                        <br />
                         <Input
                           placeholder="Password"
                           type="password"
@@ -188,7 +191,7 @@ class Login extends Component {
                     )}
                     {this.state.displayRegistration && (
                       <Row className="justify-content-center">
-                        <Col md="6">
+                        <Col md="3">
                           <Input
                             placeholder="First Name"
                             onChange={e =>
@@ -196,7 +199,7 @@ class Login extends Component {
                             }
                           />
                         </Col>
-                        <Col md="6">
+                        <Col md="3">
                           <Input
                             placeholder="Last Name"
                             onChange={e =>
@@ -204,6 +207,13 @@ class Login extends Component {
                             }
                           />
                         </Col>
+                        <Col md="6">
+                          <Input
+                            placeholder="Company Name"
+                            onChange={e => this.handleInputChange("company", e)}
+                          />
+                        </Col>
+                        <br />
                         <br />
                         <br />
                         <Col md="6">

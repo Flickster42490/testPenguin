@@ -79,6 +79,28 @@ router.post("/candidate/update", (req, res) => {
     });
 });
 
+router.post("/updatePassword", (req, res) => {
+  return req.db
+    .any(`SELECT * FROM users where id = $1 limit 1`, [req.body.userId])
+    .then(u => {
+      if (u[0].password && u[0].password === req.body.oldPassword) {
+        return req.db
+          .any(`UPDATE users SET(password) = ($1) where id = $2 RETURNING * `, [
+            req.body.newPassword,
+            req.body.userId
+          ])
+          .then(data => {
+            return res.send(data);
+          });
+      } else {
+        return res.status(400).send(false);
+      }
+    })
+    .catch(err => {
+      console.log("err", err);
+    });
+});
+
 router.get("/:id", (req, res) => {
   return req.db
     .any("SELECT * FROM users where id = $1", [req.params.id])

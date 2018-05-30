@@ -252,6 +252,7 @@ router.post("/local/register", (req, res) => {
   if (!req.body.lastName) missing.push("Last Name");
   if (!req.body.username) missing.push("Username");
   if (!req.body.password) missing.push("Password");
+  if (!req.body.company) missing.push("Company Name");
   if (missing.length > 0) return res.status(400).send({ missing: missing });
   return db
     .any("SELECT * FROM users where email_address = $1", req.body.username)
@@ -260,7 +261,7 @@ router.post("/local/register", (req, res) => {
       else {
         return db
           .any(
-            "INSERT INTO users(first_name, last_name, email_address, display_name, provider, last_signed_in, created_at, password, type) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *",
+            "INSERT INTO users(first_name, last_name, email_address, display_name, provider, last_signed_in, created_at, password, type, company) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *",
             [
               req.body.firstName,
               req.body.lastName,
@@ -270,7 +271,8 @@ router.post("/local/register", (req, res) => {
               new Date(),
               new Date(),
               req.body.password,
-              "admin"
+              "admin",
+              req.body.company
             ]
           )
           .then(u => {

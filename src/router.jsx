@@ -26,6 +26,7 @@ import QuestionReview from "./pages/Tests/CreateNewQuestion/questionReview.jsx";
 import TestBasics from "./pages/Tests/CreateNewTest/testBasics.jsx";
 import AddQuestions from "./pages/Tests/CreateNewTest/addQuestions.jsx";
 import Review from "./pages/Tests/CreateNewTest/review.jsx";
+import Profile from "./pages/Profile/index.jsx";
 import NotFound from "./pages/NotFound/index.jsx";
 
 const AppRouter = () => (
@@ -36,6 +37,7 @@ const AppRouter = () => (
         <IndexRedirect to="candidates" />
         <Route path="candidates" component={Candidates} />
         <Route path="candidates/reviewResults" component={ReviewResults} />
+        <Route path="profile" component={Profile} />
         <Route path="tests" component={Tests}>
           <IndexRedirect to="preBuiltTests" />
           <Route path="preBuiltTests" component={PreBuiltTests} />
