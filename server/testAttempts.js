@@ -118,6 +118,7 @@ router.post("/create", (req, res) => {
   console.log(req.body);
   let { userIds } = req.body;
   let subQ = ``;
+  let numberOfTests, dbUser;
   userIds.forEach((i, idx) => {
     if (idx !== userIds.length - 1)
       subQ =
@@ -165,12 +166,23 @@ router.post("/create", (req, res) => {
           };
           emails.push(tempMsg);
         });
+        numberOfTests = emails.length;
         sgMail
           .send(emails)
           .then(d => {
             //Celebrate
             console.log("celebrate. its sent", d);
-            return res.send(attempts);
+            return req.db
+              .any("SELECT * FROM users where id=$1", req.body.invitedBy)
+              .then(user => {
+                return req.db.any(
+                  "UPDATE users SET tokens = $1 where id = $2",
+                  [user[0].tokens - numberOfTests, user[0].id]
+                );
+              })
+              .then(() => {
+                return res.send(true);
+              });
           })
           .catch(error => {
             //Log friendly error
