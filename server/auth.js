@@ -6,6 +6,8 @@ const cors = require("cors");
 const router = require("express").Router();
 const NodeCache = require("node-cache");
 const Cache = new NodeCache({ stdTTL: 360000, checkperiod: 370000 });
+const stripe = require("stripe")(process.env.STRIPE_KEY);
+const moment = require("moment");
 
 var pgp = require("pg-promise")();
 const cn = {
@@ -79,7 +81,7 @@ passport.use(
           } else {
             return db
               .any(
-                "INSERT INTO users(google_id,first_name,last_name,display_name,image_url, provider, email_address, last_signed_in, created_at,type) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
+                "INSERT INTO users(google_id,first_name,last_name,display_name,image_url, provider, email_address, last_signed_in, created_at,type,trial_end,tokens) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING *",
                 [
                   profile.id,
                   profile.name.givenName,
@@ -90,14 +92,28 @@ passport.use(
                   profile.emails[0] ? profile.emails[0].value : "",
                   new Date(),
                   new Date(),
-                  "admin"
+                  "admin",
+                  moment(new Date())
+                    .endOf("day")
+                    .add(7, "days"),
+                  3
                 ]
               )
-              .then(() => {
-                return Cache.set(profile.id, new Date(), (err, data) => {
-                  console.log("err", err, "data", data);
-                  return done(null, profile);
-                });
+              .then(user => {
+                return stripe.customers
+                  .create({
+                    email: u[0].email_address
+                  })
+                  .then(customer => {
+                    console.log("stripe customer ---->", customer, u[0]);
+                    return db.any(
+                      "UPDATE users SET stripe_id = $1 WHERE id=$2 RETURNING *",
+                      [customer.id, u[0].id]
+                    );
+                  })
+                  .then(u => {
+                    return done(null, u);
+                  });
               });
           }
         })
@@ -146,7 +162,7 @@ passport.use(
           } else {
             return db
               .any(
-                "INSERT INTO users(linkedin_id,first_name,last_name,display_name,image_url, provider, email_address, last_signed_in, created_at,type) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
+                "INSERT INTO users(linkedin_id,first_name,last_name,display_name,image_url, provider, email_address, last_signed_in, created_at,type,trial_end, tokens) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING * ",
                 [
                   profile.id,
                   profile.name.givenName,
@@ -157,14 +173,28 @@ passport.use(
                   profile.emails[0] ? profile.emails[0].value : "",
                   new Date(),
                   new Date(),
-                  "admin"
+                  "admin",
+                  moment(new Date())
+                    .endOf("day")
+                    .add(7, "days"),
+                  3
                 ]
               )
-              .then(() => {
-                return Cache.set(profile.id, new Date(), (err, data) => {
-                  console.log("err", err, "data", data);
-                  return done(null, profile);
-                });
+              .then(users => {
+                return stripe.customers
+                  .create({
+                    email: u[0].email_address
+                  })
+                  .then(customer => {
+                    console.log("stripe customer ---->", customer, u[0]);
+                    return db.any(
+                      "UPDATE users SET stripe_id = $1 WHERE id=$2 RETURNING *",
+                      [customer.id, u[0].id]
+                    );
+                  })
+                  .then(u => {
+                    return done(null, u);
+                  });
               });
           }
         })
@@ -261,7 +291,7 @@ router.post("/local/register", (req, res) => {
       else {
         return db
           .any(
-            "INSERT INTO users(first_name, last_name, email_address, display_name, provider, last_signed_in, created_at, password, type, company) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *",
+            "INSERT INTO users(first_name, last_name, email_address, display_name, provider, last_signed_in, created_at, password, type, company, trial_end, tokens) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING *",
             [
               req.body.firstName,
               req.body.lastName,
@@ -272,13 +302,32 @@ router.post("/local/register", (req, res) => {
               new Date(),
               req.body.password,
               "admin",
-              req.body.company
+              req.body.company,
+              moment(req.body.currentDate)
+                .endOf("day")
+                .add(7, "days"),
+              3
             ]
           )
           .then(u => {
-            console.log(u[0]);
-            if (u && u.length > 0) return res.send(u[0]);
-            else return res.status(401).send(false);
+            console.log("registered user ===> ", u[0]);
+            return stripe.customers
+              .create({
+                email: u[0].email_address
+              })
+              .then(customer => {
+                console.log("stripe customer ---->", customer, u[0]);
+                return db
+                  .any(
+                    "UPDATE users SET stripe_id = $1 WHERE id=$2 RETURNING *",
+                    [customer.id, u[0].id]
+                  )
+                  .then(user => {
+                    console.log(user[0]);
+                    if (user && user.length > 0) return res.send(user[0]);
+                    else return res.status(401).send(false);
+                  });
+              });
           });
       }
     })

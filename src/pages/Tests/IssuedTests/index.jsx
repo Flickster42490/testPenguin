@@ -155,9 +155,6 @@ export default class IssuedTests extends Component {
                             Review
                           </Button>
                         </a>
-                        <Button size="sm" color="default">
-                          Archive Test
-                        </Button>
                       </ButtonGroup>
                     </div>
                   )

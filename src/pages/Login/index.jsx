@@ -54,7 +54,8 @@ class Login extends Component {
         lastName: this.state.lastName,
         username: this.state.username,
         password: this.state.password,
-        company: this.state.company
+        company: this.state.company,
+        currentDate: new Date()
       })
       .then(u => {
         if (u.data)

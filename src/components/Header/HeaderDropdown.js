@@ -54,16 +54,11 @@ class HeaderDropdown extends Component {
           <img src={Settings} className="img-avatar" />
         </DropdownToggle>
         <DropdownMenu right>
-          <DropdownItem>
-            <a href="/#/dashboard/profile">
+          <a href="/#/dashboard/profile">
+            <DropdownItem>
               <i className="fa fa-user" /> Profile
-            </a>
-          </DropdownItem>
-          <DropdownItem>
-            <i className="fa fa-usd" /> Payments<Badge color="secondary">
-              42
-            </Badge>
-          </DropdownItem>
+            </DropdownItem>
+          </a>
           <DropdownItem onClick={this.handleLogout}>
             <i className="fa fa-lock" /> Logout
           </DropdownItem>
