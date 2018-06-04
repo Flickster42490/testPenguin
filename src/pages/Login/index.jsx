@@ -192,7 +192,7 @@ class Login extends Component {
                     )}
                     {this.state.displayRegistration && (
                       <Row className="justify-content-center">
-                        <Col md="3">
+                        <Col xs="12" md="3">
                           <Input
                             placeholder="First Name"
                             onChange={e =>
@@ -200,7 +200,7 @@ class Login extends Component {
                             }
                           />
                         </Col>
-                        <Col md="3">
+                        <Col xs="12" md="3">
                           <Input
                             placeholder="Last Name"
                             onChange={e =>
@@ -208,7 +208,7 @@ class Login extends Component {
                             }
                           />
                         </Col>
-                        <Col md="6">
+                        <Col xs="12" md="6">
                           <Input
                             placeholder="Company Name"
                             onChange={e => this.handleInputChange("company", e)}
@@ -217,7 +217,7 @@ class Login extends Component {
                         <br />
                         <br />
                         <br />
-                        <Col md="6">
+                        <Col xs="12" md="6">
                           <Input
                             placeholder="Email"
                             onChange={e =>
@@ -225,7 +225,7 @@ class Login extends Component {
                             }
                           />
                         </Col>
-                        <Col md="6">
+                        <Col xs="12" md="6">
                           <Input
                             placeholder="Password"
                             type="password"
