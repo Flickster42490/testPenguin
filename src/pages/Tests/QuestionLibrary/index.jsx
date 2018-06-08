@@ -96,8 +96,8 @@ export default class QuestionLibrary extends Component {
     return (
       <div>
         {!this.props.addQuestions && (
-          <div style={{ paddingBottom: "10px" }}>
-            <h2 style={{ display: "inline" }}>&nbsp;Question Library</h2>&nbsp;&nbsp;&nbsp;&nbsp;
+          <div className="page-header">
+            <h2 style={{ display: "inline" }}>&nbsp;QUESTION LIBRARY</h2>&nbsp;&nbsp;&nbsp;&nbsp;
           </div>
         )}
         <Preloader loading={loading}>

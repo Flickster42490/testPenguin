@@ -51,12 +51,12 @@ class HeaderDropdown extends Component {
     return (
       <Dropdown nav isOpen={this.state.dropdownOpen} toggle={this.toggle}>
         <DropdownToggle nav>
-          <img src={Settings} className="img-avatar" />
+          <i className="fa fa-user fa-5" style={{ fontSize: "1.5rem" }} />
         </DropdownToggle>
         <DropdownMenu right>
           <a href="/#/dashboard/profile">
             <DropdownItem>
-              <i className="fa fa-user" /> Profile
+              <i className="fa fa-wrench" />Account Profile
             </DropdownItem>
           </a>
           <DropdownItem onClick={this.handleLogout}>

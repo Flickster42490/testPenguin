@@ -66,7 +66,7 @@ app-root {
 //
 .sidebar-hidden {
   .sidebar {
-    margin-left: - $sidebar-width;
+    margin-left: -$sidebar-width;
   }
 }
 
@@ -112,7 +112,7 @@ app-root {
 
     &.sidebar-hidden {
       .sidebar {
-        margin-left: - $sidebar-compact-width;
+        margin-left: -$sidebar-compact-width;
       }
     }
 
@@ -145,7 +145,7 @@ app-root {
 
     &.sidebar-hidden {
       .sidebar {
-        margin-left: - $sidebar-minimized-width;
+        margin-left: -$sidebar-minimized-width;
       }
     }
 
@@ -174,7 +174,7 @@ app-root {
 //
 .aside-menu-hidden {
   .aside-menu {
-    margin-right: - $aside-menu-width;
+    margin-right: -$aside-menu-width;
   }
 }
 
@@ -333,7 +333,7 @@ app-root {
     @include borders($navbar-brand-border);
 
     .navbar-toggler {
-      @if (lightness( $navbar-brand-bg ) > 40) {
+      @if (lightness($navbar-brand-bg) > 40) {
         color: $navbar-color;
       } @else {
         color: #fff;
@@ -343,7 +343,8 @@ app-root {
     .navbar-brand {
       position: absolute;
       left: 50%;
-      margin-left: - ($navbar-brand-width / 2);
+      margin-left: -($navbar-brand-width / 2);
+      background-size: contain;
     }
   }
 
@@ -364,7 +365,7 @@ app-root {
     z-index: $zindex-sticky - 1;
     width: $mobile-sidebar-width;
     height: calc(100vh - #{$navbar-height});
-    margin-left: - $mobile-sidebar-width;
+    margin-left: -$mobile-sidebar-width;
 
     .sidebar-nav,
     .nav {
@@ -388,7 +389,7 @@ app-root {
 
   .sidebar-hidden {
     .sidebar {
-      margin-left: - $mobile-sidebar-width;
+      margin-left: -$mobile-sidebar-width;
     }
   }
 
@@ -399,7 +400,7 @@ app-root {
     }
 
     .main {
-      margin-right: - $mobile-sidebar-width !important;
+      margin-right: -$mobile-sidebar-width !important;
       margin-left: $mobile-sidebar-width !important;
     }
   }

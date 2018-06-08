@@ -55,8 +55,8 @@ export default class PreBuiltTests extends Component {
     const { tests, loading } = this.state;
     return (
       <div>
-        <div style={{ paddingBottom: "10px" }}>
-          <h2 style={{ display: "inline" }}>&nbsp;Pre-Built Tests</h2>&nbsp;&nbsp;&nbsp;&nbsp;
+        <div className="page-header">
+          <h2 style={{ display: "inline" }}>&nbsp;PRE-BUILT TESTS</h2>&nbsp;&nbsp;&nbsp;&nbsp;
           <h6 style={{ display: "inline" }}>
             These are the system generated pre-built tests
           </h6>

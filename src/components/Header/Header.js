@@ -98,7 +98,7 @@ class Header extends Component {
             className="px-3"
             onClick={() => this.handleClick("candidates")}
           >
-            <img src={Users} />
+            <i class="fa fa-users" />
             <br />
             <span className={this.state.page === "candidates" ? "bold" : ""}>
               Candidates

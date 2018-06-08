@@ -58,8 +58,8 @@ export default class IssuedTests extends Component {
   render() {
     return (
       <div>
-        <div style={{ paddingBottom: "10px" }}>
-          <h2 style={{ display: "inline" }}>&nbsp;Review Issued Tests</h2>&nbsp;&nbsp;&nbsp;&nbsp;
+        <div className="page-header">
+          <h2 style={{ display: "inline" }}>&nbsp;REVIEW ISSUED TESTS</h2>&nbsp;&nbsp;&nbsp;&nbsp;
           <h6 style={{ display: "inline" }}>
             These are the tests you have invited candidates to take
           </h6>

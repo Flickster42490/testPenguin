@@ -70,10 +70,10 @@ export default class CustomTests extends Component {
     const { tests, loading } = this.state;
     return (
       <div>
-        <div style={{ paddingBottom: "10px" }}>
+        <div className="page-header">
           {" "}
           <h2 style={{ display: "inline" }}>
-            &nbsp;Custom Tests
+            &nbsp;CUSTOM TESTS
           </h2>&nbsp;&nbsp;&nbsp;&nbsp;
           <h6 style={{ display: "inline" }}>
             You will find your custom-built tests here

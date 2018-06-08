@@ -124,7 +124,7 @@
 
 .bold {
   font-weight: 800;
-  text-decoration: underline;
+  border-bottom: 2px solid orange;
 }
 
 @include media-breakpoint-up(lg) {

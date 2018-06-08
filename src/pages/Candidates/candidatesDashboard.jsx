@@ -87,10 +87,10 @@ class Dashboard extends Component {
     const { candidateList, loading } = this.state;
     return (
       <div>
-        <div style={{ paddingBottom: "10px" }}>
+        <div className="page-header">
           {" "}
           <h2 style={{ display: "inline" }}>
-            &nbsp;Candidates
+            &nbsp;CANDIDATES
           </h2>&nbsp;&nbsp;&nbsp;&nbsp;
           <h6 style={{ display: "inline" }}>
             You will find your active candidates here
