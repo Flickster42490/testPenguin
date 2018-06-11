@@ -54,7 +54,7 @@ export default class QuestionLibrary extends Component {
               <Col>
                 <h3>{test.name}</h3>
                 <p className="muted-text">{test.description}</p>
-                <a href="/#/dashboard/tests/preBuiltTests">
+                <a href="/#/dashboard/tests/customTests">
                   <Button>Go Back</Button>
                 </a>
                 &nbsp;&nbsp;
