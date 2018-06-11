@@ -82,7 +82,13 @@ export default class PreBuiltTests extends Component {
                         }}
                       >
                         <div style={{ maxWidth: "50%", fontSize: "1rem" }}>
-                          <strong>{cell.value}</strong>
+                          <a
+                            href={`/#/dashboard/tests/customTests/viewQuestions?id=${
+                              cell.original.id
+                            }`}
+                          >
+                            <strong>{cell.value}</strong>
+                          </a>{" "}
                         </div>
                       </div>
                     )
@@ -101,7 +107,7 @@ export default class PreBuiltTests extends Component {
                     Cell: cell => (
                       <div>
                         <span>
-                          {cell.value.multiple_choice} Multiple Choices
+                          {cell.value.multiple_choice || 0} Multiple Choice
                         </span>
                         <br />
                         <span>{cell.value.module} Modules</span>
@@ -152,7 +158,7 @@ export default class PreBuiltTests extends Component {
                                 cell.original.id
                               }`}
                             >
-                              View Questions
+                              Test Overview
                             </a>
                           </Button>
                           <Button size="sm" color="success">
@@ -178,7 +184,7 @@ export default class PreBuiltTests extends Component {
                     )
                   }
                 ]}
-                defaultPageSize={5}
+                defaultPageSize={10}
                 className="-striped -highlight"
               />
             </Col>

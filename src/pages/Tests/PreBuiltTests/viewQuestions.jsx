@@ -22,25 +22,52 @@ export default class QuestionLibrary extends Component {
     super(props);
 
     this.state = {
-      questions: []
+      questions: [],
+      test: undefined
     };
   }
 
   componentWillMount() {
     window.scrollTo(0, 0);
+    document.body.classList.toggle("sidebar-hidden");
     const queries = window.location.hash.split("?")[1];
     const testId = queryString.parse(queries).id;
     axios.get(`/tests/id/${testId}/questions`).then(d => {
-      this.setState({ questions: d.data });
+      axios.get(`/tests/${testId}`).then(t => {
+        this.setState({ test: t.data[0], questions: d.data });
+      });
     });
   }
 
+  componentWillUnmount() {
+    document.body.classList.toggle("sidebar-hidden");
+  }
+
   render() {
-    const { questions } = this.state;
-    console.log(questions);
+    const { questions, test } = this.state;
     return (
       <div>
         <Preloader loading={questions.length < 1}>
+          <br />
+          {test && (
+            <Row>
+              <Col>
+                <h3>Test Name: {test.name}</h3>
+                <p>{test.description}</p>
+                <a href="/#/dashboard/tests/preBuiltTests">
+                  <Button>Go Back</Button>
+                </a>
+                &nbsp;&nbsp;
+                <a
+                  href={`/#/dashboard/tests/inviteCandidates?id=${
+                    test.id
+                  }&name=${test.name}`}
+                >
+                  <Button>Invite Candidates</Button>
+                </a>
+              </Col>
+            </Row>
+          )}
           <br />
           <Row>
             <Col xs="12">
@@ -61,7 +88,17 @@ export default class QuestionLibrary extends Component {
                         }}
                       >
                         <div style={{ fontSize: "1rem" }}>
-                          <strong>{cell.value}</strong>
+                          <a
+                            href={`/#/dashboard/tests/questionLibrary/preview?id=${
+                              cell.original.id
+                            }&returnTo=${window.location.hash}&returnToTestId=${
+                              queryString.parse(
+                                window.location.hash.split("?")[1]
+                              ).id
+                            }`}
+                          >
+                            <strong>{cell.value}</strong>
+                          </a>
                         </div>
                       </div>
                     )

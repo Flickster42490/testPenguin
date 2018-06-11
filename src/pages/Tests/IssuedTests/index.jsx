@@ -72,19 +72,17 @@ export default class IssuedTests extends Component {
               sortable={false}
               columns={[
                 {
-                  Header: "Name",
+                  Header: "Test Name",
                   accessor: "name",
                   Cell: cell => (
                     <div
                       style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center"
+                        fontSize: "1rem",
+                        textAlign: "left",
+                        paddingLeft: "20px"
                       }}
                     >
-                      <div style={{ maxWidth: "50%", fontSize: "1rem" }}>
-                        <strong>{cell.value}</strong>
-                      </div>
+                      <strong>{cell.value}</strong>
                     </div>
                   ),
                   maxWidth: 240
@@ -93,23 +91,22 @@ export default class IssuedTests extends Component {
                   Header: "Overview",
                   Cell: cell => {
                     return (
-                      <div>
-                        <div>
-                          <strong>Estimated Time: </strong>
-                          {cell.original.estimated_time} mins
-                          {/* will want to use moment duration fomrat */}
-                        </div>
-                        <div>
-                          <strong>Questions: </strong>
-                          {cell.original.question_types.multiple_choice ||
-                            "0"}{" "}
-                          Multiple Choice,
-                          {cell.original.question_types.module || "0"} Modules
-                        </div>
-                        <div>
-                          <strong>Type : </strong>
-                          {typeMap[cell.original.type]}
-                        </div>
+                      <div
+                        style={{ display: "inline-block", textAlign: "left" }}
+                      >
+                        <strong>Estimated Time: </strong>
+                        {cell.original.estimated_time} mins
+                        {/* will want to use moment duration fomrat */}
+                        <br />
+                        <strong>Questions: </strong>
+                        {cell.original.question_types.multiple_choice ||
+                          "0"}{" "}
+                        Multiple Choice,
+                        {cell.original.question_types.module || "0"} Modules
+                        <br />
+                        <strong>Type : </strong>
+                        {typeMap[cell.original.type]}
+                        <br />
                       </div>
                     );
                   }
@@ -152,7 +149,7 @@ export default class IssuedTests extends Component {
                           }`}
                         >
                           <Button size="sm" color="primary">
-                            Review
+                            Review Test
                           </Button>
                         </a>
                       </ButtonGroup>
@@ -160,7 +157,7 @@ export default class IssuedTests extends Component {
                   )
                 }
               ]}
-              defaultPageSize={5}
+              defaultPageSize={10}
               className="-striped -highlight"
             />
           </Col>

@@ -115,14 +115,20 @@ export default class QuestionLibrary extends Component {
                     Cell: cell => (
                       <div
                         style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center"
+                          fontSize: "1rem",
+                          display: "inline-block",
+                          textAlign: "left"
                         }}
+                        title={cell.value}
                       >
-                        <div style={{ fontSize: "1rem" }} title={cell.value}>
+                        <a
+                          href={`/#/dashboard/tests/questionLibrary/preview?id=${
+                            cell.original.id
+                          }`}
+                        >
                           <strong>{cell.value}</strong>
-                        </div>
+                          <br />
+                        </a>
                       </div>
                     )
                   },
@@ -221,7 +227,7 @@ export default class QuestionLibrary extends Component {
                     )
                   }
                 ]}
-                defaultPageSize={5}
+                defaultPageSize={20}
                 className="-striped -highlight"
               />
             </Col>

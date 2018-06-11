@@ -121,7 +121,7 @@ class Header extends Component {
             <img src={Folder} />
             <br />
             <span className={this.state.page === "customTests" ? "bold" : ""}>
-              Custom Tests
+              Your Custom Tests
             </span>
           </NavItem>
           <NavItem

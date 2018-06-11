@@ -42,6 +42,7 @@ export default class TestApp extends Component {
     this.handleAnswerUpdate = this.handleAnswerUpdate.bind(this);
     this.handleSaveProgress = this.handleSaveProgress.bind(this);
     this.handleSubmitTest = this.handleSubmitTest.bind(this);
+    this.handleEndPreview = this.handleEndPreview.bind(this);
   }
 
   componentWillMount() {
@@ -186,6 +187,10 @@ export default class TestApp extends Component {
     }
   }
 
+  handleEndPreview() {
+    window.location.href = this.state.returnTo;
+  }
+
   handleNextQuestion() {
     this.setState(
       {
@@ -259,6 +264,23 @@ export default class TestApp extends Component {
             <Card className="module-container-card">
               <CardHeader className="preview-title">
                 <Row>
+                  <Col>
+                    {preview &&
+                      !review && (
+                        <p className="muted-text">
+                          <strong>
+                            You are currently previewing the test’s questions in
+                            the order in which they will appear to candidates.
+                            While taking the test, candidates will not have the
+                            option to go back and view previously answered
+                            questions. Correct answers have been filled in for
+                            all questions for purposes of this preview.
+                          </strong>
+                        </p>
+                      )}
+                  </Col>
+                </Row>
+                <Row>
                   <Col md="4">
                     {preview &&
                       !review && (
@@ -295,6 +317,17 @@ export default class TestApp extends Component {
                       )}
                   </Col>
                   <Col md="4">
+                    {preview &&
+                      !review && (
+                        <Button
+                          size="lg"
+                          color="link"
+                          className="float-right"
+                          onClick={this.handleEndPreview}
+                        >
+                          End Preview
+                        </Button>
+                      )}
                     {currentIdx !== lastIdx &&
                       !review && (
                         <Button
