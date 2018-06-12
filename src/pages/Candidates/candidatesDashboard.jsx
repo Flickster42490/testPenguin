@@ -37,13 +37,20 @@ class Dashboard extends Component {
 
   componentWillMount() {
     window.scrollTo(0, 0);
+    console.log("lksjdflakjdf;lkajs;fljka;flkjas;ldfjka;slkjf;laj;flkaj;sf");
     localForage.getItem("userId").then(id => {
       axios.post("/testAttempts", { userId: id }).then(d => {
-        this.setState({
-          candidateList: d.data,
-          userId: id,
-          loading: false
-        });
+        console.log(d);
+        this.setState(
+          {
+            candidateList: d.data,
+            userId: id,
+            loading: false
+          },
+          () => {
+            this.forceUpdate();
+          }
+        );
       });
     });
   }

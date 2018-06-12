@@ -101,6 +101,8 @@ export default class Dashboard extends Component {
           columns={[
             {
               Header: "Candidate",
+              maxWidth: 250,
+              minWidth: 220,
               Cell: cell => (
                 <div
                   style={{
@@ -109,66 +111,80 @@ export default class Dashboard extends Component {
                     justifyContent: "center"
                   }}
                 >
-                  <div style={{ maxWidth: "50%", fontSize: "1.2rem" }}>
-                    <strong>
-                      {cell.original.first_name} {cell.original.last_name}
-                    </strong>
-                    <br />
-                    {cell.original.email_address}
+                  <div>
+                    {cell.original.first_name &&
+                      cell.original.completed_at && (
+                        <div>
+                          <a
+                            href={`#/dashboard/candidates/reviewResults?id=${
+                              cell.original.test_attempt_id
+                            }`}
+                          >
+                            <strong>
+                              {cell.original.first_name}{" "}
+                              {cell.original.last_name}
+                            </strong>
+                          </a>
+                          <br />
+                        </div>
+                      )}
+                    {cell.original.completed_at && (
+                      <a
+                        href={`#/dashboard/candidates/reviewResults?id=${
+                          cell.original.test_attempt_id
+                        }`}
+                      >
+                        <span>{cell.original.email_address}</span>
+                      </a>
+                    )}
+                    {!cell.original.completed_at && (
+                      <span>{cell.original.email_address}</span>
+                    )}
                   </div>
                 </div>
               )
             },
             {
-              Header: "Invitation Details",
+              Header: "Test Name",
+              accessor: "name"
+            },
+            {
+              Header: "Test Issue Date",
+              defaultSortDesc: true,
               Cell: cell => {
                 return (
-                  <div style={{ textAlign: "left", paddingLeft: "10px" }}>
-                    <div>
-                      <strong>Test Name: </strong>
-                      {cell.original.name}
-                    </div>
-                    <div>
-                      <strong>Test Issued: </strong>
-                      {moment(cell.original.invited_at).format(
-                        "MM/DD/YYYY hh:mm a"
-                      )}
-                    </div>
-                    <div>
-                      <strong>Test Status: </strong>
-                      {cell.original.completed_at && (
+                  <span>
+                    {moment(cell.original.invited_at).format(
+                      "MM/DD/YYYY hh:mm a"
+                    )}
+                  </span>
+                );
+              }
+            },
+            {
+              Header: "Test Status",
+              Cell: cell => {
+                return (
+                  <div>
+                    {cell.original.completed_at && (
+                      <span>
+                        Completed on{" "}
+                        {moment(cell.original.completed_at).format(
+                          "MM/DD/YYYY hh:mm a"
+                        )}
+                      </span>
+                    )}
+                    {cell.original.started_at &&
+                      !cell.original.completed_at && (
                         <span>
-                          Completed on{" "}
-                          {moment(cell.original.completed_at).format(
+                          Started on{" "}
+                          {moment(cell.original.started_at).format(
                             "MM/DD/YYYY hh:mm a"
                           )}
                         </span>
                       )}
-                      {cell.original.started_at &&
-                        !cell.original.completed_at && (
-                          <span>
-                            Started on{" "}
-                            {moment(cell.original.started_at).format(
-                              "MM/DD/YYYY hh:mm a"
-                            )}
-                          </span>
-                        )}
-                      {!cell.original.started_at &&
-                        !cell.original.completed_at && <span>Not Started</span>}
-                    </div>
                     {!cell.original.started_at &&
-                      !cell.original.completed_at &&
-                      cell.original.last_reminder_sent && (
-                        <div>
-                          <strong>Last Reminded on: </strong>
-                          <span>
-                            {" "}
-                            {moment(cell.original.last_reminder_sent).format(
-                              "MM/DD/YYYY hh:mm a"
-                            )}
-                          </span>
-                        </div>
-                      )}
+                      !cell.original.completed_at && <span>Not Started</span>}
                   </div>
                 );
               }
@@ -177,6 +193,7 @@ export default class Dashboard extends Component {
               Header: "Score Results",
               accessor: "results",
               maxWidth: 250,
+              minWidth: 220,
               Cell: cell => {
                 let resultList = [];
                 _.forOwn(cell.value, (v, k) => {
@@ -210,7 +227,9 @@ export default class Dashboard extends Component {
                 });
                 return (
                   <div>
-                    {!cell.original.completed_at && <span>Pending</span>}
+                    {!cell.original.completed_at && (
+                      <span>N/A - Not Yet Completed</span>
+                    )}
 
                     {cell.original.completed_at && resultList}
                   </div>
@@ -263,7 +282,12 @@ export default class Dashboard extends Component {
               )
             }
           ]}
-          defaultPageSize={5}
+          defaultPageSize={
+            this.state.candidateList.length < 10
+              ? this.state.candidateList.length
+              : 10
+          }
+          pageSizeOptions={[5, 10]}
           className="-striped -highlight"
         />
       </div>

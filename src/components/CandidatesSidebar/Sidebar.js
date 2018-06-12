@@ -123,7 +123,7 @@ class Sidebar extends Component {
             <h4 className="muted-text">Search Filters</h4>
           </Row>
           <Row className="sidebar-row">
-            By Test Status: <br />
+            By Status: <br />
             <ButtonGroup
               size="sm"
               vertical
@@ -140,7 +140,7 @@ class Sidebar extends Component {
                 active={this.state.statusValue == "all"}
                 onClick={() => this.updateStatusValue("all")}
               >
-                All Tests
+                All Candidates
               </Button>
               <Button
                 outline
@@ -148,7 +148,7 @@ class Sidebar extends Component {
                 active={this.state.statusValue == "waiting"}
                 onClick={() => this.updateStatusValue("waiting")}
               >
-                Waiting For Test Results
+                Tests Outstanding
               </Button>
               <Button
                 outline
@@ -156,7 +156,7 @@ class Sidebar extends Component {
                 active={this.state.statusValue == "completed"}
                 onClick={() => this.updateStatusValue("completed")}
               >
-                Tests Completed
+                Completed Tests
               </Button>
             </ButtonGroup>
           </Row>

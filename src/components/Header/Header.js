@@ -83,7 +83,7 @@ class Header extends Component {
         page: e === "candidates" ? e : e.split("/")[1]
       },
       () => {
-        hashHistory.push(`dashboard/${e}`);
+        window.location.href = `/#/dashboard/${e}`;
       }
     );
   }
