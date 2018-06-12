@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Button, Nav, NavbarBrand, NavItem } from "reactstrap";
-import { hashHistory } from "react-router";
+import _ from "lodash";
 import localForage from "localforage";
 import axios from "axios";
 
@@ -105,7 +105,11 @@ class Header extends Component {
             className="px-3"
             onClick={() => this.handleClick("candidates")}
           >
-            <span className={this.state.page === "candidates" ? "bold" : ""}>
+            <span
+              className={
+                _.includes(this.state.page, "candidates") ? "bold" : ""
+              }
+            >
               Candidates
             </span>
           </NavItem>
