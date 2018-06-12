@@ -207,9 +207,9 @@ class Sidebar extends Component {
         <Container>
           <Row
             className="sidebar-row"
-            style={{ display: "flex", marginTop: "10px" }}
+            style={{ display: "flex", marginTop: "25px" }}
           >
-            <h4>Search Filters</h4>
+            <h4 className="muted-text">Search Filters</h4>
           </Row>
           {["questionLibrary"].includes(this.props.page) &&
             this.state.options && (

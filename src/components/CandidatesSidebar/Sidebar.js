@@ -118,9 +118,9 @@ class Sidebar extends Component {
         <Container>
           <Row
             className="sidebar-row"
-            style={{ display: "flex", marginTop: "30px" }}
+            style={{ display: "flex", marginTop: "25px" }}
           >
-            <h4>Search Filters</h4>
+            <h4 className="muted-text">Search Filters</h4>
           </Row>
           <Row className="sidebar-row">
             By Test Status: <br />

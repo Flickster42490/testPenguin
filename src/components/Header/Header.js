@@ -1,26 +1,9 @@
 import React, { Component } from "react";
-import {
-  Nav,
-  NavbarBrand,
-  NavLink,
-  NavbarToggler,
-  NavItem,
-  Badge
-} from "reactstrap";
+import { Button, Nav, NavbarBrand, NavItem } from "reactstrap";
 import { hashHistory } from "react-router";
-import FontAwesome from "react-fontawesome";
 import localForage from "localforage";
 import axios from "axios";
 
-import Users from "../../images/users.svg";
-import Assignment from "../../images/assignment.svg";
-import Folder from "../../images/folder.svg";
-import Alert from "../../images/alert.svg";
-import Screen from "../../images/screen.svg";
-import Lock from "../../images/lock.svg";
-import Add from "../../images/add.svg";
-import Library from "../../images/library.svg";
-import NewFolder from "../../images/new-folder.svg";
 import HeaderDropdown from "./HeaderDropdown";
 
 class Header extends Component {
@@ -29,25 +12,49 @@ class Header extends Component {
 
     this.state = {
       page: "candidates",
-      user: undefined
+      user: undefined,
+      tokens: undefined
     };
+
+    this.handleClick = this.handleClick.bind(this);
   }
 
   componentWillMount() {
     localForage.getItem("userId").then(id => {
       axios.get(`/users/${id}`).then(u => {
-        if (this.state.page !== window.location.hash.split("/")[1]) {
+        console.log(u.data[0]);
+        if (this.state.page !== window.location.hash.split("/")[2]) {
           this.setState({
-            page: window.location.hash.split("/")[1],
-            user: u.data[0]
+            page:
+              window.location.hash.split("/")[2] === "tests"
+                ? window.location.hash.split("/")[3]
+                : window.location.hash.split("/")[2],
+            user: u.data[0],
+            tokens: u.data[0].tokens
           });
         } else {
           this.setState({
-            user: u.data[0]
+            user: u.data[0],
+            tokens: u.data[0].tokens
           });
         }
       });
     });
+  }
+
+  componentWillReceiveProps(props) {
+    if (
+      typeof props.tokens !== "undefined" &&
+      props.tokens !== this.state.user.tokens
+    ) {
+      this.setState({
+        tokens: props.tokens
+      });
+    }
+  }
+
+  handleAddMoreTokens() {
+    window.location.href = "/#/dashboard/profile";
   }
 
   sidebarToggle(e) {
@@ -73,7 +80,7 @@ class Header extends Component {
   handleClick(e) {
     this.setState(
       {
-        page: e
+        page: e === "candidates" ? e : e.split("/")[1]
       },
       () => {
         hashHistory.push(`dashboard/${e}`);
@@ -82,7 +89,7 @@ class Header extends Component {
   }
 
   render() {
-    console.log(this.state.user);
+    console.log(this.state.user, this.state.page, this.state.tokens);
     return (
       <header className="app-header navbar">
         {/* <NavbarToggler className="d-lg-none" onClick={this.mobileSidebarToggle}>
@@ -98,48 +105,14 @@ class Header extends Component {
             className="px-3"
             onClick={() => this.handleClick("candidates")}
           >
-            <i class="fa fa-users" />
-            <br />
             <span className={this.state.page === "candidates" ? "bold" : ""}>
               Candidates
             </span>
           </NavItem>
           <NavItem
             className="px-3"
-            onClick={() => this.handleClick("tests/preBuiltTests")}
-          >
-            <img src={Assignment} />
-            <br />
-            <span className={this.state.page === "preBuiltTests" ? "bold" : ""}>
-              Pre-Built Tests
-            </span>
-          </NavItem>
-          <NavItem
-            className="px-3"
-            onClick={() => this.handleClick("tests/customTests")}
-          >
-            <img src={Folder} />
-            <br />
-            <span className={this.state.page === "customTests" ? "bold" : ""}>
-              Your Custom Tests
-            </span>
-          </NavItem>
-          <NavItem
-            className="px-3"
-            onClick={() => this.handleClick("tests/issuedTests")}
-          >
-            <img src={Screen} />
-            <br />
-            <span className={this.state.page === "issuedTests" ? "bold" : ""}>
-              Review Issued Tests
-            </span>
-          </NavItem>
-          <NavItem
-            className="px-3"
             onClick={() => this.handleClick("tests/questionLibrary")}
           >
-            <img src={Library} />
-            <br />
             <span
               className={this.state.page === "questionLibrary" ? "bold" : ""}
             >
@@ -148,12 +121,26 @@ class Header extends Component {
           </NavItem>
           <NavItem
             className="px-3"
-            onClick={() => this.handleClick("tests/createNewTest")}
+            onClick={() => this.handleClick("tests/customTests")}
           >
-            <img src={NewFolder} />
-            <br />
-            <span className={this.state.page === "createNewTest" ? "bold" : ""}>
-              Create New Test
+            <span className={this.state.page === "customTests" ? "bold" : ""}>
+              Your Custom Tests
+            </span>
+          </NavItem>
+          <NavItem
+            className="px-3"
+            onClick={() => this.handleClick("tests/preBuiltTests")}
+          >
+            <span className={this.state.page === "preBuiltTests" ? "bold" : ""}>
+              Pre-Built Tests
+            </span>
+          </NavItem>
+          <NavItem
+            className="px-3"
+            onClick={() => this.handleClick("tests/issuedTests")}
+          >
+            <span className={this.state.page === "issuedTests" ? "bold" : ""}>
+              Review Issued Tests
             </span>
           </NavItem>
         </Nav>
@@ -163,14 +150,32 @@ class Header extends Component {
             <a href="#">Upgrade Today</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           </NavItem> */}
           <NavItem className="d-md-down-none">
-            {this.state.user && (
-              <strong>Hi {this.state.user.first_name}!</strong>
+            {!isNaN(this.state.tokens) && (
+              <div style={{ paddingRight: "20px" }}>
+                <div style={{ fontSize: ".75rem" }}>
+                  <span style={{ fontSize: "1rem" }}>
+                    <strong>{this.state.tokens || 0}</strong>
+                  </span>{" "}
+                  Tokens<br />
+                  <Button
+                    color="link"
+                    style={{ padding: 0, borderTop: "0", marginTop: "-5px" }}
+                    onClick={this.handleAddMoreTokens}
+                  >
+                    <span style={{ fontSize: ".75rem" }}>Add More</span>
+                  </Button>
+                </div>
+              </div>
             )}
           </NavItem>
           <NavItem className="d-md-down-none">
-            {this.state.user && <HeaderDropdown />}
+            {this.state.user && <strong>{this.state.user.first_name}</strong>}
           </NavItem>
-          <NavItem className="d-md-down-none" />
+          <NavItem className="d-md-down-none">
+            {this.state.user && (
+              <HeaderDropdown handleClick={this.handleClick} />
+            )}
+          </NavItem>
         </Nav>
       </header>
     );

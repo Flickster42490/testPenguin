@@ -167,6 +167,13 @@
   background-color: #fff;
 }
 
+.dropdown-menu {
+  background-color: #38474e;
+  button {
+    color: #fff !important;
+  }
+}
+
 .float-right {
   float: right;
 }
@@ -203,6 +210,18 @@ input {
   color: grey;
 }
 
+.muted-text-inverse {
+  color: lightgray;
+}
+
+.navbar {
+  background-color: #38474e !important;
+}
+
+.nav-item {
+  color: #fff !important;
+}
+
 .page-header {
   padding-bottom: 20px;
   padding-top: 15px;
@@ -225,6 +244,8 @@ input {
 
 .sidebar {
   overflow: auto;
+  // background-color: #38474e !important;
+  // color: #fff;
 }
 
 .rt-tr.-odd {
@@ -290,6 +311,7 @@ input {
 .Select.is-focused:not(.is-open) > .Select-control {
   border: none;
   box-shadow: none;
+  background-color: #fff;
 }
 .Select.is-focused .Select-control:after {
   transform: scaleX(1);
@@ -297,7 +319,7 @@ input {
 
 .Select-control {
   align-items: baseline;
-  background-color: white;
+  background-color: #fff;
   border-collapse: separate;
   border-color: white;
   border-radius: 0;

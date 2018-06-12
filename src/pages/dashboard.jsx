@@ -12,8 +12,11 @@ export default class Dashboard extends Component {
 
     this.state = {
       secondaryHeader: false,
-      loggedIn: false
+      loggedIn: false,
+      tokens: undefined
     };
+
+    this.handleTokenUpdate = this.handleTokenUpdate.bind(this);
   }
   componentWillMount() {
     const userId =
@@ -46,6 +49,12 @@ export default class Dashboard extends Component {
       .catch(err => {});
   }
 
+  handleTokenUpdate(tokens) {
+    this.setState({
+      tokens: tokens
+    });
+  }
+
   checkLoggedIn(value) {
     console.log("checking userId", value);
     axios
@@ -71,12 +80,17 @@ export default class Dashboard extends Component {
 
   render() {
     console.log("state.loggedIn", this.state.loggedIn);
+    var children = React.Children.map(this.props.children, child =>
+      React.cloneElement(child, {
+        handleTokenUpdate: this.handleTokenUpdate
+      })
+    );
     return (
       <div className="app">
         {this.state.loggedIn && (
           <div>
-            <Header />
-            {this.props.children}
+            <Header tokens={this.state.tokens} />
+            {children}
             <Footer class="footer" />
           </div>
         )}

@@ -18,12 +18,18 @@ class HeaderDropdown extends Component {
     this.state = {
       dropdownOpen: false
     };
+
+    this.handleProfile = this.handleProfile.bind(this);
   }
 
   toggle() {
     this.setState({
       dropdownOpen: !this.state.dropdownOpen
     });
+  }
+
+  handleProfile() {
+    this.props.handleClick("profile");
   }
 
   handleLogout() {
@@ -51,14 +57,15 @@ class HeaderDropdown extends Component {
     return (
       <Dropdown nav isOpen={this.state.dropdownOpen} toggle={this.toggle}>
         <DropdownToggle nav>
-          <i className="fa fa-user fa-5" style={{ fontSize: "1.5rem" }} />
+          <i
+            className="fa fa-ellipsis-v fa-5"
+            style={{ fontSize: "1.5rem", color: "#fff" }}
+          />
         </DropdownToggle>
         <DropdownMenu right>
-          <a href="/#/dashboard/profile">
-            <DropdownItem>
-              <i className="fa fa-wrench" />Account Profile
-            </DropdownItem>
-          </a>
+          <DropdownItem onClick={this.handleProfile}>
+            <i className="fa fa-wrench" />Account Profile
+          </DropdownItem>
           <DropdownItem onClick={this.handleLogout}>
             <i className="fa fa-lock" /> Logout
           </DropdownItem>

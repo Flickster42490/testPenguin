@@ -119,7 +119,11 @@ export default class testBasics extends Component {
                       <Label htmlFor="text-input">Test Name</Label>
                     </Col>
                     <Col xs="12" md="9">
-                      <Input type="text" onBlur={this.handleName} />
+                      <Input
+                        type="text"
+                        onBlur={this.handleName}
+                        maxLength="40"
+                      />
                     </Col>
                   </FormGroup>
                   <FormGroup row>
@@ -133,6 +137,7 @@ export default class testBasics extends Component {
                         id="textarea-input"
                         rows="3"
                         onBlur={this.handleDescription}
+                        maxLength="140"
                       />
                       <FormText color="muted">
                         (Only you can see this description)

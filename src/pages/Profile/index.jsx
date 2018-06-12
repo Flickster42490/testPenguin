@@ -110,16 +110,21 @@ export default class Profile extends Component {
           .then(payment => {
             if (payment.data) {
               axios.get(`/users/${this.state.userId}`).then(d => {
-                this.setState({
-                  user: d.data ? d.data[0] : undefined,
-                  paymentLoading: false,
-                  paymentAlertVisible: true,
-                  paymentInfo: {
-                    success: true,
-                    message: `You have successfully made a payment of $${amount /
-                      100}. Your confirmation number is #${payment.data.id}`
+                this.setState(
+                  {
+                    user: d.data ? d.data[0] : undefined,
+                    paymentLoading: false,
+                    paymentAlertVisible: true,
+                    paymentInfo: {
+                      success: true,
+                      message: `You have successfully made a payment of $${amount /
+                        100}. Your confirmation number is #${payment.data.id}`
+                    }
+                  },
+                  () => {
+                    this.props.handleTokenUpdate(this.state.user.tokens);
                   }
-                });
+                );
               });
             }
           })
