@@ -187,6 +187,17 @@ input {
   text-decoration: none !important;
   cursor: pointer !important;
 }
+
+.login-container {
+  .navbar {
+    background-color: #fff !important;
+  }
+  .login {
+    background-image: url("http://www.fueltravel.com/wp-content/uploads/2015/02/large_hero_image2.png");
+    background-repeat: no-repeat;
+  }
+}
+
 .module-container-card {
   margin: 10px;
   padding: 20px;
