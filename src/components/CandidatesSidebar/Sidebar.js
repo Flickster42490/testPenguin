@@ -162,7 +162,7 @@ class Sidebar extends Component {
           </Row>
           <br />
           <Row className="sidebar-row">
-            By name: <br />
+            By Name: <br />
             <Select
               options={this.state.options.users}
               clearable
@@ -173,7 +173,7 @@ class Sidebar extends Component {
           </Row>
           <br />
           <Row className="sidebar-row">
-            By email: <br />
+            By Email: <br />
             <Select
               options={this.state.options.emails}
               clearable
