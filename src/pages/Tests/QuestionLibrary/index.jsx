@@ -218,6 +218,7 @@ export default class QuestionLibrary extends Component {
                               onClick={() =>
                                 this.handleAddQuestion(cell.original)
                               }
+                              disabled={this.props.disableAdd}
                             >
                               Add Question
                             </Button>

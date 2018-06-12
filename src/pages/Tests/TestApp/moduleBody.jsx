@@ -272,6 +272,7 @@ export default class ModuleBody extends Component {
                           onChange={value =>
                             this.handleSubModuleTwoUpdate(value)
                           }
+                          maxLength="500"
                         />
                       )}
                     {!this.state.disabled &&
@@ -288,6 +289,7 @@ export default class ModuleBody extends Component {
                           onChange={value =>
                             this.handleSubModuleTwoUpdate(value)
                           }
+                          maxLength="500"
                         />
                       )}
 

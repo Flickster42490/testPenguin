@@ -1,24 +1,6 @@
 import React, { Component } from "react";
 import { hashHistory } from "react-router";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  Button,
-  ButtonGroup,
-  ButtonToolbar,
-  Progress,
-  Collapse,
-  Form,
-  FormGroup,
-  FormText,
-  Label,
-  Input,
-  InputGroup,
-  InputGroupAddon,
-  InputGroupText
-} from "reactstrap";
+import { Container, Row, Col, Card, Button, Alert, Progress } from "reactstrap";
 import queryString from "querystring";
 import axios from "axios";
 import ReactTable from "react-table";
@@ -33,12 +15,16 @@ export default class addQuestions extends Component {
     this.state = {
       testQuestionList: [],
       testId: undefined,
-      questionLibraryList: []
+      questionLibraryList: [],
+      errorMessage: undefined,
+      disableAdd: false,
+      visible: false
     };
     this.handleNext = this.handleNext.bind(this);
     this.handleOpenLibrary = this.handleOpenLibrary.bind(this);
     this.handleAddQuestion = this.handleAddQuestion.bind(this);
     this.handleUpdateOrder = this.handleUpdateOrder.bind(this);
+    this.destroyTest = this.destroyTest.bind(this);
   }
 
   componentWillMount() {
@@ -53,6 +39,12 @@ export default class addQuestions extends Component {
 
   componentWillUnmount() {
     document.body.classList.toggle("sidebar-hidden");
+  }
+
+  destroyTest() {
+    axios.post(`/tests/destroy`, { testId: this.state.testId }).then(d => {
+      window.location.href = "/#/dashboard/tests/customTests";
+    });
   }
 
   calculateEstimatedTime(list) {
@@ -96,10 +88,25 @@ export default class addQuestions extends Component {
   handleAddQuestion(v, updatedQuestions) {
     let questions = this.state.testQuestionList;
     questions.push(v);
-    this.setState({
-      questionLibraryList: updatedQuestions,
-      testQuestionList: questions
-    });
+    if (questions.length >= 10) {
+      this.setState({
+        disableAdd: true,
+        visible: true,
+        errorMessage: "There is a max limit of 30 questions per test."
+      });
+    } else if (this.calculateEstimatedTime(questions) >= 120) {
+      this.setState({
+        disableAdd: true,
+        visible: true,
+        errorMessage: "There is a max limit of 2 hours per test."
+      });
+    } else {
+      this.setState({
+        disableAdd: false,
+        questionLibraryList: updatedQuestions,
+        testQuestionList: questions
+      });
+    }
   }
 
   handleUpdateOrder(q) {
@@ -133,6 +140,10 @@ export default class addQuestions extends Component {
     this.setState({
       questionLibraryDisplayed: true
     });
+  }
+
+  onDismiss() {
+    this.setState({ visible: false });
   }
 
   render() {
@@ -171,7 +182,19 @@ export default class addQuestions extends Component {
               </Row>
             </div>
             <br />
-
+            {this.state.errorMessage && (
+              <Row>
+                <Col>
+                  <Alert
+                    color="warning"
+                    isOpen={this.state.visible}
+                    toggle={this.onDismiss}
+                  >
+                    {this.state.errorMessage}
+                  </Alert>
+                </Col>
+              </Row>
+            )}
             <div>
               <hr />
               <Row style={{ maxHeight: "500px" }}>
@@ -181,6 +204,7 @@ export default class addQuestions extends Component {
                     handleQuestionLibraryUpdate={
                       this.state.handleQuestionLibraryUpdate
                     }
+                    disableAdd={this.state.disableAdd}
                     addQuestions={true}
                     handleAddQuestion={this.handleAddQuestion}
                   />
@@ -190,6 +214,10 @@ export default class addQuestions extends Component {
             <br />
             <Row style={{ float: "right" }}>
               <Col xs="12" s="4">
+                <a onClick={this.destroyTest}>
+                  <Button color="link">Cancel</Button>
+                </a>{" "}
+                &nbsp;&nbsp;
                 <Button color="success" onClick={() => this.handleNext()}>
                   Next Step
                 </Button>

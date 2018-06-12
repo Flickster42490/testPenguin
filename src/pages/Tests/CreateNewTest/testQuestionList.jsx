@@ -174,6 +174,7 @@ export default class TestQuestionList extends Component {
                 }
               ]}
               defaultPageSize={5}
+              pageSizeOptions={[5, 10]}
               className="-striped -highlight"
             />
           </Col>
