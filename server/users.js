@@ -65,18 +65,22 @@ router.post("/candidate/invite", (req, res) => {
 });
 
 router.post("/candidate/update", (req, res) => {
-  return req.db
-    .any(`UPDATE users SET(first_name, last_name) = ($1, $2) where id = $3`, [
-      req.body.firstName,
-      req.body.lastName,
-      req.body.userId
-    ])
-    .then(data => {
-      return res.send(data);
-    })
-    .catch(err => {
-      console.log("err", err);
-    });
+  if (req.body.firstName || req.body.lastName) {
+    return req.db
+      .any(`UPDATE users SET(first_name, last_name) = ($1, $2) where id = $3`, [
+        req.body.firstName,
+        req.body.lastName,
+        req.body.userId
+      ])
+      .then(data => {
+        return res.send(data);
+      })
+      .catch(err => {
+        console.log("err", err);
+      });
+  } else {
+    return res.send(true);
+  }
 });
 
 router.post("/updatePassword", (req, res) => {

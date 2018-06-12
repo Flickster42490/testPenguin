@@ -36,8 +36,14 @@ export default class ReviewCreatedTest extends Component {
 
     this.state = {
       testId: undefined,
-      test: undefined
+      test: undefined,
+      estimatedTime: undefined,
+      expirationDate: undefined
     };
+
+    this.handleCreateTest = this.handleCreateTest.bind(this);
+    this.destroyTest = this.destroyTest.bind(this);
+    this.handleEstimatedTime = this.handleEstimatedTime.bind(this);
   }
 
   componentWillMount() {
@@ -48,13 +54,36 @@ export default class ReviewCreatedTest extends Component {
     axios.get(`tests/${id}`).then(d => {
       this.setState({
         testId: id,
-        test: d.data[0]
+        test: d.data[0],
+        estimatedTime: d.data[0].estimated_time
       });
     });
   }
 
   componentWillUnmount() {
     document.body.classList.toggle("sidebar-hidden");
+  }
+
+  destroyTest() {
+    axios.post(`/tests/destroy`, { testId: this.state.testId }).then(d => {
+      window.location.href = "/#/dashboard/tests/customTests";
+    });
+  }
+
+  handleCreateTest() {
+    axios
+      .post(`/tests/update/${this.state.testId}`, {
+        estimatedTime: this.state.estimatedTime
+      })
+      .then(d => {
+        window.location.href = "/#/dashboard/tests/customTests";
+      });
+  }
+
+  handleEstimatedTime(e) {
+    this.setState({
+      estimatedTime: e.target.value
+    });
   }
 
   stringifyTags(tags) {
@@ -130,10 +159,50 @@ export default class ReviewCreatedTest extends Component {
                       </FormGroup>
                       <FormGroup row>
                         <Col md="3">
-                          <h5>Estimated Time:</h5>
+                          <h5>Time:</h5>
                         </Col>
                         <Col xs="12" md="9">
-                          <h5>{test.estimated_time} Mins</h5>
+                          <div>
+                            <input
+                              type="radio"
+                              value={test.estimated_time}
+                              checked={
+                                this.state.estimatedTime &&
+                                this.state.estimatedTime == test.estimated_time
+                              }
+                              onClick={this.handleEstimatedTime}
+                            />{" "}
+                            {test.estimated_time} Mins{" "}
+                            <span className="muted-text">(Recommended)</span>&nbsp;&nbsp;
+                            <input
+                              type="radio"
+                              value={Math.round(
+                                Number(test.estimated_time) * 1.25
+                              )}
+                              checked={
+                                this.state.estimatedTime &&
+                                this.state.estimatedTime ==
+                                  Math.round(Number(test.estimated_time) * 1.25)
+                              }
+                              onClick={this.handleEstimatedTime}
+                            />{" "}
+                            {Math.round(Number(test.estimated_time) * 1.25)}{" "}
+                            Mins <span className="muted-text">(25% more)</span>&nbsp;&nbsp;
+                            <input
+                              type="radio"
+                              value={Math.round(
+                                Number(test.estimated_time) * 1.5
+                              )}
+                              checked={
+                                this.state.estimatedTime &&
+                                this.state.estimatedTime ==
+                                  Math.round(Number(test.estimated_time) * 1.5)
+                              }
+                              onClick={this.handleEstimatedTime}
+                            />{" "}
+                            {Math.round(Number(test.estimated_time) * 1.5)} Mins{" "}
+                            <span className="muted-text">(50% more)</span>
+                          </div>
                         </Col>
                       </FormGroup>
                       <FormGroup row>
@@ -173,8 +242,12 @@ export default class ReviewCreatedTest extends Component {
                 <br />
                 <Row style={{ float: "right" }}>
                   <Col xs="12" s="4">
-                    <a href="/#/dashboard/tests/customTests">
-                      <Button color="success">Finish</Button>
+                    <a onClick={this.destroyTest}>
+                      <Button color="link">Cancel</Button>
+                    </a>{" "}
+                    &nbsp;&nbsp;
+                    <a onClick={this.handleCreateTest}>
+                      <Button color="success">Create Test</Button>
                     </a>
                   </Col>
                 </Row>

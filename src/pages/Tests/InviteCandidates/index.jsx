@@ -26,11 +26,14 @@ import {
 import queryString from "querystring";
 import axios from "axios";
 import localForage from "localforage";
+import moment from "moment";
 import Select from "react-select";
 import "react-select/dist/react-select.css";
 import { Alert } from "reactstrap";
 import StripeCheckout from "react-stripe-checkout";
 import { Preloader } from "../../../components/Preloader.jsx";
+import DatePicker from "../../../components/DatePicker/dist/react-datepicker";
+import "../../../components/DatePicker/dist/react-datepicker.css";
 
 export default class InviteCandidates extends Component {
   constructor(props) {
@@ -39,6 +42,7 @@ export default class InviteCandidates extends Component {
     this.state = {
       testName: "Demo",
       testId: null,
+      expirationDate: undefined,
       submitted: false,
       showSuccessToaster: false,
       user: undefined,
@@ -51,6 +55,7 @@ export default class InviteCandidates extends Component {
     this.onToken = this.onToken.bind(this);
     this.onPaymentAlertDismiss = this.onPaymentAlertDismiss.bind(this);
     this.togglePopup = this.togglePopup.bind(this);
+    this.updateCalendar = this.updateCalendar.bind(this);
   }
 
   componentWillMount() {
@@ -70,6 +75,7 @@ export default class InviteCandidates extends Component {
             emails: null,
             invitedBy: id
           },
+          expirationDate: moment(new Date()).add(7, "days"),
           submitDisable: true,
           submitted: false
         });
@@ -171,7 +177,8 @@ export default class InviteCandidates extends Component {
             .post("/testAttempts/create", {
               userIds: candidates.map(i => i.id),
               testId: this.state.testId,
-              invitedBy: this.state.candidates.invitedBy
+              invitedBy: this.state.candidates.invitedBy,
+              expiringAt: this.state.expirationDate
             })
             .then(() => {
               this.setState({
@@ -185,12 +192,18 @@ export default class InviteCandidates extends Component {
     }
   }
 
+  updateCalendar(date) {
+    this.setState({
+      expirationDate: date.format("MM/DD/YYYY")
+    });
+  }
+
   render() {
     const { testName, showSuccessToaster, candidate } = this.state;
     return (
       <div>
         {this.state.user && (
-          <Card>
+          <Card style={{ minHeight: "380px" }}>
             <Container style={{ marginTop: "10px" }}>
               {this.state.paymentPopup && (
                 <Preloader loading={this.state.paymentLoading}>
@@ -321,6 +334,21 @@ export default class InviteCandidates extends Component {
                 <Col xs="1" />
                 <Col xs="10">
                   <Form action="" className="form-horizontal">
+                    <FormGroup row>
+                      <Col md="3">
+                        <h5>Test Expiration:</h5>
+                      </Col>
+                      <Col xs="12" md="9">
+                        <DatePicker
+                          minDate={moment()}
+                          selected={
+                            moment(this.state.expirationDate) ||
+                            moment(Date.now()).add(7, "days")
+                          }
+                          onChange={this.updateCalendar}
+                        />
+                      </Col>
+                    </FormGroup>
                     <FormGroup row>
                       <Col md="3">
                         <Label htmlFor="textarea-input">Candidate Emails</Label>

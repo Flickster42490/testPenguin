@@ -123,6 +123,14 @@ router.post("/create/addQuestions/:id", (req, res) => {
     });
 });
 
+router.post("/destroy", (req, res) => {
+  return req.db
+    .any("DELETE FROM tests WHERE id = $1", req.body.testId)
+    .then(data => {
+      return res.send(data);
+    });
+});
+
 router.post("/issued", (req, res) => {
   let filters = req.body.filters || undefined;
   return req.db
@@ -152,6 +160,17 @@ router.post("/issued/:id", (req, res) => {
     .any(
       "SELECT a.*, t.* FROM (SELECT count(test_id) as count, test_id FROM test_attempts where invited_by= $1 GROUP BY test_id) a LEFT JOIN tests t ON a.test_id = t.id where a.test_id = $2",
       [req.body.userId, req.params.id]
+    )
+    .then(data => {
+      return res.send(data);
+    });
+});
+
+router.post("/update/:id", (req, res) => {
+  return req.db
+    .any(
+      "UPDATE tests SET (estimated_time) = ($1) WHERE id = ($2) RETURNING * ",
+      [req.body.estimatedTime, req.params.id]
     )
     .then(data => {
       return res.send(data);

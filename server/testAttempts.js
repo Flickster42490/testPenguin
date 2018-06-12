@@ -53,6 +53,14 @@ router.post("/", (req, res) => {
   });
 });
 
+router.get("/:id", (req, res) => {
+  return req.db
+    .any(`SELECT * FROM "test_attempts" where id = $1`, [req.params.id])
+    .then(d => {
+      return res.send(d);
+    });
+});
+
 router.get("/findOne/:id", (req, res) => {
   return req.db
     .any(
@@ -87,15 +95,16 @@ router.post("/sendReminder", (req, res) => {
         test_id: testId
       }
     };
+    console.log(msg);
     sgMail
       .send(msg)
       .then(d => {
         //Celebrate
-        console.log("celebrate. its sent", d);
+        console.log("celebrate. its sent");
         return req.db
           .any(
             "UPDATE test_attempts SET last_reminder_sent = $1 WHERE id = $2 RETURNING *",
-            [new Date(), testAttemptId]
+            [req.body.lastReminderSent, testAttemptId]
           )
           .then(d => {
             return res.status(200).send(d);
@@ -116,27 +125,32 @@ router.post("/sendReminder", (req, res) => {
 
 router.post("/create", (req, res) => {
   console.log(req.body);
-  let { userIds } = req.body;
+  let { userIds, expiringAt } = req.body;
   let subQ = ``;
   let numberOfTests, dbUser;
   userIds.forEach((i, idx) => {
     if (idx !== userIds.length - 1)
       subQ =
         subQ +
-        `($1, $${idx + 2}, '${req.body.testId}', '${req.body.invitedBy}'),`;
+        `($1, $${idx + 2}, '${req.body.testId}', '${
+          req.body.invitedBy
+        }', '${expiringAt}'),`;
     else
       subQ =
         subQ +
-        `($1, $${idx + 2}, '${req.body.testId}', '${req.body.invitedBy}')`;
+        `($1, $${idx + 2}, '${req.body.testId}', '${
+          req.body.invitedBy
+        }', '${expiringAt}')`;
   });
   let vars = [new Date()].concat(userIds);
   console.log("subQ and vars", subQ, vars);
   return req.db
     .any(
-      `INSERT INTO test_attempts(invited_at, user_id, test_id, invited_by) VALUES ${subQ} RETURNING *`,
+      `INSERT INTO test_attempts(invited_at, user_id, test_id, invited_by, expiring_at) VALUES ${subQ} RETURNING *`,
       vars
     )
     .then(data => {
+      console.log(data);
       let candidates = data.map(i => i.user_id);
       return Promise.all([
         data,
@@ -158,7 +172,7 @@ router.post("/create", (req, res) => {
               user_last_name: user.last_name,
               company: "AccountingPenguin",
               user_email: user.email_address,
-              test_expiration_date: "5/27/2019",
+              test_expiration_date: moment(expiringAt).format("MM/DD/YYYY"),
               candidate_id: a.user_id,
               test_attempt_id: a.id,
               test_id: a.test_id

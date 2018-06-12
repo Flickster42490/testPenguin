@@ -114,7 +114,6 @@ export default class addQuestions extends Component {
     let types = this.extractQuestionTypes(testQuestionList);
     let tags = this.extractQuestionTags(testQuestionList);
     let estimatedTime = this.calculateEstimatedTime(testQuestionList);
-    console.log(questions, types, tags);
     axios
       .post(`/tests/create/addQuestions/${this.state.testId}`, {
         questions: questions,
@@ -192,7 +191,7 @@ export default class addQuestions extends Component {
             <Row style={{ float: "right" }}>
               <Col xs="12" s="4">
                 <Button color="success" onClick={() => this.handleNext()}>
-                  Next
+                  Next Step
                 </Button>
               </Col>
             </Row>

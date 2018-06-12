@@ -42,7 +42,6 @@ export default class Dashboard extends Component {
   }
 
   componentWillReceiveProps(np) {
-    console.log(np, "nextProps");
     this.setState(
       {
         candidateList: np.candidateList
@@ -64,7 +63,8 @@ export default class Dashboard extends Component {
         candidateId: candidateId,
         testAttemptId: testAttemptId,
         testId: testId,
-        candidateEmail: candidateEmail
+        candidateEmail: candidateEmail,
+        lastReminderSent: moment(new Date()).format("MM/DD/YYYYTHH:mm:ss")
       })
       .then(d => {
         console.log(d);
@@ -113,6 +113,8 @@ export default class Dashboard extends Component {
                     <strong>
                       {cell.original.first_name} {cell.original.last_name}
                     </strong>
+                    <br />
+                    {cell.original.email_address}
                   </div>
                 </div>
               )
@@ -121,7 +123,7 @@ export default class Dashboard extends Component {
               Header: "Invitation Details",
               Cell: cell => {
                 return (
-                  <div>
+                  <div style={{ textAlign: "left", paddingLeft: "10px" }}>
                     <div>
                       <strong>Test Name: </strong>
                       {cell.original.name}

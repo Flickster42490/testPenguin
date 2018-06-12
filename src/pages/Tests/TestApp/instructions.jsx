@@ -12,6 +12,7 @@ import {
 } from "reactstrap";
 import axios from "axios";
 import queryString from "querystring";
+import moment from "moment";
 import { Preloader, PreloaderView } from "../../../components/Preloader.jsx";
 
 class Instructions extends Component {
@@ -22,7 +23,8 @@ class Instructions extends Component {
       testId: null,
       firstName: undefined,
       lastName: undefined,
-      disabled: true
+      disabled: true,
+      expired: false
     };
 
     this.handleStartTest = this.handleStartTest.bind(this);
@@ -38,18 +40,26 @@ class Instructions extends Component {
       let candidate = d ? d.data[0] : undefined;
       axios.get(`tests/${testId}`).then(t => {
         let test = t ? t.data[0] : undefined;
-        this.setState(
-          {
-            candidateId: candidateId,
-            testId: testId,
-            testAttemptId: testAttemptId,
-            candidate: candidate,
-            test: test
-          },
-          () => {
-            this.forceUpdate();
-          }
-        );
+        axios.get(`testAttempts/${testAttemptId}`).then(a => {
+          let testAttempt = a ? a.data[0] : undefined;
+          this.setState(
+            {
+              candidateId: candidateId,
+              testId: testId,
+              testAttemptId: testAttemptId,
+              candidate: candidate,
+              test: test,
+              testAttempt: testAttempt,
+              disabled: !(candidate && candidate.first_name),
+              expired:
+                testAttempt.expiring_at &&
+                moment(testAttempt.expiring_at) < moment(new Date())
+            },
+            () => {
+              this.forceUpdate();
+            }
+          );
+        });
       });
     });
   }
@@ -98,47 +108,67 @@ class Instructions extends Component {
   }
 
   render() {
-    let { candidate, test } = this.state;
+    let { candidate, test, testAttempt, expired } = this.state;
     return (
       <div className="app flex-row align-items-center">
         <Container>
           <Row className="justify-content-center">
             <Col>
               <Preloader loading={!this.state.candidate}>
-                <div className="clearfix">
-                  {candidate && (
+                {!expired && (
+                  <div className="clearfix">
+                    {candidate && (
+                      <h3 className="pt-3">Welcome to TestPenguin!</h3>
+                    )}
+                    {test && (
+                      <h4>Today, you'll be taking the {test.name} test</h4>
+                    )}
+                    {candidate &&
+                      !candidate.first_name && (
+                        <div>
+                          <h4>
+                            To take the test, fill out your name and click on
+                            the start button below.
+                          </h4>
+                          <br />
+                          <Row>
+                            <Col md="3" xs="12">
+                              <Input
+                                placeholder="First Name"
+                                onBlur={e => this.handleInput("firstName", e)}
+                              />
+                            </Col>
+                            <Col md="3" xs="12">
+                              <Input
+                                placeholder="Last Name"
+                                onBlur={e => this.handleInput("lastName", e)}
+                              />
+                            </Col>
+                          </Row>
+                        </div>
+                      )}
+                    <br />
+                    <Button
+                      disabled={this.state.disabled}
+                      onClick={this.handleStartTest}
+                    >
+                      Start Test
+                    </Button>
+                  </div>
+                )}
+                {expired && (
+                  <div>
                     <h3 className="pt-3">Welcome to TestPenguin!</h3>
-                  )}
-                  {test && (
-                    <h4>Today, you'll be taking the {test.name} test</h4>
-                  )}
-                  <h4>
-                    To take the test, fill out your name and click on the start
-                    button below.
-                  </h4>
-                  <br />
-                  <Row>
-                    <Col md="3" xs="12">
-                      <Input
-                        placeholder="First Name"
-                        onBlur={e => this.handleInput("firstName", e)}
-                      />
-                    </Col>
-                    <Col md="3" xs="12">
-                      <Input
-                        placeholder="Last Name"
-                        onBlur={e => this.handleInput("lastName", e)}
-                      />
-                    </Col>
-                  </Row>
-                  <br />
-                  <Button
-                    disabled={this.state.disabled}
-                    onClick={this.handleStartTest}
-                  >
-                    Start Test
-                  </Button>
-                </div>
+                    <h4>
+                      Your Test Invitation Expired on{" "}
+                      {moment(testAttempt.expiring_at).format("MM/DD/YYYY")}.{" "}
+                      <br />
+                      <br />
+                      Please Contact the Test Issuer to Request Another
+                      Invitation.
+                    </h4>
+                  </div>
+                )}
               </Preloader>
             </Col>
           </Row>

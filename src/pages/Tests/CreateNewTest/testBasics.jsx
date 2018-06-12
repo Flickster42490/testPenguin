@@ -150,7 +150,7 @@ export default class testBasics extends Component {
                   onClick={() => this.handleNext()}
                   disabled={this.state.disableNext}
                 >
-                  Next
+                  Next Step
                 </Button>
               </Col>
             </Row>
