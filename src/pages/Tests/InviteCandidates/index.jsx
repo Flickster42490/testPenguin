@@ -34,6 +34,12 @@ import StripeCheckout from "react-stripe-checkout";
 import { Preloader } from "../../../components/Preloader.jsx";
 import DatePicker from "../../../components/DatePicker/dist/react-datepicker";
 import "../../../components/DatePicker/dist/react-datepicker.css";
+import TestQuestionList from "../CreateNewTest/testQuestionList.jsx";
+
+const typeMap = {
+  module: "Module",
+  multiple_choice: "Multiple Choice"
+};
 
 export default class InviteCandidates extends Component {
   constructor(props) {
@@ -66,18 +72,21 @@ export default class InviteCandidates extends Component {
     const testName = queryString.parse(queries).name;
     localForage.getItem("userId").then(id => {
       axios.get(`/users/${id}`).then(d => {
-        this.setState({
-          user: d.data ? d.data[0] : undefined,
-          testId: testId,
-          testName: testName,
-          showSuccessToaster: false,
-          candidates: {
-            emails: null,
-            invitedBy: id
-          },
-          expirationDate: moment(new Date()).add(7, "days"),
-          submitDisable: true,
-          submitted: false
+        axios.get(`tests/${testId}`).then(t => {
+          this.setState({
+            user: d.data ? d.data[0] : undefined,
+            testId: testId,
+            testName: testName,
+            test: t.data[0],
+            showSuccessToaster: false,
+            candidates: {
+              emails: null,
+              invitedBy: id
+            },
+            expirationDate: moment(new Date()).add(7, "days"),
+            submitDisable: true,
+            submitted: false
+          });
         });
       });
     });
@@ -197,6 +206,31 @@ export default class InviteCandidates extends Component {
     }
   }
 
+  stringifyTags(tags) {
+    let template = ``;
+    tags.forEach((i, idx, arr) => {
+      if (idx === arr.length - 1) template += i;
+      else template += `${i}, `;
+    });
+    console.log(template);
+    return template;
+  }
+
+  stringifyQuestionTypes(types) {
+    let typeMapped = [];
+    _.forOwn(types, (v, k) => {
+      typeMapped.push(
+        <div>
+          <strong>{typeMap[k]}: </strong>
+          {k === "multiple_choice" && <span>{v} Questions</span>}
+          {k === "module" && <span>{v} Questions</span>}
+        </div>
+      );
+    });
+    console.log(typeMapped);
+    return typeMapped;
+  }
+
   updateCalendar(date) {
     this.setState({
       expirationDate: date.format("MM/DD/YYYY")
@@ -204,7 +238,8 @@ export default class InviteCandidates extends Component {
   }
 
   render() {
-    const { testName, showSuccessToaster, candidate } = this.state;
+    const { testName, showSuccessToaster, candidate, test } = this.state;
+    console.log(test);
     return (
       <div>
         {this.state.user && (
@@ -328,17 +363,32 @@ export default class InviteCandidates extends Component {
               )}
               <Row>
                 <Col xs="12">
-                  <div className="text-center">
-                    <h3>Send Invitations for: {testName} Test</h3>
+                  <div className="text-center page-header">
+                    <h3>INVITE CANDIDATES</h3>
                   </div>
                 </Col>
                 <br />
               </Row>
-              <hr />
+
               <Row>
-                <Col xs="1" />
-                <Col xs="10">
-                  <Form action="" className="form-horizontal">
+                <Col xs="12">
+                  <Form>
+                    <FormGroup row>
+                      <Col md="3">
+                        <h5>Test Name:</h5>
+                      </Col>
+                      <Col xs="12" md="9">
+                        <h4>{test.name}</h4>
+                      </Col>
+                    </FormGroup>
+                    <FormGroup row>
+                      <Col md="3">
+                        <h5>Description:</h5>
+                      </Col>
+                      <Col xs="12" md="9">
+                        <h5>{test.description}</h5>
+                      </Col>
+                    </FormGroup>
                     <FormGroup row>
                       <Col md="3">
                         <h5>Test Expiration:</h5>
@@ -356,21 +406,58 @@ export default class InviteCandidates extends Component {
                     </FormGroup>
                     <FormGroup row>
                       <Col md="3">
+                        <h5>Tags:</h5>
+                      </Col>
+                      <Col xs="12" md="9">
+                        <h5>{this.stringifyTags(test.tags)}</h5>
+                      </Col>
+                    </FormGroup>
+                    <FormGroup row>
+                      <Col md="3">
+                        <h5>Question Types:</h5>
+                      </Col>
+                      <Col xs="12" md="9">
+                        <h5>
+                          {this.stringifyQuestionTypes(test.question_types)}
+                        </h5>
+                      </Col>
+                    </FormGroup>
+                  </Form>
+                </Col>
+              </Row>
+              <hr />
+              <Row>
+                <Col>
+                  <Form action="" className="form-horizontal">
+                    <FormGroup row>
+                      <Col md="3">
                         <Label htmlFor="textarea-input">Candidate Emails</Label>
                       </Col>
                       <Col xs="12" md="6">
                         <Input
-                          type="text"
+                          type="textarea"
+                          rows="3"
                           onBlur={this.handleEmail}
                           disabled={this.state.submitted}
                         />
                         <FormText color="muted">
-                          Please separate emails with a comma. <br />
-                          (eg. john@test.com,mary@test.com,tracy@test.com)
+                          Please separate emails with a comma. (eg.
+                          john@test.com,mary@test.com,tracy@test.com)
                         </FormText>
                       </Col>
                     </FormGroup>
                   </Form>
+                </Col>
+              </Row>
+              <hr />
+              <Row style={{ maxHeight: "500px" }}>
+                <Col xs="12">
+                  <h5>Test Questions</h5>
+                  <TestQuestionList
+                    questions={test.question_details}
+                    hideOrdering
+                    disabledArrange
+                  />
                 </Col>
               </Row>
               <br />
@@ -381,7 +468,7 @@ export default class InviteCandidates extends Component {
                     onClick={() => this.handleSubmit()}
                     disabled={this.state.submitDisable}
                   >
-                    Submit
+                    Invite Candidates to Test
                   </Button>
                 </Col>
               </Row>

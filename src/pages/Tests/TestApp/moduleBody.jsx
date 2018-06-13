@@ -281,6 +281,7 @@ export default class ModuleBody extends Component {
                           type="textarea"
                           name="text"
                           rows="6"
+                          disabled
                           value={
                             !questionAnswered.module_stem_2_candidate_answer
                               ? " "
@@ -299,6 +300,7 @@ export default class ModuleBody extends Component {
                           type="textarea"
                           name="text"
                           rows="6"
+                          disabled
                           defaultValue={question.module_stem_2_answer}
                         />
                       )}

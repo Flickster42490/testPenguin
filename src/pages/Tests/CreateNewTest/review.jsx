@@ -25,6 +25,7 @@ import "status-indicator/styles.css";
 
 import { Preloader } from "../../../components/Preloader.jsx";
 import TestQuestionList from "./testQuestionList.jsx";
+
 const typeMap = {
   module: "Module",
   multiple_choice: "Multiple Choice"

@@ -274,8 +274,8 @@ export default class TestApp extends Component {
     );
     return (
       <div>
-        {testAttempt &&
-          !testAttempt.completed_at && (
+        {(testAttempt && ((!preview || !review) && testAttempt.completed_at)) ||
+          ((preview || review) && (
             <Preloader loading={questions.length < 1}>
               {questions[currentIdx] && (
                 <Card className="module-container-card">
@@ -361,6 +361,7 @@ export default class TestApp extends Component {
                             </Button>
                           )}
                         {currentIdx === lastIdx &&
+                          !preview &&
                           !review && (
                             <Button
                               size="lg"
@@ -428,9 +429,11 @@ export default class TestApp extends Component {
                 </Card>
               )}
             </Preloader>
-          )}
+          ))}
         {testAttempt &&
-          testAttempt.completed_at && (
+          testAttempt.completed_at &&
+          !preview &&
+          !review && (
             <div className="app flex-row align-items-center">
               <Container>
                 <Row className="justify-content-center">
