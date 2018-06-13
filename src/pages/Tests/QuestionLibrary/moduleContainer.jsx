@@ -51,6 +51,10 @@ export default class ModuleContainer extends Component {
     window.addEventListener("resize", this.updateDimensions.bind(this));
 
     let externalDocs = this.createExternalDocsArray(this.props.question);
+    console.log(
+      externalDocs,
+      "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+    );
     this.setState(
       {
         externalDocs: externalDocs,
@@ -109,6 +113,13 @@ export default class ModuleContainer extends Component {
     this.setState({ width: window.innerWidth });
   }
 
+  updatePDF(idx) {
+    console.log(idx);
+    this.setState({
+      activeDocIndex: idx
+    });
+  }
+
   render() {
     const { question, externalDocs, returnTo, returnToTestId } = this.state;
     return (
@@ -163,10 +174,17 @@ export default class ModuleContainer extends Component {
                   <div>
                     <Card className="pdf-card">
                       <CardHeader>
-                        <ButtonGroup>
+                        <ButtonGroup style={{ width: "100%" }}>
                           {externalDocs.map((doc, idx) => {
                             return (
-                              <Button outline color="default" key={idx}>
+                              <Button
+                                outline
+                                color="default"
+                                key={idx}
+                                style={{ width: "100%", borderRadius: "2px" }}
+                                onClick={() => this.updatePDF(idx)}
+                                active={this.state.activeDocIndex === idx}
+                              >
                                 {doc.name}
                               </Button>
                             );

@@ -159,6 +159,7 @@ export default class JournalEntry extends Component {
         {disabled && (
           <Col sm={2}>
             <Input
+              className="right-align"
               type="text"
               readOnly={disabled}
               defaultValue={currentRow.debit}
@@ -168,6 +169,7 @@ export default class JournalEntry extends Component {
         {disabled && (
           <Col sm={2}>
             <Input
+              className="right-align"
               type="text"
               defaultValue={currentRow.credit}
               readOnly={disabled}
@@ -177,6 +179,7 @@ export default class JournalEntry extends Component {
         {!disabled && (
           <Col sm={2}>
             <Input
+              className="right-align"
               type="text"
               value={!currentRow.debit ? " " : currentRow.debit}
               onChange={value => this.updateDebit(currentRow, value)}
@@ -186,6 +189,7 @@ export default class JournalEntry extends Component {
         {!disabled && (
           <Col sm={2}>
             <Input
+              className="right-align"
               type="text"
               value={!currentRow.credit ? " " : currentRow.credit}
               onChange={value => this.updateCredit(currentRow, value)}

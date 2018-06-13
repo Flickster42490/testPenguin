@@ -93,6 +93,7 @@ export default class QuestionLibrary extends Component {
 
   render() {
     const { questions, typeCount, loading } = this.state;
+    console.log(questions);
     return (
       <div>
         {!this.props.addQuestions && (
@@ -104,32 +105,32 @@ export default class QuestionLibrary extends Component {
           <Row>
             <Col xs="12">
               <ReactTable
-                style={{ backgroundColor: "white" }}
+                style={{ backgroundColor: "white", textOverflow: "ellipsis" }}
                 data={questions}
-                sortable={false}
                 noDataText={`No Questions Matched Your Criteria. Please Try Again.`}
                 columns={[
                   {
                     Header: "Question Name",
                     accessor: "name",
+                    maxWidth: 325,
+                    style: {
+                      fontSize: "1rem",
+                      textAlign: "left",
+                      paddingLeft: "10px"
+                    },
                     Cell: cell => (
-                      <div
-                        style={{
-                          fontSize: "1rem",
-                          display: "inline-block",
-                          textAlign: "left"
-                        }}
-                        title={cell.value}
-                      >
+                      <span>
                         <a
                           href={`/#/dashboard/tests/questionLibrary/preview?id=${
                             cell.original.id
                           }`}
                         >
-                          <strong>{cell.value}</strong>
-                          <br />
-                        </a>
-                      </div>
+                          <strong>{cell.value}</strong> -{" "}
+                          <span className="muted-text">
+                            {cell.original.subname}
+                          </span>
+                        </a>{" "}
+                      </span>
                     )
                   },
                   {
@@ -137,20 +138,27 @@ export default class QuestionLibrary extends Component {
                     maxWidth: 200,
                     Cell: cell => (
                       <span>
-                        {utils.toUpper(utils.addSpace(cell.original.type))}{" "}
+                        {utils.toUpper(utils.addSpace(cell.original.type)) ===
+                        "Module"
+                          ? `${utils.toUpper(
+                              utils.addSpace(cell.original.module_type)
+                            )} `
+                          : ""}
                         {utils.toUpper(utils.addSpace(cell.original.type)) ===
                         "Module"
                           ? `(${utils.toUpper(
-                              utils.addSpace(cell.original.module_type)
+                              utils.addSpace(cell.original.type)
                             )})`
-                          : ""}
+                          : utils.toUpper(
+                              utils.addSpace(cell.original.type)
+                            )}{" "}
                       </span>
                     )
                   },
                   {
                     Header: "Est. Time",
                     accessor: "estimated_time",
-                    maxWidth: 100,
+                    maxWidth: 125,
                     Cell: cell => (
                       <span>{cell.original.estimated_time} mins</span>
                     )
@@ -158,7 +166,7 @@ export default class QuestionLibrary extends Component {
                   {
                     Header: "Difficulty",
                     accessor: "difficulty",
-                    maxWidth: 100,
+                    maxWidth: 125,
                     Cell: cell => (
                       <span>{utils.toUpper(cell.original.difficulty)}</span>
                     )
@@ -198,17 +206,17 @@ export default class QuestionLibrary extends Component {
                         }}
                       >
                         {!this.state.addQuestions && (
-                          <ButtonGroup size="sm" vertical>
-                            <Button size="sm" color="primary">
-                              <a
-                                href={`/#/dashboard/tests/questionLibrary/preview?id=${
-                                  cell.original.id
-                                }`}
-                              >
+                          <a
+                            href={`/#/dashboard/tests/questionLibrary/preview?id=${
+                              cell.original.id
+                            }`}
+                          >
+                            <ButtonGroup size="sm" vertical>
+                              <Button size="sm" color="primary">
                                 Preview Question
-                              </a>
-                            </Button>
-                          </ButtonGroup>
+                              </Button>
+                            </ButtonGroup>
+                          </a>
                         )}
                         {this.state.addQuestions && (
                           <ButtonGroup size="sm" vertical>
@@ -226,6 +234,12 @@ export default class QuestionLibrary extends Component {
                         )}
                       </div>
                     )
+                  }
+                ]}
+                defaultSorted={[
+                  {
+                    id: "name",
+                    desc: false
                   }
                 ]}
                 defaultPageSize={this.state.addQuestions ? 8 : 20}

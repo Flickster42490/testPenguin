@@ -104,6 +104,10 @@ export default class Reconciliation extends Component {
     return segments;
   }
 
+  numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
   updateOptions(currentRow, value) {
     currentRow.options = value;
     this.props.handleSubModuleOneUpdate(this.state.reconciliation);
@@ -153,10 +157,11 @@ export default class Reconciliation extends Component {
             <h6>{reconciliationFormat[segmentIndex].rows[rowIndex].sumText}</h6>
           )}
         </Col>
-        <Col sm={6}>
+        <Col sm={6} className="right-align">
           {reconciliationFormat[segmentIndex].rows[rowIndex].options &&
             reconciliationFormat[segmentIndex].rows[rowIndex].value && (
               <Input
+                className="right-align"
                 type="text"
                 readOnly={disabled}
                 defaultValue={currentRow.value}
@@ -165,6 +170,7 @@ export default class Reconciliation extends Component {
           {reconciliationFormat[segmentIndex].rows[rowIndex].options &&
             !reconciliationFormat[segmentIndex].rows[rowIndex].value && (
               <Input
+                className="right-align"
                 type="text"
                 readOnly={disabled}
                 value={!currentRow.value ? " " : currentRow.value}
@@ -175,7 +181,9 @@ export default class Reconciliation extends Component {
               />
             )}
           {reconciliationFormat[segmentIndex].rows[rowIndex].sumText && (
-            <strong>$&nbsp;{currentRow.sum}</strong>
+            <span style={{ paddingRight: "5px" }}>
+              <strong>$&nbsp;{this.numberWithCommas(currentRow.sum)}</strong>
+            </span>
           )}
         </Col>
       </FormGroup>
