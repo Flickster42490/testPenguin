@@ -64,13 +64,14 @@ router.get("/:id", (req, res) => {
 router.get("/findOne/:id", (req, res) => {
   return req.db
     .any(
-      `SELECT u.first_name, u.last_name, t.*, a.* FROM "test_attempts" as a 
+      `SELECT u.first_name, u.last_name, u.email_address, t.*, a.* FROM "test_attempts" as a 
     left join "users" as u on a.user_id = u.id 
     left join "tests" as t on t.id = a.test_id
     where a.id = $1`,
       [req.params.id]
     )
     .then(d => {
+      console.log(d);
       return res.send(d);
     });
 });

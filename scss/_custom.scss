@@ -178,6 +178,12 @@
   float: right;
 }
 
+.horizontal-bars {
+  li {
+    overflow: auto;
+  }
+}
+
 input {
   padding-left: 10px !important;
 }
