@@ -154,6 +154,7 @@ export default class CustomTests extends Component {
                   {
                     Header: "Actions",
                     maxWidth: 300,
+                    sortable: false,
                     Cell: cell => (
                       <div
                         style={{

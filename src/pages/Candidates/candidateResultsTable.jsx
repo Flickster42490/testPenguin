@@ -96,7 +96,6 @@ export default class Dashboard extends Component {
         <ReactTable
           style={{ backgroundColor: "white" }}
           data={this.state.candidateList}
-          sortable={false}
           noDataText={`No Candidates Matched Your Criteria. Please Try Again.`}
           columns={[
             {
@@ -239,6 +238,7 @@ export default class Dashboard extends Component {
             {
               Header: "Actions",
               maxWidth: 150,
+              sortable: false,
               Cell: cell => (
                 <div
                   style={{

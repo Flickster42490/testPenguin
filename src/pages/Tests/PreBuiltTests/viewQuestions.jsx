@@ -136,6 +136,7 @@ export default class QuestionLibrary extends Component {
                   {
                     Header: "Actions",
                     maxWidth: 300,
+                    sortable: false,
                     Cell: cell => (
                       <div
                         style={{
