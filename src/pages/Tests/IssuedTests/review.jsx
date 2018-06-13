@@ -148,10 +148,8 @@ export default class IssuedTestsReview extends Component {
                     <div className="h4 m-0">Results</div>
                     <ul className="horizontal-bars">
                       <li>
-                        {completedCandidates.length} Completed/{
-                          waitingCandidates.length
-                        }{" "}
-                        Waiting
+                        {completedCandidates.length} Completed /{" "}
+                        {waitingCandidates.length} Waiting
                       </li>
                       <li>
                         <Button onClick={this.onExportPDF}>
