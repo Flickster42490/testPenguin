@@ -67,7 +67,6 @@ export default class PreBuiltTests extends Component {
               <ReactTable
                 style={{ backgroundColor: "white" }}
                 data={tests}
-                sortable={false}
                 noDataText={`No Pre-Built Tests Matched Your Criteria. Please Try Again.`}
                 columns={[
                   {
@@ -94,9 +93,9 @@ export default class PreBuiltTests extends Component {
                     )
                   },
                   {
-                    Header: "Estimated Time",
+                    Header: "Allotted Time",
                     accessor: "estimated_time",
-                    maxWidth: 130,
+                    maxWidth: 150,
                     Cell: cell => (
                       <span>{cell.original.estimated_time} mins</span>
                     )
@@ -184,7 +183,14 @@ export default class PreBuiltTests extends Component {
                     )
                   }
                 ]}
+                defaultSorted={[
+                  {
+                    id: "name",
+                    desc: true
+                  }
+                ]}
                 defaultPageSize={10}
+                pageSizeOptions={[5, 10]}
                 className="-striped -highlight"
               />
             </Col>

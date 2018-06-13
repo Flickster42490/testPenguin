@@ -1,13 +1,6 @@
 import React, { Component } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Button,
-  ButtonGroup,
-  ButtonToolbar,
-  Progress
-} from "reactstrap";
+import { Row, Col, Button, ButtonGroup } from "reactstrap";
+import moment from "moment";
 import axios from "axios";
 import localForage from "localforage";
 import ReactTable from "react-table";
@@ -91,36 +84,36 @@ export default class CustomTests extends Component {
               <ReactTable
                 style={{ backgroundColor: "white" }}
                 data={tests}
-                sortable={false}
                 noDataText={`No Custom Tests Matched Your Criteria. Please Try Again Or Go To 'Create New Test'.`}
                 columns={[
                   {
                     Header: "Test Name",
                     accessor: "name",
+                    style: {
+                      justifyContent: "center"
+                    },
                     Cell: cell => (
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center"
-                        }}
+                      <a
+                        href={`/#/dashboard/tests/customTests/viewQuestions?id=${
+                          cell.original.id
+                        }`}
                       >
-                        <div style={{ maxWidth: "50%", fontSize: "1rem" }}>
-                          <a
-                            href={`/#/dashboard/tests/customTests/viewQuestions?id=${
-                              cell.original.id
-                            }`}
-                          >
-                            <strong>{cell.value}</strong>
-                          </a>
-                        </div>
-                      </div>
+                        <strong>{cell.value}</strong>
+                      </a>
                     )
                   },
                   {
-                    Header: "Estimated Time",
+                    Header: "Date Created",
+                    accessor: "created_at",
+                    maxWidth: 120,
+                    Cell: cell => (
+                      <span>{moment(cell.value).format("MM/DD/YYYY")}</span>
+                    )
+                  },
+                  {
+                    Header: "Allotted Time",
                     accessor: "estimated_time",
-                    maxWidth: 130,
+                    maxWidth: 150,
                     Cell: cell => (
                       <span>{cell.original.estimated_time} mins</span>
                     )
@@ -208,7 +201,16 @@ export default class CustomTests extends Component {
                     )
                   }
                 ]}
-                defaultPageSize={10}
+                defaultSorted={[
+                  {
+                    id: "created_at",
+                    desc: true
+                  }
+                ]}
+                defaultPageSize={
+                  tests.length <= 5 ? 5 : tests.length < 10 ? tests.length : 10
+                }
+                pageSizeOptions={[5, 10]}
                 className="-striped -highlight"
               />
             </Col>

@@ -54,6 +54,7 @@ export default class QuestionLibrary extends Component {
               <Col>
                 <h3>{test.name}</h3>
                 <p className="muted-text">{test.description}</p>
+                <p>Allotted Time: {test.estimated_time} minutes</p>
                 <a href="/#/dashboard/tests/customTests">
                   <Button>Go Back</Button>
                 </a>
@@ -77,30 +78,27 @@ export default class QuestionLibrary extends Component {
                 sortable={false}
                 columns={[
                   {
+                    Header: "#",
+                    Cell: cell => <span>{cell.index + 1}</span>
+                  },
+                  {
                     Header: "Question Name",
                     accessor: "name",
+                    style: {
+                      justifyContent: "center"
+                    },
+                    maxWidth: 75,
                     Cell: cell => (
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center"
-                        }}
+                      <a
+                        href={`/#/dashboard/tests/questionLibrary/preview?id=${
+                          cell.original.id
+                        }&returnTo=${window.location.hash}&returnToTestId=${
+                          queryString.parse(window.location.hash.split("?")[1])
+                            .id
+                        }`}
                       >
-                        <div style={{ fontSize: "1rem" }}>
-                          <a
-                            href={`/#/dashboard/tests/questionLibrary/preview?id=${
-                              cell.original.id
-                            }&returnTo=${window.location.hash}&returnToTestId=${
-                              queryString.parse(
-                                window.location.hash.split("?")[1]
-                              ).id
-                            }`}
-                          >
-                            <strong>{cell.value}</strong>
-                          </a>
-                        </div>
-                      </div>
+                        <strong>{cell.value}</strong>
+                      </a>
                     )
                   },
                   {
