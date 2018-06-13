@@ -132,7 +132,13 @@ export default class IssuedTestsReview extends Component {
                     <ul className="horizontal-bars">
                       <li>{test.count} candidates</li>
                       <li>
-                        <Button>Invite Candidates</Button>
+                        <a
+                          href={`/#/dashboard/tests/inviteCandidates?id=${
+                            test.id
+                          }&name=${test.name}`}
+                        >
+                          <Button color="success">Invite Candidates</Button>
+                        </a>
                       </li>
                     </ul>
                   </div>

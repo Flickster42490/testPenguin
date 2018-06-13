@@ -22,7 +22,7 @@ const typeMap = {
 };
 const getStatusColor = value => {
   value = value * 100;
-  if (!value) return <status-indicator active />;
+  if (!value && value !== 0) return <status-indicator active />;
   else if (value > 90) return <status-indicator positive />;
   else if (value > 50) return <status-indicator intermediary />;
   else return <status-indicator negative />;
