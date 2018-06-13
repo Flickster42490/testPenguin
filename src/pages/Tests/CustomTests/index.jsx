@@ -153,7 +153,7 @@ export default class CustomTests extends Component {
                   },
                   {
                     Header: "Actions",
-                    maxWidth: 300,
+                    maxWidth: 200,
                     sortable: false,
                     Cell: cell => (
                       <div
@@ -167,7 +167,7 @@ export default class CustomTests extends Component {
                           size="sm"
                           vertical
                           style={{
-                            maxWidth: "50%"
+                            maxWidth: "100%"
                           }}
                         >
                           <Button size="sm" color="primary">

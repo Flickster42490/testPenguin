@@ -18,6 +18,7 @@ import queryString from "querystring";
 import momentDurationFormatSetup from "moment-duration-format";
 import ReactTable from "react-table";
 import localForage from "localforage";
+import html2pdf from "html2pdf.js";
 import "react-table/react-table.css";
 import "status-indicator/styles.css";
 
@@ -41,6 +42,7 @@ export default class IssuedTestsReview extends Component {
       userId: undefined
     };
     this.handleRefetch = this.handleRefetch.bind(this);
+    this.onExportPDF = this.onExportPDF.bind(this);
   }
 
   componentWillMount() {
@@ -83,11 +85,25 @@ export default class IssuedTestsReview extends Component {
       });
   }
 
+  onExportPDF() {
+    var element = document.getElementById("toPDF");
+    var opt = {
+      margin: [0.2, 0.5, 0.2, 0],
+      filename: `${this.state.testResults.last_name}_${
+        this.state.testResults.first_name
+      }_${this.state.testResults.name}.pdf`,
+      jsPDF: { unit: "in", format: "a4", orientation: "landscape" }
+    };
+    html2pdf()
+      .from(element)
+      .set(opt)
+      .save();
+  }
+
   render() {
     const { completedCandidates, waitingCandidates, test, userId } = this.state;
-    console.log(test);
     return (
-      <div className="app-body">
+      <div className="app-body" id="toPDF">
         {test ? (
           <main
             className="main"
@@ -132,7 +148,9 @@ export default class IssuedTestsReview extends Component {
                         Waiting
                       </li>
                       <li>
-                        <Button>Save Summary as PDF</Button>
+                        <Button onClick={this.onExportPDF}>
+                          Save Summary as PDF
+                        </Button>
                       </li>
                     </ul>
                   </div>
@@ -173,10 +191,12 @@ export default class IssuedTestsReview extends Component {
                           candidateList={completedCandidates}
                           userId={userId}
                           handleRefetch={this.handleRefetch}
+                          emptyMessage="No invited Candidates have completed their test. Press the ‘Send Reminder’ button below to ensure that candidate’s submit their tests before the expiration deadline."
                         />
                       </Col>
                     </Row>
                     <br />
+                    <div class="html2pdf__page-break" />
                     <Row>
                       <Col xs={7}>
                         <h4>Candidates - WAITING</h4>
@@ -189,6 +209,7 @@ export default class IssuedTestsReview extends Component {
                           candidateList={waitingCandidates}
                           userId={userId}
                           handleRefetch={this.handleRefetch}
+                          emptyMessage="All invited candidates have completed their test 😊. Invite additional candidates, if you’d like."
                         />
                       </Col>
                     </Row>

@@ -96,7 +96,11 @@ export default class Dashboard extends Component {
         <ReactTable
           style={{ backgroundColor: "white" }}
           data={this.state.candidateList}
-          noDataText={`No Candidates Matched Your Criteria. Please Try Again.`}
+          noDataText={
+            this.props.emptyMessage
+              ? this.props.emptyMessage
+              : `No Candidates Matched Your Criteria. Please Try Again.`
+          }
           columns={[
             {
               Header: "Candidate",

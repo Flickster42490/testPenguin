@@ -1,14 +1,7 @@
 import React, { Component } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Button,
-  ButtonGroup,
-  ButtonToolbar,
-  Progress
-} from "reactstrap";
+import { Row, Col, Button, ButtonGroup } from "reactstrap";
 import axios from "axios";
+import moment from "moment";
 import localForage from "localforage";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
@@ -64,104 +57,132 @@ export default class IssuedTests extends Component {
             These are the tests you have invited candidates to take
           </h6>
         </div>
-        <Row>
-          <Col xs="12">
-            <ReactTable
-              style={{ backgroundColor: "white" }}
-              data={this.state.tests}
-              sortable={false}
-              columns={[
-                {
-                  Header: "Test Name",
-                  accessor: "name",
-                  Cell: cell => (
-                    <div
-                      style={{
-                        fontSize: "1rem",
-                        textAlign: "left",
-                        paddingLeft: "20px"
-                      }}
-                    >
-                      <strong>{cell.value}</strong>
-                    </div>
-                  ),
-                  maxWidth: 240
-                },
-                {
-                  Header: "Overview",
-                  Cell: cell => {
-                    return (
-                      <div
-                        style={{ display: "inline-block", textAlign: "left" }}
-                      >
-                        <strong>Estimated Time: </strong>
-                        {cell.original.estimated_time} mins
-                        {/* will want to use moment duration fomrat */}
-                        <br />
-                        <strong>Questions: </strong>
-                        {cell.original.question_types.multiple_choice ||
-                          "0"}{" "}
-                        Multiple Choice,
-                        {cell.original.question_types.module || "0"} Modules
-                        <br />
-                        <strong>Type : </strong>
-                        {typeMap[cell.original.type]}
-                        <br />
-                      </div>
-                    );
-                  }
-                },
-                {
-                  Header: "Candidates",
-                  Cell: cell => {
-                    return (
-                      <div>
-                        <div>
-                          <strong>Candidates Invited: </strong>
-                          {cell.original.count}
-                        </div>
-                      </div>
-                    );
-                  },
-                  maxWidth: 200
-                },
-                {
-                  Header: "Actions",
-                  maxWidth: 300,
-                  Cell: cell => (
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center"
-                      }}
-                    >
-                      <ButtonGroup
-                        size="sm"
-                        vertical
-                        style={{
-                          maxWidth: "50%"
-                        }}
-                      >
+        {this.state.tests && (
+          <Row>
+            <Col xs="12">
+              <ReactTable
+                style={{ backgroundColor: "white" }}
+                data={this.state.tests}
+                sortable={false}
+                columns={[
+                  {
+                    Header: "Test Name",
+                    accessor: "name",
+                    style: {
+                      fontSize: "1rem",
+                      textAlign: "left",
+                      paddingLeft: "20px"
+                    },
+                    Cell: cell => (
+                      <strong>
                         <a
                           href={`/#/dashboard/tests/issuedTests/review?id=${
                             cell.original.test_id
                           }`}
                         >
-                          <Button size="sm" color="primary">
-                            Review Test
-                          </Button>
+                          {cell.value}
                         </a>
-                      </ButtonGroup>
-                    </div>
-                  )
+                      </strong>
+                    ),
+                    maxWidth: 240
+                  },
+                  {
+                    Header: "Allotted Time",
+                    accessor: "estimated_time",
+                    maxWidth: 150,
+                    Cell: cell => <span>{cell.value} mins</span>
+                  },
+                  {
+                    Header: "Questions",
+                    maxWidth: 200,
+                    Cell: cell => (
+                      <ul style={{ listStyleType: "none" }}>
+                        <li>
+                          {cell.original.question_types.multiple_choice || "0"}{" "}
+                          Multiple Choice
+                        </li>
+                        <li>
+                          {cell.original.question_types.module || "0"} Modules
+                        </li>
+                      </ul>
+                    )
+                  },
+                  {
+                    Header: "Type",
+                    maxWidth: 125,
+                    Cell: cell => <span>{typeMap[cell.original.type]}</span>
+                  },
+                  {
+                    Header: "History",
+                    Cell: cell => {
+                      return (
+                        <span>
+                          {cell.original.count} candidates{" "}
+                          {cell.original.created_at
+                            ? `since 
+                          ${moment(cell.original.created_at).format(
+                            "MM/DD/YYYY"
+                          )}`
+                            : ""}
+                        </span>
+                      );
+                    },
+                    maxWidth: 200
+                  },
+                  {
+                    Header: "Actions",
+                    maxWidth: 200,
+                    Cell: cell => (
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center"
+                        }}
+                      >
+                        <ButtonGroup
+                          size="sm"
+                          vertical
+                          style={{
+                            maxWidth: "100%"
+                          }}
+                        >
+                          <Button size="sm" color="primary">
+                            <a
+                              href={`/#/dashboard/tests/issuedTests/review?id=${
+                                cell.original.test_id
+                              }`}
+                            >
+                              Review Test
+                            </a>
+                          </Button>
+                          <Button size="sm" color="success">
+                            <a
+                              href={`/#/dashboard/tests/inviteCandidates?id=${
+                                cell.original.id
+                              }&name=${cell.original.name}`}
+                            >
+                              Invite Candidates
+                            </a>
+                          </Button>
+                        </ButtonGroup>
+                      </div>
+                    )
+                  }
+                ]}
+                defaultPageSize={
+                  this.state.tests.length <= 5
+                    ? 5
+                    : this.state.tests.length < 10
+                      ? this.state.tests.length
+                      : 10
                 }
-              ]}
-              defaultPageSize={10}
-              className="-striped -highlight"
-            />
-          </Col>
-        </Row>
+                pageSizeOptions={[5, 10]}
+                className="-striped -highlight"
+              />
+            </Col>
+          </Row>
+        )}
       </div>
     );
   }
