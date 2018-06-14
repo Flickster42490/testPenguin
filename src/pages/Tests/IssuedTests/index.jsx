@@ -83,8 +83,7 @@ export default class IssuedTests extends Component {
                           {cell.value}
                         </a>
                       </strong>
-                    ),
-                    maxWidth: 240
+                    )
                   },
                   {
                     Header: "Allotted Time",
@@ -109,7 +108,7 @@ export default class IssuedTests extends Component {
                   },
                   {
                     Header: "Type",
-                    maxWidth: 125,
+                    maxWidth: 150,
                     Cell: cell => <span>{typeMap[cell.original.type]}</span>
                   },
                   {
@@ -126,8 +125,7 @@ export default class IssuedTests extends Component {
                             : ""}
                         </span>
                       );
-                    },
-                    maxWidth: 200
+                    }
                   },
                   {
                     Header: "Actions",
@@ -141,13 +139,13 @@ export default class IssuedTests extends Component {
                         }}
                       >
                         <ButtonGroup
-                          size="sm"
+                          size="md"
                           vertical
                           style={{
                             maxWidth: "100%"
                           }}
                         >
-                          <Button size="sm" color="success">
+                          <Button size="md" color="success">
                             <a
                               href={`/#/dashboard/tests/inviteCandidates?id=${
                                 cell.original.id
@@ -156,7 +154,7 @@ export default class IssuedTests extends Component {
                               <strong>Invite Candidates</strong>
                             </a>
                           </Button>
-                          <Button size="sm" color="primary">
+                          <Button size="md" color="primary">
                             <a
                               href={`/#/dashboard/tests/issuedTests/review?id=${
                                 cell.original.test_id

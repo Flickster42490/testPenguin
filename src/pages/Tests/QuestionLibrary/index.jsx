@@ -112,7 +112,6 @@ export default class QuestionLibrary extends Component {
                   {
                     Header: "Question Name",
                     accessor: "name",
-                    maxWidth: 325,
                     style: {
                       fontSize: "1rem",
                       textAlign: "left",
@@ -135,7 +134,6 @@ export default class QuestionLibrary extends Component {
                   },
                   {
                     Header: "Question Type",
-                    maxWidth: 200,
                     Cell: cell => (
                       <span>
                         {utils.toUpper(utils.addSpace(cell.original.type)) ===
@@ -174,7 +172,6 @@ export default class QuestionLibrary extends Component {
                   {
                     Header: "Categories",
                     accessor: "tags",
-                    maxWidth: 200,
                     Cell: cell => {
                       let tags = cell.value && cell.value.split(",");
                       return tags && tags.length > 0 ? (
@@ -196,7 +193,7 @@ export default class QuestionLibrary extends Component {
                   },
                   {
                     Header: "Actions",
-                    maxWidth: 150,
+                    maxWidth: 200,
                     sortable: false,
                     Cell: cell => (
                       <div

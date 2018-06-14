@@ -241,7 +241,7 @@ export default class Dashboard extends Component {
             },
             {
               Header: "Actions",
-              maxWidth: 150,
+              maxWidth: 200,
               sortable: false,
               Cell: cell => (
                 <div
@@ -251,7 +251,7 @@ export default class Dashboard extends Component {
                     justifyContent: "center"
                   }}
                 >
-                  <ButtonGroup size="sm" vertical>
+                  <ButtonGroup size="md" vertical>
                     {cell.original.completed_at && (
                       <a
                         href={`#/dashboard/candidates/reviewResults?id=${
@@ -259,7 +259,7 @@ export default class Dashboard extends Component {
                         }`}
                         style={{ color: "#fff" }}
                       >
-                        <Button size="sm" color="primary">
+                        <Button size="md" color="primary">
                           Review Results
                         </Button>
                       </a>
@@ -276,7 +276,7 @@ export default class Dashboard extends Component {
                         }
                         style={{ color: "#fff" }}
                       >
-                        <Button size="sm" color="danger">
+                        <Button size="md" color="danger">
                           Send Reminder
                         </Button>
                       </a>

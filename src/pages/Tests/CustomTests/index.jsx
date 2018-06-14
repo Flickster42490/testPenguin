@@ -164,13 +164,13 @@ export default class CustomTests extends Component {
                         }}
                       >
                         <ButtonGroup
-                          size="sm"
+                          size="md"
                           vertical
                           style={{
                             maxWidth: "100%"
                           }}
                         >
-                          <Button size="sm" color="success">
+                          <Button size="md" color="success">
                             <a
                               href={`/#/dashboard/tests/inviteCandidates?id=${
                                 cell.original.id
@@ -179,7 +179,7 @@ export default class CustomTests extends Component {
                               <strong>Invite Candidates</strong>
                             </a>
                           </Button>
-                          <Button size="sm" color="primary">
+                          <Button size="md" color="primary">
                             <a
                               href={`/#/dashboard/tests/customTests/viewQuestions?id=${
                                 cell.original.id
@@ -188,7 +188,7 @@ export default class CustomTests extends Component {
                               Test Overview
                             </a>
                           </Button>
-                          <Button size="sm" color="secondary">
+                          <Button size="md" color="secondary">
                             <a
                               href={`/#/testApp/app?testId=${
                                 cell.original.id
