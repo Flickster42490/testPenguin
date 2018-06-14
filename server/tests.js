@@ -45,10 +45,10 @@ router.post("/type/:type", (req, res) => {
 router.post("/type/:type/:id", (req, res) => {
   let filters = req.body.filters || undefined;
   return req.db
-    .any("SELECT * FROM tests where type = $1 and created_by = $2", [
-      req.params.type,
-      req.params.id
-    ])
+    .any(
+      "SELECT * FROM tests where type = $1 and created_by = $2 and created_at IS NOT NULL",
+      [req.params.type, req.params.id]
+    )
     .then(data => {
       let d = data;
       if (filters && filters.customTests && filters.customTests.length > 0) {
@@ -95,8 +95,8 @@ router.get("/id/:id/questions", (req, res) => {
 router.post("/create/testBasics", (req, res) => {
   return req.db
     .any(
-      "INSERT INTO tests(name, description, created_at, created_by) VALUES($1,$2,$3,$4) RETURNING *",
-      [req.body.name, req.body.description, new Date(), req.body.userId]
+      "INSERT INTO tests(name, description, created_by) VALUES($1,$2,$3) RETURNING *",
+      [req.body.name, req.body.description, req.body.userId]
     )
     .then(data => {
       return res.send(data);
@@ -166,11 +166,11 @@ router.post("/issued/:id", (req, res) => {
     });
 });
 
-router.post("/update/:id", (req, res) => {
+router.post("/create/review/:id", (req, res) => {
   return req.db
     .any(
-      "UPDATE tests SET (estimated_time) = ($1) WHERE id = ($2) RETURNING * ",
-      [req.body.estimatedTime, req.params.id]
+      "UPDATE tests SET (estimated_time, created_at) = ($1, $2) WHERE id = ($3) RETURNING * ",
+      [req.body.estimatedTime, new Date(), req.params.id]
     )
     .then(data => {
       return res.send(data);

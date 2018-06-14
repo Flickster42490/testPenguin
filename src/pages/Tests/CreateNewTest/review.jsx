@@ -73,7 +73,7 @@ export default class ReviewCreatedTest extends Component {
 
   handleCreateTest() {
     axios
-      .post(`/tests/update/${this.state.testId}`, {
+      .post(`/tests/create/review/${this.state.testId}`, {
         estimatedTime: this.state.estimatedTime
       })
       .then(d => {
