@@ -137,7 +137,9 @@ export default class IssuedTestsReview extends Component {
                             test.id
                           }&name=${test.name}`}
                         >
-                          <Button color="success">Invite Candidates</Button>
+                          <Button color="success">
+                            <strong>Invite Candidates</strong>
+                          </Button>
                         </a>
                       </li>
                     </ul>

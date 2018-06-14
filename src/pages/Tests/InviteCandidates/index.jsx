@@ -468,7 +468,7 @@ export default class InviteCandidates extends Component {
                     onClick={() => this.handleSubmit()}
                     disabled={this.state.submitDisable}
                   >
-                    Invite Candidates to Test
+                    Invite Candidates
                   </Button>
                 </Col>
               </Row>

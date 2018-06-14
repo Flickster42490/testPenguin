@@ -152,6 +152,15 @@ export default class PreBuiltTests extends Component {
                             maxWidth: "100%"
                           }}
                         >
+                          <Button size="sm" color="success">
+                            <a
+                              href={`/#/dashboard/tests/inviteCandidates?id=${
+                                cell.original.id
+                              }&name=${cell.original.name}`}
+                            >
+                              <strong>Invite Candidates</strong>
+                            </a>
+                          </Button>
                           <Button size="sm" color="primary">
                             <a
                               href={`/#/dashboard/tests/preBuiltTests/viewQuestions?id=${
@@ -159,15 +168,6 @@ export default class PreBuiltTests extends Component {
                               }`}
                             >
                               Test Overview
-                            </a>
-                          </Button>
-                          <Button size="sm" color="success">
-                            <a
-                              href={`/#/dashboard/tests/inviteCandidates?id=${
-                                cell.original.id
-                              }&name=${cell.original.name}`}
-                            >
-                              Invite Candidates
                             </a>
                           </Button>
                           <Button size="sm" color="secondary">

@@ -64,7 +64,9 @@ export default class QuestionLibrary extends Component {
                     test.id
                   }&name=${test.name}`}
                 >
-                  <Button>Invite Candidates</Button>
+                  <Button>
+                    <strong>Invite Candidates</strong>
+                  </Button>
                 </a>
               </Col>
             </Row>
