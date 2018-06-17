@@ -173,13 +173,15 @@ class Sidebar extends Component {
     return categories.map(i => {
       return (
         <Button
+          className="flex-container"
           outline
           color="secondary"
           active={this.state.questionCategoryValue === i.value}
           onClick={() => this.updateQuestionCategoryValue(i.value)}
           key={i.value}
+          title={i.value}
         >
-          {i.value}
+          <span className="flex-child">{i.value}</span>
         </Button>
       );
     });
@@ -189,13 +191,15 @@ class Sidebar extends Component {
     return categories.map(i => {
       return (
         <Button
+          className="flex-container"
           outline
           color="secondary"
           active={this.state.testCategoryValue === i.value}
           onClick={() => this.updateTestCategoryValue(i.value)}
           key={i.value}
+          title={i.value}
         >
-          {i.value}
+          <span className="flex-child">{i.value}</span>
         </Button>
       );
     });
@@ -222,7 +226,7 @@ class Sidebar extends Component {
                   style={{
                     marginTop: "5px",
                     marginBottom: "10px",
-                    width: "160px"
+                    width: "150px"
                   }}
                 >
                   <Button
@@ -276,6 +280,35 @@ class Sidebar extends Component {
                 <br />
               </div>
             )}
+          {["preBuiltTests", "customTests"].includes(this.props.page) &&
+            this.state.options && (
+              <Row className="sidebar-row">
+                Categories: <br />
+                <ButtonGroup
+                  size="sm"
+                  vertical
+                  block
+                  style={{
+                    marginTop: "5px",
+                    marginBottom: "10px",
+                    width: "150px"
+                  }}
+                >
+                  <Button
+                    outline
+                    color="secondary"
+                    active={this.state.testCategoryValue === "all"}
+                    onClick={() => this.updateTestCategoryValue("all")}
+                  >
+                    All
+                  </Button>
+                  {this.renderTestCategoryButtons(
+                    this.state.options.testCategories
+                  )}
+                </ButtonGroup>
+                <br />
+              </Row>
+            )}
           {["preBuiltTests"].includes(this.props.page) &&
             this.state.options && (
               <div>
@@ -311,35 +344,6 @@ class Sidebar extends Component {
                 </Row>
                 <br />
               </div>
-            )}
-          {["preBuiltTests", "customTests"].includes(this.props.page) &&
-            this.state.options && (
-              <Row className="sidebar-row">
-                Categories: <br />
-                <ButtonGroup
-                  size="sm"
-                  vertical
-                  block
-                  style={{
-                    marginTop: "5px",
-                    marginBottom: "10px",
-                    width: "160px"
-                  }}
-                >
-                  <Button
-                    outline
-                    color="secondary"
-                    active={this.state.testCategoryValue === "all"}
-                    onClick={() => this.updateTestCategoryValue("all")}
-                  >
-                    All
-                  </Button>
-                  {this.renderTestCategoryButtons(
-                    this.state.options.testCategories
-                  )}
-                </ButtonGroup>
-                <br />
-              </Row>
             )}
         </Container>
       </div>

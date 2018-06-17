@@ -96,6 +96,9 @@ export default class PreBuiltTests extends Component {
                     Header: "Allotted Time",
                     accessor: "estimated_time",
                     maxWidth: 150,
+                    sortMethod: (a, b) => {
+                      return a - b;
+                    },
                     Cell: cell => (
                       <span>{cell.original.estimated_time} mins</span>
                     )
@@ -103,6 +106,7 @@ export default class PreBuiltTests extends Component {
                   {
                     Header: "Question Types",
                     accessor: "question_types",
+                    sortable: false,
                     Cell: cell => (
                       <div>
                         <span>
@@ -116,6 +120,7 @@ export default class PreBuiltTests extends Component {
                   {
                     Header: "Categories",
                     accessor: "tags",
+                    sortable: false,
                     Cell: cell =>
                       cell.value && cell.value.length > 0 ? (
                         <div>
@@ -190,8 +195,10 @@ export default class PreBuiltTests extends Component {
                     desc: true
                   }
                 ]}
-                defaultPageSize={10}
-                pageSizeOptions={[5, 10]}
+                defaultPageSize={
+                  tests.length <= 5 ? 5 : tests.length < 10 ? tests.length : 10
+                }
+                showPageSizeOptions={false}
                 className="-striped -highlight"
               />
             </Col>

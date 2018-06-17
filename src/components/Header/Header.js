@@ -128,7 +128,7 @@ class Header extends Component {
             onClick={() => this.handleClick("tests/customTests")}
           >
             <span className={this.state.page === "customTests" ? "bold" : ""}>
-              Your Custom Tests
+              My Custom Tests
             </span>
           </NavItem>
           <NavItem
@@ -144,7 +144,7 @@ class Header extends Component {
             onClick={() => this.handleClick("tests/issuedTests")}
           >
             <span className={this.state.page === "issuedTests" ? "bold" : ""}>
-              Review Issued Tests
+              Tests Issued
             </span>
           </NavItem>
         </Nav>
@@ -156,11 +156,11 @@ class Header extends Component {
           <NavItem className="d-md-down-none">
             {!isNaN(this.state.tokens) && (
               <div style={{ paddingRight: "20px" }}>
-                <div style={{ fontSize: ".75rem" }}>
+                <div style={{ fontSize: ".75rem", cursor: "initial" }}>
                   <span style={{ fontSize: "1rem" }}>
                     <strong>{this.state.tokens || 0}</strong>
                   </span>{" "}
-                  Tokens<br />
+                  Tests<br />
                   <Button
                     color="link"
                     style={{ padding: 0, borderTop: "0", marginTop: "-5px" }}

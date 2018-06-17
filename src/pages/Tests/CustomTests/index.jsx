@@ -67,7 +67,7 @@ export default class CustomTests extends Component {
           {" "}
           <Row>
             <Col>
-              <h2 style={{ display: "inline" }}>&nbsp;YOUR CUSTOM TESTS</h2>&nbsp;&nbsp;&nbsp;&nbsp;
+              <h2 style={{ display: "inline" }}>&nbsp;MY CUSTOM TESTS</h2>&nbsp;&nbsp;&nbsp;&nbsp;
               <h6 style={{ display: "inline" }}>
                 You will find your custom-built tests here
               </h6>
@@ -114,6 +114,9 @@ export default class CustomTests extends Component {
                     Header: "Allotted Time",
                     accessor: "estimated_time",
                     maxWidth: 150,
+                    sortMethod: (a, b) => {
+                      return a - b;
+                    },
                     Cell: cell => (
                       <span>{cell.original.estimated_time} mins</span>
                     )
@@ -121,6 +124,7 @@ export default class CustomTests extends Component {
                   {
                     Header: "Question Types",
                     accessor: "question_types",
+                    sortable: false,
                     Cell: cell => (
                       <div>
                         <span>
@@ -134,6 +138,7 @@ export default class CustomTests extends Component {
                   {
                     Header: "Categories",
                     accessor: "tags",
+                    sortable: false,
                     Cell: cell =>
                       cell.value && cell.value.length > 0 ? (
                         <div>
@@ -211,7 +216,7 @@ export default class CustomTests extends Component {
                 defaultPageSize={
                   tests.length <= 5 ? 5 : tests.length < 10 ? tests.length : 10
                 }
-                pageSizeOptions={[5, 10]}
+                showPageSizeOptions={false}
                 className="-striped -highlight"
               />
             </Col>

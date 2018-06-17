@@ -117,6 +117,7 @@ export default class QuestionLibrary extends Component {
                       textAlign: "left",
                       paddingLeft: "10px"
                     },
+                    sortable: true,
                     Cell: cell => (
                       <span>
                         <a
@@ -134,6 +135,8 @@ export default class QuestionLibrary extends Component {
                   },
                   {
                     Header: "Question Type",
+                    accessor: "type",
+                    sortable: false,
                     Cell: cell => (
                       <span>
                         {utils.toUpper(utils.addSpace(cell.original.type)) ===
@@ -157,6 +160,9 @@ export default class QuestionLibrary extends Component {
                     Header: "Est. Time",
                     accessor: "estimated_time",
                     maxWidth: 125,
+                    sortMethod: (a, b) => {
+                      return a - b;
+                    },
                     Cell: cell => (
                       <span>{cell.original.estimated_time} mins</span>
                     )
@@ -172,6 +178,7 @@ export default class QuestionLibrary extends Component {
                   {
                     Header: "Categories",
                     accessor: "tags",
+                    sortable: false,
                     Cell: cell => {
                       let tags = cell.value && cell.value.split(",");
                       return tags && tags.length > 0 ? (
@@ -242,6 +249,7 @@ export default class QuestionLibrary extends Component {
                 ]}
                 defaultPageSize={this.state.addQuestions ? 8 : 20}
                 showPageSizeOptions={this.state.addQuestions ? false : true}
+                pageSizeOptions={[10, 20, 50, 100]}
                 className="-striped -highlight"
               />
             </Col>

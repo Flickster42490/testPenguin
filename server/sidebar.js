@@ -54,11 +54,13 @@ router.post("/tests", (req, res) => {
       questionCategories.forEach(i => {
         if (i.tags) {
           let tags = i.tags.split(",");
+          tags = tags.map(i => i.trim());
           qCat = qCat.concat(tags);
         }
       });
       let filteredQCat = _.uniqBy(qCat);
-      result.questionCategories = filteredQCat.map(i => ({
+      filteredQCat = filteredQCat.sort();
+      filteredQCat = result.questionCategories = filteredQCat.map(i => ({
         value: i,
         label: i
       }));
@@ -104,9 +106,11 @@ router.post("/tests", (req, res) => {
     .then(testCategories => {
       let tCat = [];
       testCategories.forEach(i => {
-        tCat = tCat.concat(i.tags);
+        let tags = i.tags.map(i => i.trim());
+        tCat = tCat.concat(tags);
       });
       let filteredTCat = _.uniqBy(tCat);
+      filteredTCat = filteredTCat.sort();
       result.testCategories = filteredTCat.map(i => ({
         value: i,
         label: i

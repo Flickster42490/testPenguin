@@ -96,6 +96,7 @@ export default class Dashboard extends Component {
         <ReactTable
           style={{ backgroundColor: "white" }}
           data={this.state.candidateList}
+          sortable={false}
           noDataText={
             this.props.emptyMessage
               ? this.props.emptyMessage
@@ -106,6 +107,7 @@ export default class Dashboard extends Component {
               Header: "Candidate",
               maxWidth: 250,
               minWidth: 220,
+              sortable: false,
               Cell: cell => (
                 <div
                   style={{
@@ -149,11 +151,17 @@ export default class Dashboard extends Component {
             },
             {
               Header: "Test Name",
-              accessor: "name"
+              accessor: "name",
+              sortable: true
             },
             {
               Header: "Test Issue Date",
-              defaultSortDesc: true,
+              accessor: "invited_at",
+              sortable: true,
+              sortMethod: (a, b) => {
+                console.log(a, b);
+                return moment(a).isBefore(moment(b)) ? -1 : 1;
+              },
               Cell: cell => {
                 return (
                   <span>
@@ -166,6 +174,7 @@ export default class Dashboard extends Component {
             },
             {
               Header: "Test Status",
+              sortable: false,
               Cell: cell => {
                 return (
                   <div>
@@ -197,6 +206,7 @@ export default class Dashboard extends Component {
               accessor: "results",
               maxWidth: 250,
               minWidth: 220,
+              sortable: false,
               Cell: cell => {
                 let resultList = [];
                 _.forOwn(cell.value, (v, k) => {
@@ -286,6 +296,12 @@ export default class Dashboard extends Component {
               )
             }
           ]}
+          defaultSorted={[
+            {
+              id: "invited_at",
+              desc: true
+            }
+          ]}
           defaultPageSize={
             this.state.candidateList.length <= 5
               ? 5
@@ -293,7 +309,7 @@ export default class Dashboard extends Component {
                 ? this.state.candidateList.length
                 : 10
           }
-          pageSizeOptions={[5, 10]}
+          showPageSizeOptions={false}
           className="-striped -highlight"
         />
       </div>

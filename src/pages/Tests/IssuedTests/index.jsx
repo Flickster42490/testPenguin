@@ -52,7 +52,7 @@ export default class IssuedTests extends Component {
     return (
       <div>
         <div className="page-header">
-          <h2 style={{ display: "inline" }}>&nbsp;REVIEW ISSUED TESTS</h2>&nbsp;&nbsp;&nbsp;&nbsp;
+          <h2 style={{ display: "inline" }}>&nbsp;TESTS ISSUED</h2>&nbsp;&nbsp;&nbsp;&nbsp;
           <h6 style={{ display: "inline" }}>
             These are the tests you have invited candidates to take
           </h6>
@@ -63,15 +63,13 @@ export default class IssuedTests extends Component {
               <ReactTable
                 style={{ backgroundColor: "white" }}
                 data={this.state.tests}
-                sortable={false}
                 columns={[
                   {
                     Header: "Test Name",
                     accessor: "name",
                     style: {
                       fontSize: "1rem",
-                      textAlign: "left",
-                      paddingLeft: "20px"
+                      textAlign: "center"
                     },
                     Cell: cell => (
                       <strong>
@@ -89,11 +87,15 @@ export default class IssuedTests extends Component {
                     Header: "Allotted Time",
                     accessor: "estimated_time",
                     maxWidth: 150,
+                    sortMethod: (a, b) => {
+                      return a - b;
+                    },
                     Cell: cell => <span>{cell.value} mins</span>
                   },
                   {
                     Header: "Questions",
                     maxWidth: 200,
+                    sortable: false,
                     Cell: cell => (
                       <ul style={{ listStyleType: "none" }}>
                         <li>
@@ -109,27 +111,20 @@ export default class IssuedTests extends Component {
                   {
                     Header: "Type",
                     maxWidth: 150,
+                    accessor: "type",
                     Cell: cell => <span>{typeMap[cell.original.type]}</span>
                   },
                   {
                     Header: "History",
+                    accessor: "count",
                     Cell: cell => {
-                      return (
-                        <span>
-                          {cell.original.count} candidates{" "}
-                          {cell.original.created_at
-                            ? `since 
-                          ${moment(cell.original.created_at).format(
-                            "MM/DD/YYYY"
-                          )}`
-                            : ""}
-                        </span>
-                      );
+                      return <span>{cell.original.count} candidates </span>;
                     }
                   },
                   {
                     Header: "Actions",
                     maxWidth: 200,
+                    sortable: false,
                     Cell: cell => (
                       <div
                         style={{
@@ -168,6 +163,12 @@ export default class IssuedTests extends Component {
                     )
                   }
                 ]}
+                defaultSorted={[
+                  {
+                    id: "name",
+                    desc: true
+                  }
+                ]}
                 defaultPageSize={
                   this.state.tests.length <= 5
                     ? 5
@@ -175,7 +176,7 @@ export default class IssuedTests extends Component {
                       ? this.state.tests.length
                       : 10
                 }
-                pageSizeOptions={[5, 10]}
+                showPageSizeOptions={false}
                 className="-striped -highlight"
               />
             </Col>
