@@ -40,7 +40,7 @@ export default class JournalEntry extends Component {
     this.state = {
       journalEntry: [],
       journalEntryFormat: [],
-      disabled: props.disabled
+      disabled: props.disabled || props.review
     };
 
     this.constructEntryRow = this.constructEntryRow.bind(this);

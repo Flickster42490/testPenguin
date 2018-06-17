@@ -221,6 +221,7 @@ export default class ModuleBody extends Component {
                     questionAnswered={questionAnswered}
                     handleSubModuleOneUpdate={this.handleSubModuleOneUpdate}
                     disabled={this.state.disabled || this.state.review}
+                    review={this.state.review}
                   />
                 )}
               {question &&

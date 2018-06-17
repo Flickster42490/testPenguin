@@ -56,7 +56,7 @@ export default class ReviewResults extends Component {
   getCompletionTime() {
     let { completed_at, started_at } = this.state.testResults;
     let duration = moment.duration(
-      moment(completed_at).diff(moment(started_at))
+      moment(started_at).diff(moment(completed_at))
     );
     let mins = Math.round(duration.asMinutes());
     return mins;
@@ -64,7 +64,7 @@ export default class ReviewResults extends Component {
 
   getStatusColor(value) {
     value = value * 100;
-    if (!value) return <status-indicator active />;
+    if (!value && value !== 0) return <status-indicator active />;
     else if (value > 90) return <status-indicator positive />;
     else if (value > 50) return <status-indicator intermediary />;
     else return <status-indicator negative />;
@@ -134,18 +134,29 @@ export default class ReviewResults extends Component {
                 <br />
                 <Row>
                   <Col s={5} xs={12} md={5}>
-                    <h4>
+                    <h5>
+                      <span className="text-muted">Candidate Name: </span>
                       <strong>
                         {testResults.first_name} {testResults.last_name}
                       </strong>
-                    </h4>
-                    <h5>{testResults.email_address}</h5>
+                    </h5>
+                    <h5>
+                      {" "}
+                      <span className="text-muted">Candidate Email: </span>
+                      {testResults.email_address}
+                    </h5>
+                    <h5>
+                      <span className="text-muted">Test Name: </span>
+                      <strong>{testResults.name}</strong>
+                    </h5>
+                    <h5>
+                      {" "}
+                      <span className="text-muted">Issue Date: </span>
+                      {moment(testResults.invited_at).format("MM/DD/YYYY")}
+                    </h5>
                   </Col>
                   <Col s={5} xs={12} md={5}>
                     <div style={{ float: "right", textAlign: "right" }}>
-                      <h4>
-                        <strong>{testResults.name}</strong>
-                      </h4>
                       <Button color="info" onClick={this.onExportPDF}>
                         Save as PDF
                       </Button>
@@ -167,27 +178,17 @@ export default class ReviewResults extends Component {
                             {testResults.estimated_time} minutes)
                           </li>
                           {this.getScoreResults()}
-                          <li />
-                          <li />
                         </ul>
                       </CardBody>
                     </Card>
                   </Col>
                   <Col xs={12} md={5}>
                     <Card>
-                      <CardBody>
+                      <CardBody style={{ height: "226px" }}>
                         <div className="h4 m-0">
                           <img src={History} />&nbsp; History
                         </div>
                         <ul className="horizontal-bars">
-                          <li>
-                            <div>
-                              <strong>Test Issued:</strong>{" "}
-                              {moment(testResults.invited_at).format(
-                                "MM/DD/YYYY hh:mm a"
-                              )}
-                            </div>
-                          </li>
                           <li>
                             <div>
                               <strong>Test Started:</strong>{" "}
@@ -206,9 +207,7 @@ export default class ReviewResults extends Component {
                           </li>
                           <li>
                             <div>
-                              <strong>
-                                # of Times Candidate Re-Entered Test:
-                              </strong>
+                              <strong>Test Re-Entrances: </strong>
                               {testResults.reentered_count}
                             </div>
                           </li>
@@ -221,7 +220,7 @@ export default class ReviewResults extends Component {
                 <div class="html2pdf__page-break" />
                 <Row>
                   <Col>
-                    <h4>Review Candidate's Answers</h4>
+                    <h4>Score Breakdown</h4>
                   </Col>
                 </Row>
                 <br />
@@ -237,8 +236,16 @@ export default class ReviewResults extends Component {
                       columns={[
                         {
                           Header: "#",
-                          accessor: "id",
-                          maxWidth: 75
+                          maxWidth: 75,
+                          Cell: cell => {
+                            return (
+                              <span>
+                                {_.findIndex(testResults.candidate_answers, {
+                                  id: cell.original.id
+                                }) + 1}
+                              </span>
+                            );
+                          }
                         },
                         {
                           Header: "Type",
@@ -315,22 +322,40 @@ export default class ReviewResults extends Component {
                         {
                           Header: "Action",
                           Cell: cell => {
-                            let reviewIdx;
+                            let reviewIdx, questionId;
                             testResults.candidate_answers.forEach((i, idx) => {
-                              if (i.id === cell.original.id) reviewIdx = idx;
+                              if (i.id === cell.original.id) {
+                                reviewIdx = idx;
+                                questionId = i.id;
+                              }
                             });
                             return (
-                              <a
-                                href={`/#/testApp/app?testId=${
-                                  testResults.test_id
-                                }&candidateId=${testResults.user_id}&id=${
-                                  testResults.id
-                                }&review=true&reviewIdx=${reviewIdx}&returnTo=${`/#/dashboard/candidates/reviewResults%3Fid=${
-                                  testResults.id
-                                }`}`}
-                              >
-                                <Button color="link">Go To Question</Button>
-                              </a>
+                              <ButtonGroup vertical>
+                                <a
+                                  href={`/#/testApp/app?testId=${
+                                    testResults.test_id
+                                  }&candidateId=${testResults.user_id}&id=${
+                                    testResults.id
+                                  }&review=true&reviewIdx=${reviewIdx}&returnTo=${`/#/dashboard/candidates/reviewResults%3Fid=${
+                                    testResults.id
+                                  }`}`}
+                                >
+                                  <Button color="link">
+                                    Review Candidate Answer
+                                  </Button>
+                                </a>
+                                {cell.original.module_stem_2 && (
+                                  <a
+                                    href={`/#/dashboard/tests/questionLibrary/preview?id=${questionId}&returnTo=${`/#/dashboard/candidates/reviewResults%3Fid=${
+                                      testResults.id
+                                    }`}`}
+                                  >
+                                    <Button color="link">
+                                      Correct Answer Notes
+                                    </Button>
+                                  </a>
+                                )}
+                              </ButtonGroup>
                             );
                           }
                         }

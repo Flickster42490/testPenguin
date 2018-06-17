@@ -75,7 +75,7 @@ export default class TestAppContainer extends Component {
       <div className="app">
         {/* {this.state.loggedIn && ( */}
         <div className="test-app">
-          <Header />
+          <Header dashboard={false} />
           {this.props.children}
         </div>
         {/* )} */}

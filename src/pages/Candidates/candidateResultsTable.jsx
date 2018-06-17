@@ -309,7 +309,7 @@ export default class Dashboard extends Component {
                 ? this.state.candidateList.length
                 : 10
           }
-          showPageSizeOptions={false}
+          pageSizeOptions={[10, 20, 50]}
           className="-striped -highlight"
         />
       </div>
