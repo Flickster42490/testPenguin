@@ -164,6 +164,11 @@
 .btn {
   z-index: 0 !important;
 }
+
+.btn.active {
+  background-color: #38474e;
+  color: white;
+}
 .card-footer {
   background-color: #fff;
 }
@@ -327,6 +332,14 @@ input {
   text-align: center;
 }
 
+.token-header {
+  font-size: 0.75rem;
+}
+
+.token-header-number {
+  font-size: 1rem;
+}
+
 .transparent-card {
   border: none;
   margin-top: calc(0.375rem + 1px);
@@ -349,7 +362,8 @@ input {
     font-size: 10px;
   }
   .token-header,
-  .header-menu-icon {
+  .header-menu-icon,
+  .token-header-number {
     font-size: 10px !important;
   }
 }

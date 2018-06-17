@@ -51,10 +51,7 @@ export default class ModuleContainer extends Component {
     window.addEventListener("resize", this.updateDimensions.bind(this));
 
     let externalDocs = this.createExternalDocsArray(this.props.question);
-    console.log(
-      externalDocs,
-      "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-    );
+
     this.setState(
       {
         externalDocs: externalDocs,
@@ -191,9 +188,14 @@ export default class ModuleContainer extends Component {
                           })}
                         </ButtonGroup>
                       </CardHeader>
-                      <CardBody>
+                      <CardBody
+                        style={{
+                          display: "flex",
+                          justifyContent: "center"
+                        }}
+                      >
                         <PDF
-                          file={`/img/${
+                          file={`https://s3-us-west-2.amazonaws.com/question-assets/pdf/${
                             externalDocs[this.state.activeDocIndex].url
                           }`}
                           style={{ maxWidth: "100%", height: "auto" }}

@@ -163,7 +163,11 @@ export default class Dashboard extends Component {
                 return moment(a).isBefore(moment(b)) ? -1 : 1;
               },
               Cell: cell => {
-                return (
+                return this.props.issuedTestPage ? (
+                  <span>
+                    {moment(cell.original.invited_at).format("MM/DD/YYYY")}
+                  </span>
+                ) : (
                   <span>
                     {moment(cell.original.invited_at).format(
                       "MM/DD/YYYY hh:mm a"
@@ -261,7 +265,10 @@ export default class Dashboard extends Component {
                     justifyContent: "center"
                   }}
                 >
-                  <ButtonGroup size="md" vertical>
+                  <ButtonGroup
+                    size={this.props.issuedTestPage ? "sm" : "md"}
+                    vertical
+                  >
                     {cell.original.completed_at && (
                       <a
                         href={`#/dashboard/candidates/reviewResults?id=${
@@ -310,6 +317,7 @@ export default class Dashboard extends Component {
                 : 10
           }
           pageSizeOptions={[10, 20, 50]}
+          showPageSizeOptions={!this.props.issuedTestPage}
           className="-striped -highlight"
         />
       </div>

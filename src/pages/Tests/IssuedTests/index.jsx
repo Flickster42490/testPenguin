@@ -5,6 +5,7 @@ import moment from "moment";
 import localForage from "localforage";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
+import { Preloader } from "../../../components/Preloader.jsx";
 
 const typeMap = {
   custom: "Custom",
@@ -16,7 +17,8 @@ export default class IssuedTests extends Component {
     super(props);
 
     this.state = {
-      tests: undefined
+      tests: [],
+      loading: true
     };
   }
 
@@ -27,7 +29,8 @@ export default class IssuedTests extends Component {
         console.log(d);
         this.setState(
           {
-            tests: d.data
+            tests: d.data,
+            loading: false
           },
           () => {
             let page = window.location.hash.split("tests/")[1];
@@ -50,14 +53,14 @@ export default class IssuedTests extends Component {
 
   render() {
     return (
-      <div>
-        <div className="page-header">
-          <h2 style={{ display: "inline" }}>&nbsp;TESTS ISSUED</h2>&nbsp;&nbsp;&nbsp;&nbsp;
-          <h6 style={{ display: "inline" }}>
-            These are the tests you have invited candidates to take
-          </h6>
-        </div>
-        {this.state.tests && (
+      <Preloader loading={this.state.loading}>
+        <div>
+          <div className="page-header">
+            <h2 style={{ display: "inline" }}>&nbsp;TESTS ISSUED</h2>&nbsp;&nbsp;&nbsp;&nbsp;
+            <h6 style={{ display: "inline" }}>
+              These are the tests you have invited candidates to take
+            </h6>
+          </div>
           <Row>
             <Col xs="12">
               <ReactTable
@@ -97,7 +100,7 @@ export default class IssuedTests extends Component {
                     maxWidth: 200,
                     sortable: false,
                     Cell: cell => (
-                      <ul style={{ listStyleType: "none" }}>
+                      <ul style={{ listStyleType: "none", padding: "none" }}>
                         <li>
                           {cell.original.question_types.multiple_choice || "0"}{" "}
                           Multiple Choice
@@ -115,7 +118,7 @@ export default class IssuedTests extends Component {
                     Cell: cell => <span>{typeMap[cell.original.type]}</span>
                   },
                   {
-                    Header: "History",
+                    Header: "Tested Candidates",
                     accessor: "count",
                     Cell: cell => {
                       return <span>{cell.original.count} candidates </span>;
@@ -155,7 +158,7 @@ export default class IssuedTests extends Component {
                                 cell.original.test_id
                               }`}
                             >
-                              Review Test
+                              Test Summary
                             </a>
                           </Button>
                         </ButtonGroup>
@@ -176,13 +179,13 @@ export default class IssuedTests extends Component {
                       ? this.state.tests.length
                       : 10
                 }
-                showPageSizeOptions={false}
+                pageSizeOptions={[10, 20]}
                 className="-striped -highlight"
               />
             </Col>
           </Row>
-        )}
-      </div>
+        </div>
+      </Preloader>
     );
   }
 }

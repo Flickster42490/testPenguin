@@ -76,6 +76,18 @@ router.get("/findOne/:id", (req, res) => {
     });
 });
 
+router.get("/issuedBy/:id", (req, res) => {
+  return req.db
+    .any(
+      `SELECT count(*) as count FROM "test_attempts" where invited_by = $1`,
+      [req.params.id]
+    )
+    .then(d => {
+      console.log(d);
+      return res.send(d);
+    });
+});
+
 router.post("/sendReminder", (req, res) => {
   let { userId, candidateId, candidateEmail, testAttemptId, testId } = req.body;
   console.log(req.body);

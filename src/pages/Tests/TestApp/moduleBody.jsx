@@ -158,6 +158,13 @@ export default class ModuleBody extends Component {
     this.setState({ width: window.innerWidth });
   }
 
+  updatePDF(idx) {
+    console.log(idx);
+    this.setState({
+      activeDocIndex: idx
+    });
+  }
+
   render() {
     const {
       question,
@@ -189,17 +196,29 @@ export default class ModuleBody extends Component {
                 <div>
                   <Card className="pdf-card">
                     <CardHeader>
-                      <ButtonGroup>
+                      <ButtonGroup style={{ width: "100%" }}>
                         {externalDocs.map((doc, idx) => {
                           return (
-                            <Button outline color="default" key={idx}>
+                            <Button
+                              outline
+                              color="default"
+                              key={idx}
+                              style={{ width: "100%", borderRadius: "2px" }}
+                              onClick={() => this.updatePDF(idx)}
+                              active={this.state.activeDocIndex === idx}
+                            >
                               {doc.name}
                             </Button>
                           );
                         })}
                       </ButtonGroup>
                     </CardHeader>
-                    <CardBody>
+                    <CardBody
+                      style={{
+                        display: "flex",
+                        justifyContent: "center"
+                      }}
+                    >
                       <PDF
                         file={`/img/${
                           externalDocs[this.state.activeDocIndex].url

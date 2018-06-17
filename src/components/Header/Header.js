@@ -157,10 +157,13 @@ class Header extends Component {
             {!isNaN(this.state.tokens) && (
               <div style={{ paddingRight: "20px" }}>
                 <div
-                  className="token-header"
+                  className="token-header "
                   style={{ fontSize: ".75rem", cursor: "initial" }}
                 >
-                  <span className="token-header" style={{ fontSize: "1rem" }}>
+                  <span
+                    className="token-header token-header-number"
+                    style={{ fontSize: "1rem" }}
+                  >
                     <strong>{this.state.tokens || 0}</strong>
                   </span>{" "}
                   Tests<br />

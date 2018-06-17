@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Row, Col, Button, ButtonGroup } from "reactstrap";
+import { Row, Col, Button, ButtonGroup, Badge } from "reactstrap";
 import moment from "moment";
 import axios from "axios";
 import localForage from "localforage";
@@ -141,19 +141,23 @@ export default class CustomTests extends Component {
                     sortable: false,
                     Cell: cell =>
                       cell.value && cell.value.length > 0 ? (
-                        <div>
-                          {cell.value.map((i, idx, arr) => {
-                            if (idx === arr.length - 1) {
-                              return <span>{i}</span>;
-                            }
+                        <span
+                          style={{
+                            display: "flex",
+                            flexWrap: "wrap",
+                            alignItems: "start"
+                          }}
+                        >
+                          {cell.value.map(i => {
                             return (
                               <span>
-                                {i}
-                                <br />
+                                <Badge color="light" pill>
+                                  {i}
+                                </Badge>&nbsp;
                               </span>
                             );
                           })}
-                        </div>
+                        </span>
                       ) : null
                   },
                   {
@@ -216,7 +220,7 @@ export default class CustomTests extends Component {
                 defaultPageSize={
                   tests.length <= 5 ? 5 : tests.length < 10 ? tests.length : 10
                 }
-                showPageSizeOptions={false}
+                pageSizeOptions={[10, 20]}
                 className="-striped -highlight"
               />
             </Col>

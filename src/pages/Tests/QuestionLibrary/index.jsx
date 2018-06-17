@@ -1,17 +1,10 @@
 import React, { Component } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Button,
-  ButtonGroup,
-  ButtonToolbar,
-  Progress
-} from "reactstrap";
+import { Container, Row, Col, Button, ButtonGroup, Badge } from "reactstrap";
 import _ from "lodash";
 import axios from "axios";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
+import FontAwesome from "react-fontawesome";
 
 import utils from "../../../utils";
 import { Preloader } from "../../../components/Preloader.jsx";
@@ -137,6 +130,7 @@ export default class QuestionLibrary extends Component {
                     Header: "Question Type",
                     accessor: "type",
                     sortable: false,
+                    maxWidth: 180,
                     Cell: cell => (
                       <span>
                         {utils.toUpper(utils.addSpace(cell.original.type)) ===
@@ -182,25 +176,29 @@ export default class QuestionLibrary extends Component {
                     Cell: cell => {
                       let tags = cell.value && cell.value.split(",");
                       return tags && tags.length > 0 ? (
-                        <div>
-                          {tags.map((i, idx, arr) => {
-                            if (idx === arr.length - 1) {
-                              return <span>{i}</span>;
-                            }
+                        <span
+                          style={{
+                            display: "flex",
+                            flexWrap: "wrap",
+                            alignItems: "start"
+                          }}
+                        >
+                          {tags.map(i => {
                             return (
                               <span>
-                                {i}
-                                <br />
+                                <Badge color="light" pill>
+                                  {i}
+                                </Badge>&nbsp;
                               </span>
                             );
                           })}
-                        </div>
+                        </span>
                       ) : null;
                     }
                   },
                   {
                     Header: "Actions",
-                    maxWidth: 200,
+                    width: 150,
                     sortable: false,
                     Cell: cell => (
                       <div
@@ -249,7 +247,7 @@ export default class QuestionLibrary extends Component {
                 ]}
                 defaultPageSize={this.state.addQuestions ? 8 : 20}
                 showPageSizeOptions={this.state.addQuestions ? false : true}
-                pageSizeOptions={[10, 20, 50, 100]}
+                pageSizeOptions={[20, 50, 100]}
                 className="-striped -highlight"
               />
             </Col>

@@ -89,9 +89,7 @@ export default class IssuedTestsReview extends Component {
     var element = document.getElementById("toPDF");
     var opt = {
       margin: [0.2, 0.5, 0.2, 0],
-      filename: `${this.state.testResults.last_name}_${
-        this.state.testResults.first_name
-      }_${this.state.testResults.name}.pdf`,
+      filename: `${this.state.test.name}_issued_summary.pdf`,
       jsPDF: { unit: "in", format: "a4", orientation: "landscape" }
     };
     html2pdf()
@@ -111,10 +109,13 @@ export default class IssuedTestsReview extends Component {
           >
             <Container fluid>
               <Row>
-                <Col xs={6}>
-                  <h3>{test.name}</h3>
+                <Col xs={12} md={9}>
+                  <h3>
+                    <span className="muted-text">Test Name: </span>
+                    {test.name}
+                  </h3>
                 </Col>
-                <Col xs={6}>
+                <Col xs={12} md={3}>
                   <a
                     href={`/#/dashboard/tests/issuedTests`}
                     className="float-right"
@@ -147,16 +148,14 @@ export default class IssuedTestsReview extends Component {
                 </Col>
                 <Col xs={4}>
                   <div class="text-align-center">
-                    <div className="h4 m-0">Results</div>
+                    <div className="h4 m-0">Summary</div>
                     <ul className="horizontal-bars">
                       <li>
                         {completedCandidates.length} Completed /{" "}
-                        {waitingCandidates.length} Waiting
+                        {waitingCandidates.length} Outstanding
                       </li>
                       <li>
-                        <Button onClick={this.onExportPDF}>
-                          Save Summary as PDF
-                        </Button>
+                        <Button onClick={this.onExportPDF}>Save as PDF</Button>
                       </li>
                     </ul>
                   </div>
@@ -187,7 +186,7 @@ export default class IssuedTestsReview extends Component {
                   <div>
                     <Row>
                       <Col xs={7}>
-                        <h4>Candidates - COMPLETED</h4>
+                        <h4>Completed Tests</h4>
                       </Col>
                     </Row>
                     <br />
@@ -197,6 +196,7 @@ export default class IssuedTestsReview extends Component {
                           candidateList={completedCandidates}
                           userId={userId}
                           handleRefetch={this.handleRefetch}
+                          issuedTestPage
                           emptyMessage="No invited Candidates have completed their test. Press the ‘Send Reminder’ button below to ensure that candidate’s submit their tests before the expiration deadline."
                         />
                       </Col>
@@ -205,7 +205,7 @@ export default class IssuedTestsReview extends Component {
                     <div class="html2pdf__page-break" />
                     <Row>
                       <Col xs={7}>
-                        <h4>Candidates - WAITING</h4>
+                        <h4>Outstanding Tests</h4>
                       </Col>
                     </Row>
                     <br />
@@ -214,6 +214,7 @@ export default class IssuedTestsReview extends Component {
                         <CandidateResults
                           candidateList={waitingCandidates}
                           userId={userId}
+                          issuedTestPage
                           handleRefetch={this.handleRefetch}
                           emptyMessage="All invited candidates have completed their test 😊. Invite additional candidates, if you’d like."
                         />

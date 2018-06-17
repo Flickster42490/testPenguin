@@ -61,11 +61,14 @@ export default class Profile extends Component {
     document.body.classList.toggle("sidebar-hidden");
     localForage.getItem("userId").then(id => {
       axios.get(`/users/${id}`).then(d => {
-        this.setState({
-          userId: id,
-          user: d.data ? d.data[0] : undefined,
-          loading: false,
-          paymentLoading: false
+        axios.get(`/testAttempts/issuedBy/${id}`).then(a => {
+          this.setState({
+            userId: id,
+            user: d.data ? d.data[0] : undefined,
+            issuedCount: a.data ? a.data[0].count : undefined,
+            loading: false,
+            paymentLoading: false
+          });
         });
       });
     });
@@ -283,6 +286,28 @@ export default class Profile extends Component {
                           </Col>
                           <Col xs="12" md="3">
                             {<strong>{this.state.user.company}</strong>}
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col md={{ size: 2 }} style={{ paddingLeft: "40px" }}>
+                            <Label htmlFor="text-input">Join Date</Label>
+                          </Col>
+                          <Col xs="12" md="3">
+                            {
+                              <strong>
+                                {moment(this.state.user.created_at).format(
+                                  "MM/DD/YYYY"
+                                )}
+                              </strong>
+                            }
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col md={{ size: 2 }} style={{ paddingLeft: "40px" }}>
+                            <Label htmlFor="text-input">Tests Issued</Label>
+                          </Col>
+                          <Col xs="12" md="3">
+                            {<strong>{this.state.issuedCount}</strong>}
                           </Col>
                         </Row>
                         <br />
