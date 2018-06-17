@@ -4,7 +4,7 @@ class Footer extends Component {
   render() {
     return (
       <footer className="app-footer">
-        <span style={{ marginLeft: "220px" }}>
+        <span className="left-hand-footer" style={{ marginLeft: "220px" }}>
           Need help?{" "}
           <a href="mailto:support@testpenguin.com">support@testpenguin.com</a>
         </span>

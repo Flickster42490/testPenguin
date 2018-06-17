@@ -156,8 +156,11 @@ class Header extends Component {
           <NavItem className="d-md-down-none">
             {!isNaN(this.state.tokens) && (
               <div style={{ paddingRight: "20px" }}>
-                <div style={{ fontSize: ".75rem", cursor: "initial" }}>
-                  <span style={{ fontSize: "1rem" }}>
+                <div
+                  className="token-header"
+                  style={{ fontSize: ".75rem", cursor: "initial" }}
+                >
+                  <span className="token-header" style={{ fontSize: "1rem" }}>
                     <strong>{this.state.tokens || 0}</strong>
                   </span>{" "}
                   Tests<br />
@@ -166,7 +169,12 @@ class Header extends Component {
                     style={{ padding: 0, borderTop: "0", marginTop: "-5px" }}
                     onClick={this.handleAddMoreTokens}
                   >
-                    <span style={{ fontSize: ".75rem" }}>Add More</span>
+                    <span
+                      className="token-header"
+                      style={{ fontSize: ".75rem" }}
+                    >
+                      Add More
+                    </span>
                   </Button>
                 </div>
               </div>

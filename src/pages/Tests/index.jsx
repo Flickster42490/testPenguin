@@ -48,12 +48,23 @@ export default class App extends Component {
       })
     );
     return (
-      <div className="app-body">
-        <Sidebar page={this.state.page} handleAddFilters={this.handleFilters} />
-        <main className="main">
-          <Container fluid>{children}</Container>
-        </main>
-        <Aside />
+      <div>
+        <div className="app-body">
+          <Sidebar
+            page={this.state.page}
+            handleAddFilters={this.handleFilters}
+          />
+          <main className="main">
+            <Container fluid>{children}</Container>
+          </main>
+          <Aside />
+        </div>
+        <div className="show-error">
+          <h2>
+            Please view this page on a desktop- or laptop-width screen <br />
+            for the best user experience
+          </h2>
+        </div>
       </div>
     );
   }

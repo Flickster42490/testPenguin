@@ -58,7 +58,7 @@ class HeaderDropdown extends Component {
       <Dropdown nav isOpen={this.state.dropdownOpen} toggle={this.toggle}>
         <DropdownToggle nav>
           <i
-            className="fa fa-ellipsis-v fa-5"
+            className="fa fa-ellipsis-v fa-5 header-menu-icon"
             style={{ fontSize: "1.5rem", color: "#fff" }}
           />
         </DropdownToggle>
