@@ -129,7 +129,7 @@ export default class JournalEntry extends Component {
       <FormGroup row key={row.id}>
         <Col sm={4}>
           <DatePicker
-            selected={moment(currentRow.date || Date.now())}
+            selected={moment(currentRow.date || "01/01/2019")}
             onChange={date => this.updateCalendar(currentRow, date)}
             disabled={disabled}
           />

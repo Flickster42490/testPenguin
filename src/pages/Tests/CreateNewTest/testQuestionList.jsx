@@ -105,6 +105,19 @@ export default class TestQuestionList extends Component {
                   )
                 },
                 {
+                  Header: "#",
+                  maxWidth: 75,
+                  Cell: cell => {
+                    return (
+                      <span>
+                        {_.findIndex(questions, {
+                          id: cell.original.id
+                        }) + 1}
+                      </span>
+                    );
+                  }
+                },
+                {
                   Header: "Question Name",
                   accessor: "name",
                   Cell: cell => (
@@ -174,7 +187,7 @@ export default class TestQuestionList extends Component {
                 }
               ]}
               defaultPageSize={5}
-              pageSizeOptions={[5, 10]}
+              showPageSizeOptions={false}
               className="-striped -highlight"
             />
           </Col>

@@ -257,7 +257,7 @@ router.post("/retrieveSavedProgress", (req, res) => {
     })
     .then(() => {
       return req.db.any(
-        "SELECT candidate_answers FROM test_attempts where id = $1 limit 1",
+        "SELECT candidate_answers,saved_progress_index,time_left FROM test_attempts where id = $1 limit 1",
         [req.body.id]
       );
     })
@@ -267,7 +267,7 @@ router.post("/retrieveSavedProgress", (req, res) => {
 });
 
 router.post("/saveProgress", (req, res) => {
-  let { id, userId, candidateAnswers } = req.body;
+  let { id, userId, candidateAnswers, timeLeft, savedProgressIndex } = req.body;
   candidateAnswers = JSON.stringify(candidateAnswers);
   return req.db
     .any(
@@ -275,10 +275,20 @@ router.post("/saveProgress", (req, res) => {
       [id]
     )
     .then(data => {
-      let newSavedProgressCount = data[0].saved_progress_count + 1;
+      console.log(data);
+      let newSavedProgressCount = data[0]
+        ? data[0].saved_progress_count + 1
+        : 1;
       return req.db.any(
-        "UPDATE test_attempts SET (candidate_answers, saved_progress_at,saved_progress_count) = ($1,$2,$3) where id = $4 RETURNING *",
-        [candidateAnswers, new Date(), newSavedProgressCount, id]
+        "UPDATE test_attempts SET (candidate_answers, saved_progress_at,saved_progress_count, saved_progress_index, time_left) = ($1,$2,$3,$4,$5) where id = $6 RETURNING *",
+        [
+          candidateAnswers,
+          new Date(),
+          newSavedProgressCount,
+          savedProgressIndex,
+          JSON.stringify(timeLeft),
+          id
+        ]
       );
     })
     .then(attempt => {

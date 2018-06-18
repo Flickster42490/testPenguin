@@ -53,12 +53,18 @@ export default class ReviewResults extends Component {
     });
   }
 
+  convertIntoMinutes({ hours, minutes, seconds }) {
+    let totalMin = 0;
+    if (hours) totalMin = totalMin + hours * 60;
+    if (minutes) totalMin = totalMin + minutes;
+    if (seconds) totalMin = totalMin + seconds / 60;
+    return totalMin;
+  }
+
   getCompletionTime() {
-    let { completed_at, started_at } = this.state.testResults;
-    let duration = moment.duration(
-      moment(started_at).diff(moment(completed_at))
-    );
-    let mins = Math.round(duration.asMinutes());
+    let { estimated_time, time_left } = this.state.testResults;
+    time_left = this.convertIntoMinutes(time_left);
+    let mins = Math.round(estimated_time - time_left);
     return mins;
   }
 

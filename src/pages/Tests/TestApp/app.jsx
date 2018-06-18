@@ -35,7 +35,8 @@ export default class TestApp extends Component {
       currentQuestion: null,
       startTime: Date.now(),
       preview: false,
-      review: false
+      review: false,
+      testAttemp: undefined
     };
 
     this.handleNextQuestion = this.handleNextQuestion.bind(this);
@@ -44,10 +45,35 @@ export default class TestApp extends Component {
     this.handleSubmitTest = this.handleSubmitTest.bind(this);
     this.handleEndPreview = this.handleEndPreview.bind(this);
     this.timerRender = this.timerRender.bind(this);
+    this.onTimerTick = this.onTimerTick.bind(this);
     this.onTimerComplete = this.onTimerComplete.bind(this);
   }
 
   componentWillMount() {
+    window.addEventListener("beforeunload", ev => {
+      ev.preventDefault();
+      const {
+        id,
+        candidateId,
+        questionsAnswered,
+        hoursLeft,
+        minutesLeft,
+        secondsLeft,
+        currentIdx
+      } = this.state;
+      const body = {
+        userId: candidateId,
+        id: id,
+        candidateAnswers: questionsAnswered,
+        timeLeft: {
+          hours: hoursLeft,
+          minutes: minutesLeft,
+          seconds: secondsLeft
+        },
+        savedProgressIndex: currentIdx
+      };
+      axios.post("testAttempts/saveProgress", body);
+    });
     window.scrollTo(0, 0);
     const queries = window.location.hash.split("?")[1];
     const preview = Boolean(queryString.parse(queries).preview) || false;
@@ -60,31 +86,70 @@ export default class TestApp extends Component {
       d.data.forEach(
         i => (i.module_candidate_answer = deepCopy(i.module_format))
       );
-      if (!preview && !review) {
-        axios
-          .post(`/testAttempts/retrieveSavedProgress`, { id: id })
-          .then(saved => {
-            let candidateAnswers = saved
-              ? saved.data[0].candidate_answers
-              : null;
+      axios.get(`/tests/${testId}`).then(t => {
+        if (!preview && !review) {
+          axios
+            .post(`/testAttempts/retrieveSavedProgress`, { id: id })
+            .then(saved => {
+              let candidateAnswers = saved
+                ? saved.data[0].candidate_answers
+                : null;
+              currentIdx = saved.data[0].saved_progress_index || 0;
 
-            axios.get(`/testAttempts/${id}`).then(attempt => {
+              axios.get(`/testAttempts/${id}`).then(attempt => {
+                this.setState(
+                  {
+                    questions: d.data,
+                    questionsAnswered: candidateAnswers || deepCopy(d.data),
+                    lastIdx: d.data.length - 1,
+                    currentQuestion: d.data[currentIdx],
+                    currentIdx: currentIdx,
+                    preview: preview,
+                    testAttempt: attempt.data[0] || undefined,
+                    testId: testId,
+                    id: id,
+                    candidateId: candidateId,
+                    returnTo: returnTo,
+                    estimatedTime: t.data[0].estimated_time,
+                    timeLeft: saved.data[0].time_left
+                      ? this.convertIntoMinutes(saved.data[0].time_left)
+                      : undefined
+                  },
+                  () => {
+                    console.log(this.state.questionsAnswered);
+                    if (this.state.testAttempt.completed_at)
+                      window.location.href = "/#/testApp/completed";
+                    this.forceUpdate();
+                  }
+                );
+              });
+            });
+        } else if (review) {
+          axios
+            .post(`/testAttempts/retrieveSavedProgress`, {
+              id: id,
+              review: review
+            })
+            .then(saved => {
+              console.log(saved.data[0]);
+              let candidateAnswers = saved
+                ? saved.data[0].candidate_answers
+                : null;
+              console.log("REVIEW AND PREVIEW", review, preview);
               this.setState(
                 {
                   questions: d.data,
                   questionsAnswered: candidateAnswers || deepCopy(d.data),
+                  currentIdx: currentIdx,
                   lastIdx: d.data.length - 1,
                   currentQuestion: d.data[currentIdx],
                   preview: preview,
-                  testAttempt: attempt.data[0] || undefined,
+                  review: review,
                   testId: testId,
                   id: id,
                   candidateId: candidateId,
                   returnTo: returnTo,
-                  estimatedTime: d.data.reduce(
-                    (sum, i) => (sum = sum + Number(i.estimated_time)),
-                    0
-                  )
+                  estimatedTime: t.data[0].estimated_time
                 },
                 () => {
                   console.log(this.state.questionsAnswered);
@@ -92,66 +157,59 @@ export default class TestApp extends Component {
                 }
               );
             });
-          });
-      } else if (review) {
-        axios
-          .post(`/testAttempts/retrieveSavedProgress`, {
-            id: id,
-            review: review
-          })
-          .then(saved => {
-            console.log(saved.data[0]);
-            let candidateAnswers = saved
-              ? saved.data[0].candidate_answers
-              : null;
-            console.log("REVIEW AND PREVIEW", review, preview);
-            this.setState(
-              {
-                questions: d.data,
-                questionsAnswered: candidateAnswers || deepCopy(d.data),
-                currentIdx: currentIdx,
-                lastIdx: d.data.length - 1,
-                currentQuestion: d.data[currentIdx],
-                preview: preview,
-                review: review,
-                testId: testId,
-                id: id,
-                candidateId: candidateId,
-                returnTo: returnTo,
-                estimatedTime: d.data.reduce(
-                  (sum, i) => (sum = sum + Number(i.estimated_time)),
-                  0
-                )
-              },
-              () => {
-                console.log(this.state.questionsAnswered);
-                this.forceUpdate();
-              }
-            );
-          });
-      } else {
-        this.setState(
-          {
-            questions: d.data,
-            questionsAnswered: deepCopy(d.data),
-            lastIdx: d.data.length - 1,
-            currentQuestion: d.data[currentIdx],
-            preview: preview,
-            testId: testId,
-            id: id,
-            candidateId: candidateId,
-            returnTo: returnTo,
-            estimatedTime: d.data.reduce(
-              (sum, i) => (sum = sum + Number(i.estimated_time)),
-              0
-            )
-          },
-          () => {
-            this.forceUpdate();
-          }
-        );
-      }
+        } else {
+          this.setState(
+            {
+              questions: d.data,
+              questionsAnswered: deepCopy(d.data),
+              lastIdx: d.data.length - 1,
+              currentQuestion: d.data[currentIdx],
+              preview: preview,
+              testId: testId,
+              id: id,
+              candidateId: candidateId,
+              returnTo: returnTo,
+              estimatedTime: t.data[0].estimated_time
+            },
+            () => {
+              this.forceUpdate();
+            }
+          );
+        }
+      });
     });
+  }
+
+  componentWillUnmount() {
+    const {
+      id,
+      candidateId,
+      questionsAnswered,
+      hoursLeft,
+      minutesLeft,
+      secondsLeft,
+      currentIdx
+    } = this.state;
+    const body = {
+      userId: candidateId,
+      id: id,
+      candidateAnswers: questionsAnswered,
+      timeLeft: {
+        hours: hoursLeft,
+        minutes: minutesLeft,
+        seconds: secondsLeft
+      },
+      savedProgressIndex: currentIdx
+    };
+    axios.post("testAttempts/saveProgress", body);
+  }
+
+  convertIntoMinutes({ hours, minutes, seconds }) {
+    let totalMin = 0;
+    if (hours) totalMin = totalMin + hours * 60;
+    if (minutes) totalMin = totalMin + minutes;
+    if (seconds) totalMin = totalMin + seconds / 60;
+    return totalMin;
   }
 
   handleAnswerUpdate(answer) {
@@ -209,11 +267,25 @@ export default class TestApp extends Component {
   }
 
   handleSaveProgress() {
-    const { id, candidateId, questionsAnswered } = this.state;
+    const {
+      id,
+      candidateId,
+      questionsAnswered,
+      hoursLeft,
+      minutesLeft,
+      secondsLeft,
+      currentIdx
+    } = this.state;
     const body = {
       userId: candidateId,
       id: id,
-      candidateAnswers: questionsAnswered
+      candidateAnswers: questionsAnswered,
+      timeLeft: {
+        hours: hoursLeft,
+        minutes: minutesLeft,
+        seconds: secondsLeft
+      },
+      savedProgressIndex: currentIdx
     };
     this.setState(
       {
@@ -243,6 +315,14 @@ export default class TestApp extends Component {
       });
   }
 
+  onTimerTick({ hours, minutes, seconds }) {
+    this.setState({
+      hoursLeft: hours,
+      minutesLeft: minutes,
+      secondsLeft: seconds
+    });
+  }
+
   timerRender({ hours, minutes, seconds, completed }) {
     return (
       <h4>
@@ -257,6 +337,8 @@ export default class TestApp extends Component {
       questionsAnswered,
       currentIdx,
       candidateId,
+      timeLeft,
+      estimatedTime,
       lastIdx,
       startTime,
       preview,
@@ -266,190 +348,167 @@ export default class TestApp extends Component {
     } = this.state;
     const question = questions[currentIdx];
     const testLength = questions.length;
-    console.log(
-      "app currentidx quetstions answers",
-      questionsAnswered,
-      currentIdx,
-      questionsAnswered[currentIdx]
-    );
+    // console.log(
+    //   "app currentidx quetstions answers",
+    //   questionsAnswered,
+    //   currentIdx,
+    //   questionsAnswered[currentIdx]
+    // );
+    // console.log(estimatedTime);
     return (
       <div>
-        {(testAttempt && ((!preview || !review) && testAttempt.completed_at)) ||
-          ((preview || review) && (
-            <Preloader loading={questions.length < 1}>
-              {questions[currentIdx] && (
-                <Card className="module-container-card">
-                  <CardHeader className="preview-title">
-                    <Row>
-                      <Col>
-                        {preview &&
-                          !review && (
-                            <p className="muted-text">
-                              <strong>
-                                You are currently previewing the test’s
-                                questions in the order in which they will appear
-                                to candidates. While taking the test, candidates
-                                will not have the option to go back and view
-                                previously answered questions. Correct answers
-                                have been filled in for all questions for
-                                purposes of this preview.
-                              </strong>
-                            </p>
-                          )}
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col md="4">
-                        {preview &&
-                          !review && (
-                            <h3>
-                              {question.name} &nbsp;&nbsp;
-                              <span className="question-subtitle">
-                                (Question {currentIdx + 1} of {testLength})
-                              </span>
-                            </h3>
-                          )}
-                        {!preview &&
-                          review && (
-                            <h3>
-                              {question.name} &nbsp;&nbsp;
-                              <span className="question-subtitle">
-                                (Question {Number(currentIdx) + 1} of{" "}
-                                {testLength})
-                              </span>
-                            </h3>
-                          )}
-                        {!preview &&
-                          !review && (
-                            <h3>
-                              Question {currentIdx + 1} of {testLength}
-                            </h3>
-                          )}
-                      </Col>
-                      <Col md="4">
-                        {!preview &&
-                          !review && (
-                            <Countdown
-                              // date={startTime + estimatedTime * 60000}
-                              date={startTime + 0.1 * 60000}
-                              renderer={this.timerRender}
-                              onComplete={this.onTimerComplete}
-                            />
-                          )}
-                      </Col>
-                      <Col md="4">
-                        {preview &&
-                          !review && (
-                            <Button
-                              size="lg"
-                              color="link"
-                              className="float-right"
-                              onClick={this.handleEndPreview}
-                            >
-                              End Preview
-                            </Button>
-                          )}
-                        {currentIdx !== lastIdx &&
-                          !review && (
-                            <Button
-                              size="lg"
-                              color="primary"
-                              className="float-right"
-                              onClick={this.handleNextQuestion}
-                            >
-                              Next Question
-                            </Button>
-                          )}
-                        {currentIdx === lastIdx &&
-                          !preview &&
-                          !review && (
-                            <Button
-                              size="lg"
-                              color="success"
-                              className="float-right"
-                              onClick={this.handleSubmitTest}
-                            >
-                              {preview && <a>Finish Test</a>}
-                              {!preview && <a>Finish Test</a>}
-                            </Button>
-                          )}
-                        {!preview &&
-                          !review && (
-                            <Button
-                              size="lg"
-                              outline
-                              color="secondary"
-                              className="float-right"
-                              disabled={preview}
-                              onClick={this.handleSaveProgress}
-                            >
-                              {this.state.saveSpinner && (
-                                <span>
-                                  <FontAwesome name="spinner" spin />&nbsp;&nbsp;
-                                </span>
-                              )}
-                              Save Progress
-                            </Button>
-                          )}
-                        {review &&
-                          returnTo && (
-                            <a href={returnTo} className="float-right">
-                              <FontAwesome
-                                name="chevron-circle-left"
-                                size="2x"
-                              />{" "}
-                              &nbsp; Go Back
-                            </a>
-                          )}
-                      </Col>
-                    </Row>
-                  </CardHeader>
-                  {questions[currentIdx].type === "module" && (
-                    <ModuleBody
-                      question={questions[currentIdx]}
-                      questionAnswered={questionsAnswered[currentIdx]}
-                      currentIdx={currentIdx}
-                      questionList={questions}
-                      preview={preview}
-                      review={review}
-                      handleAnswerUpdate={this.handleAnswerUpdate}
-                    />
-                  )}
-                  {questions[currentIdx].type === "multiple_choice" && (
-                    <MultipleChoice
-                      question={questions[currentIdx]}
-                      questionAnswered={questionsAnswered[currentIdx]}
-                      currentIdx={currentIdx}
-                      questionList={questions}
-                      preview={preview}
-                      review={review}
-                      handleAnswerUpdate={this.handleAnswerUpdate}
-                    />
-                  )}
-                </Card>
-              )}
-            </Preloader>
-          ))}
-        {testAttempt &&
-          testAttempt.completed_at &&
-          !preview &&
-          !review && (
-            <div className="app flex-row align-items-center">
-              <Container>
-                <Row className="justify-content-center">
-                  <Col md="6">
-                    <div className="clearfix">
-                      <h3>You have already completed this test. </h3>
-                      <h3>
-                        Please close the window. Your recruiter will contact you
-                        with the results.
-                      </h3>
-                    </div>
+        <Preloader loading={questions.length < 1}>
+          {questions.length > 0 && (
+            <Card className="module-container-card">
+              <CardHeader className="preview-title">
+                <Row>
+                  <Col>
+                    {preview &&
+                      !review && (
+                        <p className="muted-text">
+                          <strong>
+                            You are currently previewing the test’s questions in
+                            the order in which they will appear to candidates.
+                            While taking the test, candidates will not have the
+                            option to go back and view previously answered
+                            questions. Correct answers have been filled in for
+                            all questions for purposes of this preview.
+                          </strong>
+                        </p>
+                      )}
                   </Col>
                 </Row>
-              </Container>
-            </div>
+                <Row>
+                  <Col md="4">
+                    {preview &&
+                      !review && (
+                        <h3>
+                          {question.name} &nbsp;&nbsp;
+                          <span className="question-subtitle">
+                            (Question {currentIdx + 1} of {testLength})
+                          </span>
+                        </h3>
+                      )}
+                    {!preview &&
+                      review && (
+                        <h3>
+                          {question.name} &nbsp;&nbsp;
+                          <span className="question-subtitle">
+                            (Question {Number(currentIdx) + 1} of {testLength})
+                          </span>
+                        </h3>
+                      )}
+                    {!preview &&
+                      !review && (
+                        <h3>
+                          Question {currentIdx + 1} of {testLength}
+                        </h3>
+                      )}
+                  </Col>
+                  <Col md="4">
+                    {!preview &&
+                      !review && (
+                        <Countdown
+                          date={
+                            timeLeft
+                              ? startTime + timeLeft * 60000
+                              : startTime + estimatedTime * 60000
+                          }
+                          renderer={this.timerRender}
+                          onComplete={this.onTimerComplete}
+                          onTick={this.onTimerTick}
+                        />
+                      )}
+                  </Col>
+                  <Col md="4">
+                    {preview &&
+                      !review && (
+                        <Button
+                          size="lg"
+                          color="link"
+                          className="float-right"
+                          onClick={this.handleEndPreview}
+                        >
+                          End Preview
+                        </Button>
+                      )}
+                    {currentIdx !== lastIdx &&
+                      !review && (
+                        <Button
+                          size="lg"
+                          color="primary"
+                          className="float-right"
+                          onClick={this.handleNextQuestion}
+                        >
+                          Next Question
+                        </Button>
+                      )}
+                    {currentIdx === lastIdx &&
+                      !preview &&
+                      !review && (
+                        <Button
+                          size="lg"
+                          color="success"
+                          className="float-right"
+                          onClick={this.handleSubmitTest}
+                        >
+                          {preview && <a>Finish Test</a>}
+                          {!preview && <a>Finish Test</a>}
+                        </Button>
+                      )}
+                    {!preview &&
+                      !review && (
+                        <Button
+                          size="lg"
+                          outline
+                          color="secondary"
+                          className="float-right"
+                          disabled={preview}
+                          onClick={this.handleSaveProgress}
+                        >
+                          {this.state.saveSpinner && (
+                            <span>
+                              <FontAwesome name="spinner" spin />&nbsp;&nbsp;
+                            </span>
+                          )}
+                          Save Progress
+                        </Button>
+                      )}
+                    {review &&
+                      returnTo && (
+                        <a href={returnTo} className="float-right">
+                          <FontAwesome name="chevron-circle-left" size="2x" />{" "}
+                          &nbsp; Go Back
+                        </a>
+                      )}
+                  </Col>
+                </Row>
+              </CardHeader>
+              {questions[currentIdx].type === "module" && (
+                <ModuleBody
+                  question={questions[currentIdx]}
+                  questionAnswered={questionsAnswered[currentIdx]}
+                  currentIdx={currentIdx}
+                  questionList={questions}
+                  preview={preview}
+                  review={review}
+                  handleAnswerUpdate={this.handleAnswerUpdate}
+                />
+              )}
+              {questions[currentIdx].type === "multiple_choice" && (
+                <MultipleChoice
+                  question={questions[currentIdx]}
+                  questionAnswered={questionsAnswered[currentIdx]}
+                  currentIdx={currentIdx}
+                  questionList={questions}
+                  preview={preview}
+                  review={review}
+                  handleAnswerUpdate={this.handleAnswerUpdate}
+                />
+              )}
+            </Card>
           )}
+        </Preloader>
       </div>
     );
   }

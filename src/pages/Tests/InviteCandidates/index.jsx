@@ -49,6 +49,7 @@ export default class InviteCandidates extends Component {
       testName: "Demo",
       testId: null,
       expirationDate: undefined,
+      confirmationModal: false,
       submitted: false,
       showSuccessToaster: false,
       user: undefined,
@@ -57,6 +58,8 @@ export default class InviteCandidates extends Component {
       paymentInfo: { success: undefined, message: undefined }
     };
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleSubmitPopover = this.handleSubmitPopover.bind(this);
+    this.toggleConfirmationModal = this.toggleConfirmationModal.bind(this);
     this.handleEmail = this.handleEmail.bind(this);
     this.onToken = this.onToken.bind(this);
     this.onPaymentAlertDismiss = this.onPaymentAlertDismiss.bind(this);
@@ -73,6 +76,7 @@ export default class InviteCandidates extends Component {
     localForage.getItem("userId").then(id => {
       axios.get(`/users/${id}`).then(d => {
         axios.get(`tests/${testId}`).then(t => {
+          console.log(t);
           this.setState({
             user: d.data ? d.data[0] : undefined,
             testId: testId,
@@ -177,6 +181,12 @@ export default class InviteCandidates extends Component {
     );
   }
 
+  handleSubmitPopover() {
+    this.setState({
+      confirmationModal: true
+    });
+  }
+
   handleSubmit() {
     let numberOfCandidates = this.state.candidates.emails.split(",").length;
     if (numberOfCandidates > this.state.user.tokens) {
@@ -198,7 +208,8 @@ export default class InviteCandidates extends Component {
               this.setState({
                 submitDisable: true,
                 submitted: true,
-                showSuccessToaster: true
+                showSuccessToaster: true,
+                confirmationModal: false
               });
             });
         }
@@ -227,8 +238,13 @@ export default class InviteCandidates extends Component {
         </div>
       );
     });
-    console.log(typeMapped);
     return typeMapped;
+  }
+
+  toggleConfirmationModal() {
+    this.setState({
+      confirmationModal: false
+    });
   }
 
   updateCalendar(date) {
@@ -239,9 +255,47 @@ export default class InviteCandidates extends Component {
 
   render() {
     const { testName, showSuccessToaster, candidate, test } = this.state;
-    console.log(test);
     return (
       <div>
+        {test &&
+          this.state.candidates &&
+          this.state.candidates.emails && (
+            <Modal
+              isOpen={this.state.confirmationModal}
+              toggle={this.toggleConfirmationModal}
+            >
+              <ModalHeader toggle={this.toggleConfirmationModal}>
+                <h4>
+                  You are about to issue the {test.name} Test to{" "}
+                  {this.state.candidates.emails.split(",").length} candidates.
+                </h4>
+              </ModalHeader>
+              <ModalBody>
+                <h6> Questions: {test.question_ids.length}</h6>
+                <h6> Time Allotted: {test.estimated_time} mins</h6>
+                <h6>
+                  {" "}
+                  Expiration Date:{" "}
+                  {moment(this.state.expirationDate).format("MM/DD/YYYY")}
+                </h6>
+                <h6>
+                  {" "}
+                  <strong>Click ‘Confirm’ to email the test link now.</strong>
+                </h6>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="primary" onClick={this.handleSubmit}>
+                  Confirm
+                </Button>{" "}
+                <Button
+                  color="secondary"
+                  onClick={this.toggleConfirmationModal}
+                >
+                  Cancel
+                </Button>
+              </ModalFooter>
+            </Modal>
+          )}
         {this.state.user && (
           <Card style={{ minHeight: "380px" }}>
             <Container style={{ marginTop: "10px" }}>
@@ -350,7 +404,7 @@ export default class InviteCandidates extends Component {
                 <Row>
                   <Col>
                     <Alert type="success">
-                      Invitations Sent
+                      Invitations Sent{" "}
                       <span
                         onClick={() => window.location.reload()}
                         className="link"
@@ -465,7 +519,7 @@ export default class InviteCandidates extends Component {
                 <Col xs="4">
                   <Button
                     color="success"
-                    onClick={() => this.handleSubmit()}
+                    onClick={() => this.handleSubmitPopover()}
                     disabled={this.state.submitDisable}
                   >
                     <strong>Invite Candidates</strong>

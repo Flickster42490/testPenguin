@@ -25,6 +25,7 @@ export default class addQuestions extends Component {
     this.handleAddQuestion = this.handleAddQuestion.bind(this);
     this.handleUpdateOrder = this.handleUpdateOrder.bind(this);
     this.destroyTest = this.destroyTest.bind(this);
+    this.onDismiss = this.onDismiss.bind(this);
   }
 
   componentWillMount() {

@@ -57,13 +57,14 @@ export default class testBasics extends Component {
   handleName(e) {
     this.setState({
       name: e.target.value,
-      disableNext: e.target.value ? false : true
+      disableNext: e.target.value && this.state.description ? false : true
     });
   }
 
   handleDescription(e) {
     this.setState({
-      description: e.target.value
+      description: e.target.value,
+      disableNext: e.target.value && this.state.name ? false : true
     });
   }
 
@@ -122,8 +123,11 @@ export default class testBasics extends Component {
                       <Input
                         type="text"
                         onBlur={this.handleName}
-                        maxLength="40"
+                        maxLength="30"
                       />
+                      <FormText color="muted">
+                        (Only you can see this description)
+                      </FormText>
                     </Col>
                   </FormGroup>
                   <FormGroup row>
@@ -137,7 +141,8 @@ export default class testBasics extends Component {
                         id="textarea-input"
                         rows="3"
                         onBlur={this.handleDescription}
-                        maxLength="140"
+                        maxLength="100"
+                        minLength="10"
                       />
                       <FormText color="muted">
                         (Only you can see this description)

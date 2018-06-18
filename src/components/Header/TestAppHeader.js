@@ -65,7 +65,7 @@ class Header extends Component {
   render() {
     return (
       <header className="app-header navbar">
-        <NavbarBrand href="#" />
+        <NavbarBrand />
       </header>
     );
   }

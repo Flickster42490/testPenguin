@@ -111,7 +111,7 @@ export default class QuestionLibrary extends Component {
                         <a
                           href={`/#/testApp/app?testId=${
                             test.id
-                          }&preview=true&returnTo=${window.location.hash}`}
+                          }&preview=true&returnTo=/#/dashboard/tests/customTests`}
                         >
                           <Button color="primary">
                             <strong>Preview Test</strong>

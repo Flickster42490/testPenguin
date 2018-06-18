@@ -112,7 +112,7 @@ export default class QuestionLibrary extends Component {
                         <a
                           href={`/#/testApp/app?testId=${
                             test.id
-                          }&preview=true&returnTo=${window.location.hash}`}
+                          }&preview=true&returnTo=/#/dashboard/tests/preBuiltTests`}
                         >
                           <Button color="default" style={{ width: "136px" }}>
                             <strong>Preview Test</strong>
@@ -138,6 +138,7 @@ export default class QuestionLibrary extends Component {
                 columns={[
                   {
                     Header: "#",
+                    width: 75,
                     Cell: cell => <span>{cell.index + 1}</span>
                   },
                   {
@@ -146,7 +147,6 @@ export default class QuestionLibrary extends Component {
                     style: {
                       justifyContent: "center"
                     },
-                    maxWidth: 75,
                     Cell: cell => (
                       <a
                         href={`/#/dashboard/tests/questionLibrary/preview?id=${

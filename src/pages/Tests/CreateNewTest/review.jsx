@@ -235,6 +235,7 @@ export default class ReviewCreatedTest extends Component {
                       <TestQuestionList
                         questions={test.question_details}
                         hideOrdering
+                        review
                         disabledArrange
                       />
                     </Col>

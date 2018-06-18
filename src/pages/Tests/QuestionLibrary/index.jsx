@@ -245,7 +245,7 @@ export default class QuestionLibrary extends Component {
                     desc: false
                   }
                 ]}
-                defaultPageSize={this.state.addQuestions ? 8 : 20}
+                defaultPageSize={this.state.addQuestions ? 5 : 20}
                 showPageSizeOptions={this.state.addQuestions ? false : true}
                 pageSizeOptions={[20, 50, 100]}
                 className="-striped -highlight"
