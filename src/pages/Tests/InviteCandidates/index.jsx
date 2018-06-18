@@ -201,6 +201,7 @@ export default class InviteCandidates extends Component {
             .post("/testAttempts/create", {
               userIds: candidates.map(i => i.id),
               testId: this.state.testId,
+              testName: this.state.testName,
               invitedBy: this.state.candidates.invitedBy,
               expiringAt: this.state.expirationDate
             })

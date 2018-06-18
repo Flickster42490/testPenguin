@@ -89,23 +89,31 @@ router.get("/issuedBy/:id", (req, res) => {
 });
 
 router.post("/sendReminder", (req, res) => {
-  let { userId, candidateId, candidateEmail, testAttemptId, testId } = req.body;
+  let {
+    userId,
+    candidateId,
+    candidateEmail,
+    testAttemptId,
+    testId,
+    expiringAt
+  } = req.body;
   console.log(req.body);
   return req.db.any("SELECT * FROM users WHERE id=$1", [userId]).then(u => {
     let user = u[0];
     let msg = {
       to: candidateEmail,
       from: "admin@testpenguin.com",
-      templateId: "0dde1f97-fa38-47ad-997d-383b9ad7e7e4",
+      templateId: "66de2bfa-3df7-4845-b0e0-d577251ef584",
       substitutions: {
         user_first_name: user.first_name,
         user_last_name: user.last_name,
-        company: "AccountingPenguin",
+        company: user.company,
         user_email: user.email_address,
-        test_expiration_date: "5/27/2019",
+        expiration_date: moment(expiringAt).format("MM/DD/YYYY"),
         candidate_id: candidateId,
         test_attempt_id: testAttemptId,
-        test_id: testId
+        test_id: testId,
+        base_url: "http://accounting-penguin.herokuapp.com"
       }
     };
     console.log(msg);
@@ -138,9 +146,9 @@ router.post("/sendReminder", (req, res) => {
 
 router.post("/create", (req, res) => {
   console.log(req.body);
-  let { userIds, expiringAt } = req.body;
+  let { userIds, expiringAt, testName } = req.body;
   let subQ = ``;
-  let numberOfTests, dbUser;
+  let numberOfTests, dbUser, user, test;
   userIds.forEach((i, idx) => {
     if (idx !== userIds.length - 1)
       subQ =
@@ -171,7 +179,7 @@ router.post("/create", (req, res) => {
         req.db.any("SELECT * FROM users WHERE id IN ($1:csv) ", [candidates])
       ]).then(all => {
         let attempts = all[0];
-        let user = all[1][0];
+        user = all[1][0];
         let candidates = all[2];
         let emails = [];
         attempts.forEach(a => {
@@ -183,12 +191,13 @@ router.post("/create", (req, res) => {
             substitutions: {
               user_first_name: user.first_name,
               user_last_name: user.last_name,
-              company: "AccountingPenguin",
-              user_email: user.email_address,
+              company: user.company,
+              user_email_address: user.email_address,
               test_expiration_date: moment(expiringAt).format("MM/DD/YYYY"),
               candidate_id: a.user_id,
               test_attempt_id: a.id,
-              test_id: a.test_id
+              test_id: a.test_id,
+              base_url: "http://accounting-penguin.herokuapp.com"
             }
           };
           emails.push(tempMsg);
@@ -208,7 +217,22 @@ router.post("/create", (req, res) => {
                 );
               })
               .then(() => {
-                return res.send(true);
+                let userMsg = {
+                  to: user.email_address,
+                  from: "admin@testpenguin.com",
+                  templateId: "9bab0a1a-5644-46f1-b9aa-beda063080b2",
+                  substitutions: {
+                    user_first_name: user.first_name,
+                    user_email: user.email_address,
+                    expiration_date: moment(expiringAt).format("MM/DD/YYYY"),
+                    invite_count: numberOfTests,
+                    test_name: testName,
+                    base_url: "http://accounting-penguin.herokuapp.com"
+                  }
+                };
+                sgMail.send(userMsg).then(() => {
+                  return res.send(true);
+                });
               });
           })
           .catch(error => {
@@ -299,7 +323,7 @@ router.post("/saveProgress", (req, res) => {
 router.post("/submitTest", (req, res) => {
   let { candidateAnswers, id } = req.body;
   const util = require("util");
-
+  let result, user, test, testAttempt, candidate;
   // console.log(util.inspect(candidateAnswers, false, null));
   candidateAnswers = JSON.stringify(candidateAnswers);
   return req.db
@@ -307,7 +331,22 @@ router.post("/submitTest", (req, res) => {
       "UPDATE test_attempts SET (candidate_answers) = ($1) where id = $2 RETURNING *",
       [candidateAnswers, id]
     )
-    .then(() => {
+    .then(a => {
+      testAttempt = a[0];
+      return req.db.any(
+        `SELECT * FROM users WHERE id = $1 limit 1`,
+        testAttempt.user_id
+      );
+    })
+    .then(c => {
+      candidate = c[0];
+      return req.db.any(
+        `SELECT * FROM users WHERE id = $1 limit 1`,
+        testAttempt.invited_by
+      );
+    })
+    .then(u => {
+      user = u[0];
       let results = [];
       let answers = JSON.parse(candidateAnswers);
       answers.forEach(q => {
@@ -340,6 +379,20 @@ router.post("/submitTest", (req, res) => {
       );
     })
     .then(d => {
-      return res.send(d);
+      result = d;
+      let userMsg = {
+        to: user.email_address,
+        from: "admin@testpenguin.com",
+        templateId: "1e886e06-9056-4ff3-830c-7bc6e78ad6c1",
+        substitutions: {
+          user_first_name: user.first_name,
+          candidate_email: candidate.email_address,
+          test_attempt_id: testAttempt.id,
+          base_url: "http://accounting-penguin.herokuapp.com"
+        }
+      };
+      sgMail.send(userMsg).then(() => {
+        return res.send(result);
+      });
     });
 });

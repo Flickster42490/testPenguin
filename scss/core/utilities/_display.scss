@@ -6,13 +6,6 @@
   @include media-breakpoint-down($breakpoint) {
     $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
 
-    .d#{$infix}-down-none {
-      font-size: 10px;
-    }
-    .token-header,
-    .header-menu-icon {
-      font-size: 10px !important;
-    }
     // .d#{$infix}-inline       { display: inline !important; }
     // .d#{$infix}-inline-block { display: inline-block !important; }
     // .d#{$infix}-block        { display: block !important; }

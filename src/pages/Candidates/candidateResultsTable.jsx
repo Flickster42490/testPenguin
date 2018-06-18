@@ -56,12 +56,19 @@ export default class Dashboard extends Component {
     this.setState({ visible: false });
   }
 
-  handleSendReminder(candidateId, candidateEmail, testAttemptId, testId) {
+  handleSendReminder(
+    candidateId,
+    candidateEmail,
+    testAttemptId,
+    testId,
+    expiringAt
+  ) {
     axios
       .post("/testAttempts/sendReminder", {
         userId: this.state.userId,
         candidateId: candidateId,
         testAttemptId: testAttemptId,
+        expiringAt: expiringAt,
         testId: testId,
         candidateEmail: candidateEmail,
         lastReminderSent: moment(new Date()).format("MM/DD/YYYYTHH:mm:ss")
@@ -288,7 +295,8 @@ export default class Dashboard extends Component {
                             cell.original.user_id,
                             cell.original.email_address,
                             cell.original.id,
-                            cell.original.test_id
+                            cell.original.test_id,
+                            cell.original.expiring_at
                           )
                         }
                         style={{ color: "#fff" }}

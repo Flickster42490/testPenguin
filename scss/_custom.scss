@@ -180,6 +180,10 @@
   }
 }
 
+.dropdown-item:hover {
+  color: #000 !important;
+}
+
 .flex-container {
   display: flex;
   justify-content: center;
@@ -260,6 +264,12 @@ input {
 
 .nav-item {
   color: #fff !important;
+}
+
+.px-3 {
+  span:hover {
+    border-bottom: 2px solid orange;
+  }
 }
 
 .page-header {
