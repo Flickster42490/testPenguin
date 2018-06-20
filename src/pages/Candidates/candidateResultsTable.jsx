@@ -166,7 +166,6 @@ export default class Dashboard extends Component {
               accessor: "invited_at",
               sortable: true,
               sortMethod: (a, b) => {
-                console.log(a, b);
                 return moment(a).isBefore(moment(b)) ? -1 : 1;
               },
               Cell: cell => {

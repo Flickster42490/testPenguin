@@ -33,7 +33,14 @@ passport.use(
         if (!user || user.length < 1) return done(null, false);
         if (user.length > 0 && user[0].password != password)
           return done(null, false);
-        return done(null, user[0]);
+        return db
+          .any(
+            "UPDATE users set (last_signed_in,times_signed_in) = ($1,$2) where id = $3 RETURNING *",
+            [new Date(), user[0].times_signed_in + 1, user[0].id]
+          )
+          .then(user => {
+            return done(null, user[0]);
+          });
       });
   })
 );
@@ -65,8 +72,8 @@ passport.use(
             console.log("user.length > 0");
             return db
               .any(
-                "UPDATE users set last_signed_in = $1 where id = $2 RETURNING *",
-                [new Date(), user[0].id]
+                "UPDATE users set (last_signed_in,times_signed_in) = ($1,$2) where id = $3 RETURNING *",
+                [new Date(), user[0].times_signed_in + 1, user[0].id]
               )
               .then(u => {
                 console.log(u);
@@ -84,7 +91,7 @@ passport.use(
           } else {
             return db
               .any(
-                "INSERT INTO users(google_id,first_name,last_name,display_name,image_url, provider, email_address, last_signed_in, created_at,type,trial_end,tokens) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING *",
+                "INSERT INTO users(google_id,first_name,last_name,display_name,image_url, provider, email_address, last_signed_in, created_at,type,trial_end,tokens, times_signed_in) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING *",
                 [
                   profile.id,
                   profile.name.givenName,
@@ -99,7 +106,8 @@ passport.use(
                   moment(new Date())
                     .endOf("day")
                     .add(7, "days"),
-                  3
+                  3,
+                  1
                 ]
               )
               .then(u => {
@@ -159,8 +167,8 @@ passport.use(
             console.log("user.length > 0");
             return db
               .any(
-                "UPDATE users set last_signed_in = $1 where id = $2 RETURNING *",
-                [new Date(), user[0].id]
+                "UPDATE users set (last_signed_in,times_signed_in) = ($1,$2) where id = $3 RETURNING *",
+                [new Date(), user[0].times_signed_in + 1, user[0].id]
               )
               .then(u => {
                 console.log(u);
@@ -178,7 +186,7 @@ passport.use(
           } else {
             return db
               .any(
-                "INSERT INTO users(linkedin_id,first_name,last_name,display_name,image_url, provider, email_address, last_signed_in, created_at,type,trial_end, tokens) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING * ",
+                "INSERT INTO users(linkedin_id,first_name,last_name,display_name,image_url, provider, email_address, last_signed_in, created_at,type,trial_end, tokens,times_signed_in) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING * ",
                 [
                   profile.id,
                   profile.name.givenName,
@@ -193,7 +201,8 @@ passport.use(
                   moment(new Date())
                     .endOf("day")
                     .add(7, "days"),
-                  3
+                  3,
+                  1
                 ]
               )
               .then(u => {
@@ -320,7 +329,7 @@ router.post("/local/register", (req, res) => {
       else {
         return db
           .any(
-            "INSERT INTO users(first_name, last_name, email_address, display_name, provider, last_signed_in, created_at, password, type, company, trial_end, tokens) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING *",
+            "INSERT INTO users(first_name, last_name, email_address, display_name, provider, last_signed_in, created_at, password, type, company, trial_end, tokens,times_signed_in) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING *",
             [
               req.body.firstName,
               req.body.lastName,
@@ -335,7 +344,8 @@ router.post("/local/register", (req, res) => {
               moment(req.body.currentDate)
                 .endOf("day")
                 .add(7, "days"),
-              3
+              3,
+              1
             ]
           )
           .then(u => {

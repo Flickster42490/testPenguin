@@ -3,10 +3,11 @@ import {
   Container,
   Row,
   Col,
+  Modal,
+  ModalHeader,
   Button,
-  ButtonGroup,
-  ButtonToolbar,
-  Progress
+  ModalBody,
+  ModalFooter
 } from "reactstrap";
 import axios from "axios";
 import moment from "moment";
@@ -23,6 +24,37 @@ const typeMap = {
   multipleChoice: "Multiple Choice"
 };
 
+const firstTimeInfo = [
+  {
+    header: "Header 1",
+    image:
+      "https://www.lockportny.gov/wp-content/uploads/2018/04/placeholder-300x225.png",
+    paragraph:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam odio arcu, vulputate id sem quis, volutpat vestibulum risus. Donec nec rhoncus justo. Curabitur varius lobortis suscipit. Curabitur tempus sit amet justo dictum sagittis. Etiam posuere justo ut urna lobortis egestas. Aenean sapien libero, tincidunt pharetra sapien tempus, gravida finibus eros. Nam suscipit tortor enim, vel lacinia massa elementum at. Vestibulum sed consequat risus, quis lobortis nulla. "
+  },
+  {
+    header: "Header 2",
+    image:
+      "https://www.lockportny.gov/wp-content/uploads/2018/04/placeholder-300x225.png",
+    paragraph:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam odio arcu, vulputate id sem quis, volutpat vestibulum risus. Donec nec rhoncus justo. Curabitur varius lobortis suscipit. Curabitur tempus sit amet justo dictum sagittis. Etiam posuere justo ut urna lobortis egestas. Aenean sapien libero, tincidunt pharetra sapien tempus, gravida finibus eros. Nam suscipit tortor enim, vel lacinia massa elementum at. Vestibulum sed consequat risus, quis lobortis nulla. "
+  },
+  {
+    header: "Header 3",
+    image:
+      "https://www.lockportny.gov/wp-content/uploads/2018/04/placeholder-300x225.png",
+    paragraph:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam odio arcu, vulputate id sem quis, volutpat vestibulum risus. Donec nec rhoncus justo. Curabitur varius lobortis suscipit. Curabitur tempus sit amet justo dictum sagittis. Etiam posuere justo ut urna lobortis egestas. Aenean sapien libero, tincidunt pharetra sapien tempus, gravida finibus eros. Nam suscipit tortor enim, vel lacinia massa elementum at. Vestibulum sed consequat risus, quis lobortis nulla. "
+  },
+  {
+    header: "Header 4",
+    image:
+      "https://www.lockportny.gov/wp-content/uploads/2018/04/placeholder-300x225.png",
+    paragraph:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam odio arcu, vulputate id sem quis, volutpat vestibulum risus. Donec nec rhoncus justo. Curabitur varius lobortis suscipit. Curabitur tempus sit amet justo dictum sagittis. Etiam posuere justo ut urna lobortis egestas. Aenean sapien libero, tincidunt pharetra sapien tempus, gravida finibus eros. Nam suscipit tortor enim, vel lacinia massa elementum at. Vestibulum sed consequat risus, quis lobortis nulla. "
+  }
+];
+
 class Dashboard extends Component {
   constructor(props) {
     super(props);
@@ -30,27 +62,37 @@ class Dashboard extends Component {
       candidateList: [],
       loading: true,
       userId: undefined,
-      filters: {}
+      filters: {},
+      firstTimeModal: false,
+      firstTimeModalIdx: 0
     };
     this.handleRefetch = this.handleRefetch.bind(this);
+    this.toggleFirstTimeModal = this.toggleFirstTimeModal.bind(this);
+    this.handlePrevious = this.handlePrevious.bind(this);
+    this.handleNext = this.handleNext.bind(this);
   }
 
   componentWillMount() {
     window.scrollTo(0, 0);
-    console.log("lksjdflakjdf;lkajs;fljka;flkjas;ldfjka;slkjf;laj;flkaj;sf");
+    let userId;
     localForage.getItem("userId").then(id => {
+      userId = id;
       axios.post("/testAttempts", { userId: id }).then(d => {
-        console.log(d);
-        this.setState(
-          {
-            candidateList: d.data,
-            userId: id,
-            loading: false
-          },
-          () => {
-            this.forceUpdate();
-          }
-        );
+        axios.get(`/users/${userId}`).then(user => {
+          console.log(user);
+          this.setState(
+            {
+              candidateList: d.data,
+              userId: id,
+              user: user.data[0],
+              firstTimeModal: user.data[0].times_signed_in === 1 ? true : false,
+              loading: false
+            },
+            () => {
+              this.forceUpdate();
+            }
+          );
+        });
       });
     });
   }
@@ -71,6 +113,30 @@ class Dashboard extends Component {
           () => this.forceUpdate()
         );
       });
+  }
+
+  toggleFirstTimeModal() {
+    this.setState({
+      firstTimeModal: !this.state.firstTimeModal
+    });
+  }
+
+  handlePrevious() {
+    this.setState({
+      firstTimeModalIdx:
+        this.state.firstTimeModalIdx === 0
+          ? this.state.firstTimeModalIdx
+          : this.state.firstTimeModalIdx - 1
+    });
+  }
+
+  handleNext() {
+    this.setState({
+      firstTimeModalIdx:
+        this.state.firstTimeModalIdx === 3
+          ? this.state.firstTimeModalIdx
+          : this.state.firstTimeModalIdx + 1
+    });
   }
 
   handleRefetch() {
@@ -94,6 +160,45 @@ class Dashboard extends Component {
     const { candidateList, loading } = this.state;
     return (
       <div>
+        <Modal
+          isOpen={this.state.firstTimeModal}
+          toggle={this.toggleFirstTimeModal}
+          size="lg"
+        >
+          <ModalHeader toggle={this.toggleFirstTimeModal}>
+            <h4>{firstTimeInfo[this.state.firstTimeModalIdx].header}</h4>
+          </ModalHeader>
+          <ModalBody
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              flexDirection: "column"
+            }}
+          >
+            <img src={firstTimeInfo[this.state.firstTimeModalIdx].image} />
+            <p>{firstTimeInfo[this.state.firstTimeModalIdx].paragraph}</p>
+            {/* <button onClick={this.handlePrevious}>
+              Previous
+            </button>&nbsp;&nbsp;<button onClick={this.handleNext}>Next</button> */}
+          </ModalBody>
+          <ModalFooter>
+            {this.state.firstTimeModalIdx !== 0 && (
+              <Button color="secondary" onClick={this.handlePrevious}>
+                Previous
+              </Button>
+            )}
+            {this.state.firstTimeModalIdx !== 3 && (
+              <Button color="secondary" onClick={this.handleNext}>
+                Next
+              </Button>
+            )}
+            {this.state.firstTimeModalIdx == 3 && (
+              <Button color="secondary" onClick={this.toggleFirstTimeModal}>
+                Close
+              </Button>
+            )}
+          </ModalFooter>
+        </Modal>
         <div className="page-header">
           {" "}
           <h2 style={{ display: "inline" }}>
