@@ -57,8 +57,8 @@ router.post("/purchase", (req, res) => {
         return Promise.all([
           charge,
           req.db.any(
-            `UPDATE users SET (tokens,trial_end) = ($1,$2) where id = $3`,
-            [dbUser.tokens + req.body.tokenAmount, null, dbUser.id]
+            `UPDATE users SET (tokens,trial) = ($1,$2) where id = $3`,
+            [dbUser.tokens + req.body.tokenAmount, false, dbUser.id]
           )
         ]);
       }

@@ -45,7 +45,8 @@ export default class Profile extends Component {
       paymentAlertVisible: false,
       loading: true,
       paymentLoading: true,
-      paymentInfo: { success: undefined, message: undefined }
+      paymentInfo: { success: undefined, message: undefined },
+      trialError: false
     };
 
     this.togglePasswordChange = this.togglePasswordChange.bind(this);
@@ -59,10 +60,13 @@ export default class Profile extends Component {
   componentWillMount() {
     window.scrollTo(0, 0);
     document.body.classList.toggle("sidebar-hidden");
+    const queries = window.location.hash.split("?")[1];
+    const { trialError } = queryString.parse(queries);
     localForage.getItem("userId").then(id => {
       axios.get(`/users/${id}`).then(d => {
         axios.get(`/testAttempts/issuedBy/${id}`).then(a => {
           this.setState({
+            trialError: trialError,
             userId: id,
             user: d.data ? d.data[0] : undefined,
             issuedCount: a.data ? a.data[0].count : undefined,
@@ -187,6 +191,13 @@ export default class Profile extends Component {
         <main className="main">
           <Container fluid>
             <Preloader loading={this.state.loading}>
+              {this.state.trialError && (
+                <Alert style={{ textAlign: "center" }} color={"danger"}>
+                  Your Free Trial has Ended. In order to view "Custom Tests",
+                  "Question Library", and "Pre-Built Tests" pages, please add
+                  test tokens.
+                </Alert>
+              )}
               <Row>
                 <Col xs="12" md={{ size: 8, offset: 2 }}>
                   <h2>My Profile</h2>
@@ -334,7 +345,7 @@ export default class Profile extends Component {
                     {this.state.user && (
                       <Card>
                         <br />
-                        {!this.state.user.trial_end && (
+                        {!this.state.user.trial && (
                           <Row>
                             <Col
                               md={{ size: 2 }}
@@ -347,7 +358,7 @@ export default class Profile extends Component {
                             </Col>
                           </Row>
                         )}
-                        {this.state.user.trial_end && (
+                        {this.state.user.trial && (
                           <Row>
                             <Col
                               md={{ size: 2 }}
@@ -359,14 +370,14 @@ export default class Profile extends Component {
                             </Col>
                             <Col xs="12" md="3">
                               <strong>
-                                {moment(this.state.user.trial_end).format(
-                                  "MM/DD/YYYY"
-                                )}
+                                {moment(this.state.user.created_at)
+                                  .add(7, "days")
+                                  .format("MM/DD/YYYY")}
                               </strong>
                             </Col>
                           </Row>
                         )}
-                        {this.state.user.trial_end &&
+                        {this.state.user.trial &&
                           this.state.user.tokens && (
                             <Row>
                               <Col

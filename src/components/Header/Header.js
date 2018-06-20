@@ -13,7 +13,8 @@ class Header extends Component {
     this.state = {
       page: "candidates",
       user: undefined,
-      tokens: undefined
+      tokens: undefined,
+      trialExpired: false
     };
 
     this.handleClick = this.handleClick.bind(this);
@@ -25,6 +26,7 @@ class Header extends Component {
         console.log(u.data[0]);
         if (this.state.page !== window.location.hash.split("/")[2]) {
           this.setState({
+            trialExpired: u.data[0].trial && u.data[0].trial_expired,
             page:
               window.location.hash.split("/")[2] === "tests"
                 ? window.location.hash.split("/")[3]
@@ -34,6 +36,7 @@ class Header extends Component {
           });
         } else {
           this.setState({
+            trialExpired: u.data[0].trial && u.data[0].trial_expired,
             user: u.data[0],
             tokens: u.data[0].tokens
           });
@@ -55,6 +58,10 @@ class Header extends Component {
 
   handleAddMoreTokens() {
     window.location.href = "/#/dashboard/profile";
+  }
+
+  openPaymentPage() {
+    window.location.href = "/#/dashboard/profile?trialError=true";
   }
 
   sidebarToggle(e) {
@@ -115,7 +122,11 @@ class Header extends Component {
           </NavItem>
           <NavItem
             className="px-3"
-            onClick={() => this.handleClick("tests/questionLibrary")}
+            onClick={
+              this.state.trialExpired
+                ? this.openPaymentPage()
+                : () => this.handleClick("tests/questionLibrary")
+            }
           >
             <span
               className={this.state.page === "questionLibrary" ? "bold" : ""}
@@ -125,7 +136,11 @@ class Header extends Component {
           </NavItem>
           <NavItem
             className="px-3"
-            onClick={() => this.handleClick("tests/customTests")}
+            onClick={
+              this.state.trialExpired
+                ? this.openPaymentPage()
+                : () => this.handleClick("tests/customTests")
+            }
           >
             <span className={this.state.page === "customTests" ? "bold" : ""}>
               My Custom Tests
@@ -133,7 +148,11 @@ class Header extends Component {
           </NavItem>
           <NavItem
             className="px-3"
-            onClick={() => this.handleClick("tests/preBuiltTests")}
+            onClick={
+              this.state.trialExpired
+                ? this.openPaymentPage()
+                : () => this.handleClick("tests/preBuiltTests")
+            }
           >
             <span className={this.state.page === "preBuiltTests" ? "bold" : ""}>
               Pre-Built Tests

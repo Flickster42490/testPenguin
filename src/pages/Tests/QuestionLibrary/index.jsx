@@ -4,6 +4,7 @@ import _ from "lodash";
 import axios from "axios";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
+import localForage from "localforage";
 import FontAwesome from "react-fontawesome";
 
 import utils from "../../../utils";
@@ -17,43 +18,51 @@ export default class QuestionLibrary extends Component {
       questions: [],
       typeCount: {},
       addQuestions: false,
-      loading: true
+      loading: true,
+      userId: undefined
     };
 
     this.findTypeCount = this.findTypeCount.bind(this);
   }
 
   componentWillMount() {
-    axios.post("/questions").then(d => {
-      let typeCount = this.findTypeCount(d.data);
-      this.setState(
-        {
-          typeCount: typeCount,
-          questions: d.data,
-          addQuestions: this.props.addQuestions,
-          loading: false
-        },
-        () => {
-          let page = window.location.hash.split("tests/")[1];
-          if (page == "questionLibrary") {
-            this.props.handlePageUpdate(page);
+    let userId;
+    localForage.getItem("userId").then(id => {
+      userId = id;
+      axios.post("/questions", { userId: id }).then(d => {
+        let typeCount = this.findTypeCount(d.data);
+        this.setState(
+          {
+            userId: userId,
+            typeCount: typeCount,
+            questions: d.data,
+            addQuestions: this.props.addQuestions,
+            loading: false
+          },
+          () => {
+            let page = window.location.hash.split("tests/")[1];
+            if (page == "questionLibrary") {
+              this.props.handlePageUpdate(page);
+            }
           }
-        }
-      );
+        );
+      });
     });
   }
 
   componentWillReceiveProps(np) {
     if (np.filters && Object.keys(np.filters).length > 0) {
-      axios.post("/questions", { filters: np.filters }).then(d => {
-        let typeCount = this.findTypeCount(d.data);
-        this.setState({
-          typeCount: typeCount,
-          questions: d.data,
-          addQuestions: this.props.addQuestions,
-          loading: false
+      axios
+        .post("/questions", { filters: np.filters, userId: this.state.userId })
+        .then(d => {
+          let typeCount = this.findTypeCount(d.data);
+          this.setState({
+            typeCount: typeCount,
+            questions: d.data,
+            addQuestions: this.props.addQuestions,
+            loading: false
+          });
         });
-      });
     }
   }
 
