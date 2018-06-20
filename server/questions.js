@@ -10,7 +10,7 @@ router.post("/", (req, res) => {
       if (u[0].trial) {
         query = "SELECT * FROM questions where trial IS TRUE";
       } else {
-        query = "SELECT * FROM questions where trial IS FALSE";
+        query = "SELECT * FROM questions";
       }
       return req.db.any(query).then(data => {
         let d = data;

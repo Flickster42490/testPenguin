@@ -225,6 +225,14 @@ export default class ModuleContainer extends Component {
                   )}
                 {question[0] &&
                   question[0].type === "module" &&
+                  question[0].module_type === "financiaL_statement" && (
+                    <Reconciliation
+                      question={question[0]}
+                      disabled={this.state.disabled}
+                    />
+                  )}
+                {question[0] &&
+                  question[0].type === "module" &&
                   question[0].module_type === "multiple_choice" && (
                     <div>
                       {question[0].module_answer.segments.map(i => {

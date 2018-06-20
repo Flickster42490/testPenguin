@@ -205,14 +205,19 @@ export default class InviteCandidates extends Component {
               invitedBy: this.state.candidates.invitedBy,
               expiringAt: this.state.expirationDate
             })
-            .then(() => {
-              this.setState({
-                submitDisable: true,
-                submitted: true,
-                showSuccessToaster: true,
-                confirmationModal: false
-              });
-            });
+            .then(
+              () => {
+                this.setState({
+                  submitDisable: true,
+                  submitted: true,
+                  showSuccessToaster: true,
+                  confirmationModal: false
+                });
+              },
+              () => {
+                window.scrollTo(0, 0);
+              }
+            );
         }
       });
     }
@@ -243,9 +248,14 @@ export default class InviteCandidates extends Component {
   }
 
   toggleConfirmationModal() {
-    this.setState({
-      confirmationModal: false
-    });
+    this.setState(
+      {
+        confirmationModal: false
+      },
+      () => {
+        window.scrollTo(0, 0);
+      }
+    );
   }
 
   updateCalendar(date) {

@@ -98,17 +98,16 @@ export default class IssuedTests extends Component {
                   {
                     Header: "Questions",
                     maxWidth: 200,
+                    accessor: "question_types",
                     sortable: false,
                     Cell: cell => (
-                      <ul style={{ listStyleType: "none", padding: "none" }}>
-                        <li>
-                          {cell.original.question_types.multiple_choice || "0"}{" "}
-                          Multiple Choice
-                        </li>
-                        <li>
-                          {cell.original.question_types.module || "0"} Modules
-                        </li>
-                      </ul>
+                      <div>
+                        <span>
+                          {cell.value.multiple_choice || 0} Multiple Choice
+                        </span>
+                        <br />
+                        <span>{cell.value.module || 0} Modules</span>
+                      </div>
                     )
                   },
                   {

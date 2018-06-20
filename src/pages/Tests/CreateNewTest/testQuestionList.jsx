@@ -3,7 +3,7 @@ import {
   Container,
   Row,
   Col,
-  Button,
+  Badge,
   ButtonGroup,
   ButtonToolbar,
   Progress
@@ -69,6 +69,15 @@ export default class TestQuestionList extends Component {
       );
     }
     return;
+  }
+
+  removeItem(cell) {
+    let index = _.findIndex(this.state.questions, { id: cell.id });
+    let newQuestionList = this.state.questions;
+    newQuestionList.splice(index, 1);
+    this.setState({
+      questions: newQuestionList
+    });
   }
 
   render() {
@@ -169,21 +178,38 @@ export default class TestQuestionList extends Component {
                   Cell: cell => {
                     let tags = cell.value && cell.value.split(",");
                     return tags && tags.length > 0 ? (
-                      <div>
-                        {tags.map((i, idx, arr) => {
-                          if (idx === arr.length - 1) {
-                            return <span>{i}</span>;
-                          }
+                      <span
+                        style={{
+                          display: "flex",
+                          flexWrap: "wrap",
+                          alignItems: "start"
+                        }}
+                      >
+                        {tags.map(i => {
                           return (
                             <span>
-                              {i}
-                              <br />
+                              <Badge color="light" pill>
+                                {i}
+                              </Badge>&nbsp;
                             </span>
                           );
                         })}
-                      </div>
+                      </span>
                     ) : null;
                   }
+                },
+                {
+                  Header: "Remove",
+                  maxWidth: 100,
+                  show: this.state.addQuestions,
+                  Cell: cell => (
+                    <span
+                      onClick={() => this.removeItem(cell.original)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <i class="fa fa-trash" aria-hidden="true" />
+                    </span>
+                  )
                 }
               ]}
               defaultPageSize={5}

@@ -70,7 +70,8 @@ export default class TestApp extends Component {
           minutes: minutesLeft,
           seconds: secondsLeft
         },
-        savedProgressIndex: currentIdx
+        savedProgressIndex: currentIdx,
+        testSubmitted: this.state.testSubmitted
       };
       axios.post("testAttempts/saveProgress", body);
     });
@@ -113,7 +114,8 @@ export default class TestApp extends Component {
                     estimatedTime: t.data[0].estimated_time,
                     timeLeft: saved.data[0].time_left
                       ? this.convertIntoMinutes(saved.data[0].time_left)
-                      : undefined
+                      : undefined,
+                    testSubmitted: attempt.data[0].results
                   },
                   () => {
                     console.log(this.state.questionsAnswered);
@@ -149,7 +151,8 @@ export default class TestApp extends Component {
                   id: id,
                   candidateId: candidateId,
                   returnTo: returnTo,
-                  estimatedTime: t.data[0].estimated_time
+                  estimatedTime: t.data[0].estimated_time,
+                  testSubmitted: true
                 },
                 () => {
                   console.log(this.state.questionsAnswered);
@@ -169,7 +172,8 @@ export default class TestApp extends Component {
               id: id,
               candidateId: candidateId,
               returnTo: returnTo,
-              estimatedTime: t.data[0].estimated_time
+              estimatedTime: t.data[0].estimated_time,
+              testSubmitted: true
             },
             () => {
               this.forceUpdate();
@@ -199,7 +203,8 @@ export default class TestApp extends Component {
         minutes: minutesLeft,
         seconds: secondsLeft
       },
-      savedProgressIndex: currentIdx
+      savedProgressIndex: currentIdx,
+      testSubmitted: this.state.testSubmitted
     };
     axios.post("testAttempts/saveProgress", body);
   }
@@ -233,7 +238,10 @@ export default class TestApp extends Component {
       returnTo,
       candidateId,
       questionsAnswered,
-      id
+      id,
+      hoursLeft,
+      minutesLeft,
+      secondsLeft
     } = this.state;
     if (preview) {
       window.location.href = `${returnTo}?id=${testId}`;
@@ -241,11 +249,23 @@ export default class TestApp extends Component {
       axios
         .post(`/testAttempts/submitTest`, {
           id: id,
-          candidateAnswers: questionsAnswered
+          candidateAnswers: questionsAnswered,
+          timeLeft: {
+            hours: hoursLeft,
+            minutes: minutesLeft,
+            seconds: secondsLeft
+          }
         })
         .then(d => {
           if (d.status == 200) {
-            window.location.href = `/#/testApp/completed?id=${testId}&candidateId=${candidateId}`;
+            this.setState(
+              {
+                testSubmitted: true
+              },
+              () => {
+                window.location.href = `/#/testApp/completed?id=${testId}&candidateId=${candidateId}`;
+              }
+            );
           }
         });
     }

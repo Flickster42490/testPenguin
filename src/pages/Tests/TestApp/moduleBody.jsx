@@ -251,6 +251,18 @@ export default class ModuleBody extends Component {
                     questionAnswered={questionAnswered}
                     handleSubModuleOneUpdate={this.handleSubModuleOneUpdate}
                     disabled={this.state.disabled || this.state.review}
+                    review={this.state.review}
+                  />
+                )}
+              {question &&
+                question.type === "module" &&
+                question.module_type === "financial_statement" && (
+                  <Reconciliation
+                    question={question}
+                    questionAnswered={questionAnswered}
+                    handleSubModuleOneUpdate={this.handleSubModuleOneUpdate}
+                    disabled={this.state.disabled || this.state.review}
+                    review={this.state.review}
                   />
                 )}
               {question &&

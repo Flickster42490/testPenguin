@@ -30,7 +30,9 @@ const typeMap = {
   multipleChoice: "Multiple Choice",
   journal_entry: "Journal Entry",
   multiple_choice: "Multiple Choice",
-  reconciliation: "Reconciliation"
+  reconciliation: "Reconciliation",
+  financialStatement: "Financial Statement",
+  financial_Statement: "Financial Statement"
 };
 export default class ReviewResults extends Component {
   constructor(props) {
@@ -105,6 +107,14 @@ export default class ReviewResults extends Component {
                 )}
               </span>
             )}
+            {k === "financialStatement" && (
+              <span>
+                {v.correctRows}/{v.correctRows + v.wrongRows}{" "}
+                {this.getStatusColor(
+                  v.correctRows / (v.correctRows + v.wrongRows)
+                )}
+              </span>
+            )}
           </div>
         </li>
       );
@@ -149,7 +159,7 @@ export default class ReviewResults extends Component {
                     <h5>
                       {" "}
                       <span className="text-muted">Candidate Email: </span>
-                      {testResults.email_address}
+                      <strong>{testResults.email_address}</strong>
                     </h5>
                     <h5>
                       <span className="text-muted">Test Name: </span>
@@ -158,7 +168,9 @@ export default class ReviewResults extends Component {
                     <h5>
                       {" "}
                       <span className="text-muted">Issue Date: </span>
-                      {moment(testResults.invited_at).format("MM/DD/YYYY")}
+                      <strong>
+                        {moment(testResults.invited_at).format("MM/DD/YYYY")}
+                      </strong>
                     </h5>
                   </Col>
                   <Col s={5} xs={12} md={5}>
@@ -214,7 +226,7 @@ export default class ReviewResults extends Component {
                           <li>
                             <div>
                               <strong>Test Re-Entrances: </strong>
-                              {testResults.reentered_count}
+                              {testResults.reentered_count - 1}
                             </div>
                           </li>
                         </ul>
@@ -258,9 +270,12 @@ export default class ReviewResults extends Component {
                           Cell: cell => {
                             return (
                               <div>
-                                {cell.original.type === "module"
-                                  ? typeMap[cell.original.module_type]
-                                  : typeMap[cell.original.type]}
+                                {cell.original.type === "module" &&
+                                  `${
+                                    typeMap[cell.original.module_type]
+                                  } (Module)`}
+                                {cell.original.type !== "module" &&
+                                  typeMap[cell.original.type]}
                               </div>
                             );
                           }
@@ -272,7 +287,6 @@ export default class ReviewResults extends Component {
                         {
                           Header: "Score",
                           Cell: cell => {
-                            console.log(cell.original);
                             let { correct, module_stem_2 } = cell.original;
                             return (
                               <div>
@@ -350,7 +364,7 @@ export default class ReviewResults extends Component {
                                     Review Candidate Answer
                                   </Button>
                                 </a>
-                                {cell.original.module_stem_2 && (
+                                {cell.original.type === "module" && (
                                   <a
                                     href={`/#/dashboard/tests/questionLibrary/preview?id=${questionId}&returnTo=${`/#/dashboard/candidates/reviewResults%3Fid=${
                                       testResults.id

@@ -21,26 +21,33 @@ export default class CustomTests extends Component {
 
   componentWillMount() {
     window.scrollTo(0, 0);
+    let userId;
     localForage.getItem("userId").then(id => {
-      this.setState(
-        {
-          userId: id
-        },
-        () => {
-          axios.post(`/tests/type/custom/${this.state.userId}`).then(d => {
-            this.setState(
-              {
-                tests: d.data,
-                loading: false
-              },
-              () => {
-                let page = window.location.hash.split("tests/")[1];
-                this.props.handlePageUpdate(page);
-              }
-            );
-          });
+      userId = id;
+      axios.get(`users/${userId}`).then(u => {
+        if (u.data[0].trial && u.data[0].trial_expired) {
+          window.location.href = "/#/dashboard/profile?trialError=true";
         }
-      );
+        this.setState(
+          {
+            userId: userId
+          },
+          () => {
+            axios.post(`/tests/type/custom/${this.state.userId}`).then(d => {
+              this.setState(
+                {
+                  tests: d.data,
+                  loading: false
+                },
+                () => {
+                  let page = window.location.hash.split("tests/")[1];
+                  this.props.handlePageUpdate(page);
+                }
+              );
+            });
+          }
+        );
+      });
     });
   }
 
@@ -131,7 +138,7 @@ export default class CustomTests extends Component {
                           {cell.value.multiple_choice || 0} Multiple Choice
                         </span>
                         <br />
-                        <span>{cell.value.module} Modules</span>
+                        <span>{cell.value.module || 0} Modules</span>
                       </div>
                     )
                   },

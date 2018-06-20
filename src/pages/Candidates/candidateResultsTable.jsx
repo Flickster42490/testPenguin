@@ -18,7 +18,8 @@ import "react-table/react-table.css";
 const typeMap = {
   journalEntry: "Journal Entry",
   multipleChoice: "Multiple Choice",
-  reconciliation: "Reconciliation"
+  reconciliation: "Reconciliation",
+  financialStatement: "Financial Statement"
 };
 const getStatusColor = value => {
   value = value * 100;
@@ -238,6 +239,14 @@ export default class Dashboard extends Component {
                         </span>
                       )}
                       {k === "reconciliation" && (
+                        <span>
+                          {v.correctRows}/{v.correctRows + v.wrongRows}{" "}
+                          {getStatusColor(
+                            v.correctRows / (v.correctRows + v.wrongRows)
+                          )}
+                        </span>
+                      )}
+                      {k === "financialStatement" && (
                         <span>
                           {v.correctRows}/{v.correctRows + v.wrongRows}{" "}
                           {getStatusColor(

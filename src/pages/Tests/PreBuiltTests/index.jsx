@@ -11,6 +11,7 @@ import {
 import axios from "axios";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
+import localForage from "localforage";
 
 import { Preloader } from "../../../components/Preloader.jsx";
 
@@ -26,17 +27,26 @@ export default class PreBuiltTests extends Component {
 
   componentWillMount() {
     window.scrollTo(0, 0);
-    axios.post("/tests/type/pre_built").then(d => {
-      this.setState(
-        {
-          tests: d.data,
-          loading: false
-        },
-        () => {
-          let page = window.location.hash.split("tests/")[1];
-          this.props.handlePageUpdate(page);
+    let userId;
+    localForage.getItem("userId").then(id => {
+      userId = id;
+      axios.get(`users/${userId}`).then(u => {
+        if (u.data[0].trial && u.data[0].trial_expired) {
+          window.location.href = "/#/dashboard/profile?trialError=true";
         }
-      );
+        axios.post("/tests/type/pre_built").then(d => {
+          this.setState(
+            {
+              tests: d.data,
+              loading: false
+            },
+            () => {
+              let page = window.location.hash.split("tests/")[1];
+              this.props.handlePageUpdate(page);
+            }
+          );
+        });
+      });
     });
   }
 
@@ -113,7 +123,7 @@ export default class PreBuiltTests extends Component {
                           {cell.value.multiple_choice || 0} Multiple Choice
                         </span>
                         <br />
-                        <span>{cell.value.module} Modules</span>
+                        <span>{cell.value.module || 0} Modules</span>
                       </div>
                     )
                   },

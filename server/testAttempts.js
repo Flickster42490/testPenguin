@@ -291,7 +291,14 @@ router.post("/retrieveSavedProgress", (req, res) => {
 });
 
 router.post("/saveProgress", (req, res) => {
-  let { id, userId, candidateAnswers, timeLeft, savedProgressIndex } = req.body;
+  let {
+    id,
+    userId,
+    candidateAnswers,
+    timeLeft,
+    savedProgressIndex,
+    testSubmitted
+  } = req.body;
   candidateAnswers = JSON.stringify(candidateAnswers);
   return req.db
     .any(
@@ -299,21 +306,25 @@ router.post("/saveProgress", (req, res) => {
       [id]
     )
     .then(data => {
-      console.log(data);
-      let newSavedProgressCount = data[0]
-        ? data[0].saved_progress_count + 1
-        : 1;
-      return req.db.any(
-        "UPDATE test_attempts SET (candidate_answers, saved_progress_at,saved_progress_count, saved_progress_index, time_left) = ($1,$2,$3,$4,$5) where id = $6 RETURNING *",
-        [
-          candidateAnswers,
-          new Date(),
-          newSavedProgressCount,
-          savedProgressIndex,
-          JSON.stringify(timeLeft),
-          id
-        ]
-      );
+      console.log(testSubmitted, "<---------------------- Test Submitted");
+      if (!testSubmitted) {
+        console.log(data);
+        let newSavedProgressCount = data[0]
+          ? data[0].saved_progress_count + 1
+          : 1;
+        return req.db.any(
+          "UPDATE test_attempts SET (candidate_answers, saved_progress_at,saved_progress_count, saved_progress_index, time_left) = ($1,$2,$3,$4,$5) where id = $6 RETURNING *",
+          [
+            candidateAnswers,
+            new Date(),
+            newSavedProgressCount,
+            savedProgressIndex,
+            JSON.stringify(timeLeft),
+            id
+          ]
+        );
+      }
+      return Promise.resolve([true]);
     })
     .then(attempt => {
       return res.send(attempt[0]);
@@ -321,15 +332,14 @@ router.post("/saveProgress", (req, res) => {
 });
 
 router.post("/submitTest", (req, res) => {
-  let { candidateAnswers, id } = req.body;
+  let { candidateAnswers, id, timeLeft } = req.body;
   const util = require("util");
   let result, user, test, testAttempt, candidate;
   // console.log(util.inspect(candidateAnswers, false, null));
-  candidateAnswers = JSON.stringify(candidateAnswers);
   return req.db
     .any(
-      "UPDATE test_attempts SET (candidate_answers) = ($1) where id = $2 RETURNING *",
-      [candidateAnswers, id]
+      "UPDATE test_attempts SET (completed_at) = ($1) where id = $2 RETURNING *",
+      [new Date(), id]
     )
     .then(a => {
       testAttempt = a[0];
@@ -348,7 +358,7 @@ router.post("/submitTest", (req, res) => {
     .then(u => {
       user = u[0];
       let results = [];
-      let answers = JSON.parse(candidateAnswers);
+      let answers = candidateAnswers;
       answers.forEach(q => {
         if (q.type === "multiple_choice") {
           let question = { id: q.id, type: q.type };
@@ -365,17 +375,30 @@ router.post("/submitTest", (req, res) => {
           let question = TestAttempts.checkReconciliationAnswers(q);
           q.correct = question;
           results.push(question);
+        } else if (
+          q.type === "module" &&
+          q.module_type === "financial_statement"
+        ) {
+          let question = TestAttempts.checkReconciliationAnswers(q);
+          q.correct = question;
+          results.push(question);
         } else if (q.type === "module" && q.module_type === "multiple_choice") {
           let question = TestAttempts.checkMultipleChoiceModuleAnswers(q);
           q.correct = question;
           results.push(question);
         }
       });
-      console.log("results ---->", results);
       results = TestAttempts.aggregateResults(results);
+      console.log(JSON.stringify(answers));
       return req.db.any(
-        "UPDATE test_attempts SET (results, completed_at, candidate_answers) = ($1,$2,$3) where id = $4 RETURNING *",
-        [JSON.stringify(results), new Date(), JSON.stringify(answers), id]
+        "UPDATE test_attempts SET (candidate_answers, results, completed_at, time_left) = ($1,$2,$3,$4) where id = $5 RETURNING *",
+        [
+          JSON.stringify(answers),
+          JSON.stringify(results),
+          new Date(),
+          JSON.stringify(timeLeft),
+          id
+        ]
       );
     })
     .then(d => {

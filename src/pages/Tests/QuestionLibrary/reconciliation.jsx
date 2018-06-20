@@ -114,7 +114,7 @@ export default class Reconciliation extends Component {
   }
 
   updateValue(currentRow, event) {
-    currentRow.value = Number(event.target.value);
+    currentRow.value = Number(event.target.value.toString().replace(/,/g, ""));
     this.props.handleSubModuleOneUpdate(this.state.reconciliation);
   }
 
@@ -162,7 +162,7 @@ export default class Reconciliation extends Component {
             reconciliationFormat[segmentIndex].rows[rowIndex].value && (
               <Input
                 className="right-align"
-                type="text"
+                type="number"
                 readOnly={disabled}
                 defaultValue={currentRow.value}
               />
@@ -171,9 +171,9 @@ export default class Reconciliation extends Component {
             !reconciliationFormat[segmentIndex].rows[rowIndex].value && (
               <Input
                 className="right-align"
-                type="text"
+                type="number"
                 readOnly={disabled}
-                value={!currentRow.value ? " " : currentRow.value}
+                value={!currentRow.value ? null : currentRow.value}
                 onChange={value => this.updateValue(currentRow, value)}
                 onBlur={value =>
                   this.calculateSum(segmentIndex, segment.id, value)

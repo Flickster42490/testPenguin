@@ -29,23 +29,28 @@ export default class QuestionLibrary extends Component {
     let userId;
     localForage.getItem("userId").then(id => {
       userId = id;
-      axios.post("/questions", { userId: id }).then(d => {
-        let typeCount = this.findTypeCount(d.data);
-        this.setState(
-          {
-            userId: userId,
-            typeCount: typeCount,
-            questions: d.data,
-            addQuestions: this.props.addQuestions,
-            loading: false
-          },
-          () => {
-            let page = window.location.hash.split("tests/")[1];
-            if (page == "questionLibrary") {
-              this.props.handlePageUpdate(page);
+      axios.get(`users/${id}`).then(u => {
+        if (u.data[0].trial && u.data[0].trial_expired) {
+          window.location.href = "/#/dashboard/profile?trialError=true";
+        }
+        axios.post("/questions", { userId: userId }).then(d => {
+          let typeCount = this.findTypeCount(d.data);
+          this.setState(
+            {
+              userId: userId,
+              typeCount: typeCount,
+              questions: d.data,
+              addQuestions: this.props.addQuestions,
+              loading: false
+            },
+            () => {
+              let page = window.location.hash.split("tests/")[1];
+              if (page == "questionLibrary") {
+                this.props.handlePageUpdate(page);
+              }
             }
-          }
-        );
+          );
+        });
       });
     });
   }
@@ -137,8 +142,8 @@ export default class QuestionLibrary extends Component {
                   },
                   {
                     Header: "Question Type",
-                    accessor: "type",
-                    sortable: false,
+                    accessor: "module_type",
+                    sortable: true,
                     maxWidth: 180,
                     Cell: cell => (
                       <span>
@@ -242,6 +247,16 @@ export default class QuestionLibrary extends Component {
                             >
                               Add Question
                             </Button>
+                            <a
+                              href={`/#/dashboard/tests/questionLibrary/preview?id=${
+                                cell.original.id
+                              }`}
+                              target="_blank"
+                            >
+                              <Button size="sm" color="link">
+                                Go To Question
+                              </Button>
+                            </a>
                           </ButtonGroup>
                         )}
                       </div>

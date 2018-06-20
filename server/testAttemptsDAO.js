@@ -28,6 +28,17 @@ module.exports = {
             obj.reconciliation.correctRows + i.correctRows;
           obj.reconciliation.wrongRows =
             obj.reconciliation.wrongRows + i.wrongRows;
+        } else if (
+          i.type === "module" &&
+          i.module_type === "financial_statement"
+        ) {
+          if (!obj.financialStatement) {
+            obj.financialStatement = { correctRows: 0, wrongRows: 0 };
+          }
+          obj.financialStatement.correctRows =
+            obj.financialStatement.correctRows + i.correctRows;
+          obj.financialStatement.wrongRows =
+            obj.financialStatement.wrongRows + i.wrongRows;
         } else if (i.type === "module" && i.module_type === "multiple_choice") {
           if (!obj.multipleChoice) {
             obj.multipleChoice = { correct: 0, wrong: 0 };

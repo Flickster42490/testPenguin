@@ -141,7 +141,7 @@ export default class testBasics extends Component {
                         id="textarea-input"
                         rows="3"
                         onBlur={this.handleDescription}
-                        maxLength="100"
+                        maxLength="200"
                         minLength="10"
                       />
                       <FormText color="muted">

@@ -111,12 +111,12 @@ export default class JournalEntry extends Component {
   }
 
   updateDebit(currentRow, event) {
-    currentRow.debit = Number(event.target.value);
+    currentRow.debit = Number(event.target.value.toString().replace(/,/g, ""));
     this.props.handleSubModuleOneUpdate(this.state.journalEntry);
   }
 
   updateCredit(currentRow, event) {
-    currentRow.credit = Number(event.target.value);
+    currentRow.credit = Number(event.target.value.toString().replace(/,/g, ""));
     this.props.handleSubModuleOneUpdate(this.state.journalEntry);
   }
 
@@ -160,7 +160,7 @@ export default class JournalEntry extends Component {
           <Col sm={2}>
             <Input
               className="right-align"
-              type="text"
+              type="number"
               readOnly={disabled}
               defaultValue={currentRow.debit}
             />
@@ -170,7 +170,7 @@ export default class JournalEntry extends Component {
           <Col sm={2}>
             <Input
               className="right-align"
-              type="text"
+              type="number"
               defaultValue={currentRow.credit}
               readOnly={disabled}
             />
@@ -180,8 +180,8 @@ export default class JournalEntry extends Component {
           <Col sm={2}>
             <Input
               className="right-align"
-              type="text"
-              value={!currentRow.debit ? " " : currentRow.debit}
+              type="number"
+              value={!currentRow.debit ? null : currentRow.debit}
               onChange={value => this.updateDebit(currentRow, value)}
             />
           </Col>
@@ -190,8 +190,8 @@ export default class JournalEntry extends Component {
           <Col sm={2}>
             <Input
               className="right-align"
-              type="text"
-              value={!currentRow.credit ? " " : currentRow.credit}
+              type="number"
+              value={!currentRow.credit ? null : currentRow.credit}
               onChange={value => this.updateCredit(currentRow, value)}
             />
           </Col>

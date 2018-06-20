@@ -18,6 +18,11 @@ import queryString from "querystring";
 import utils from "../../../utils";
 import { Preloader } from "../../../components/Preloader.jsx";
 
+const typeMap = {
+  custom: "Custom",
+  pre_built: "Pre-Built"
+};
+
 export default class QuestionLibrary extends Component {
   constructor(props) {
     super(props);
@@ -73,7 +78,7 @@ export default class QuestionLibrary extends Component {
               <hr />
               <Row>
                 <Col xs={12} md={4}>
-                  <div class="text-align-center">
+                  <div class="text-align-left">
                     <div className="h4 m-0">Test Description</div>
                     <span>{test.description}</span>
                   </div>
@@ -84,7 +89,7 @@ export default class QuestionLibrary extends Component {
                     <ul className="horizontal-bars">
                       <li>
                         <span className="muted-text">Type: </span>
-                        <span>{test.type}</span>{" "}
+                        <span>{typeMap[test.type]}</span>{" "}
                       </li>
                       <li>
                         <span className="muted-text">Allotted Time: </span>
