@@ -9,6 +9,7 @@ const Cache = new NodeCache({ stdTTL: 360000, checkperiod: 370000 });
 const stripe = require("stripe")(process.env.STRIPE_KEY);
 const moment = require("moment");
 const sgMail = require("@sendgrid/mail");
+const bcrypt = require("bcrypt");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 var pgp = require("pg-promise")();
@@ -20,44 +21,35 @@ const cn = {
   password: process.env.DB_PASSWORD,
   ssl: true
 };
-console.log(cn);
 var db = pgp(cn);
-
+const saltRounds = 10;
 //local strategy
 passport.use(
   new LocalStrategy(function(username, password, done) {
-    console.log(username, password, "!!!!!!!!!!!!!!!!!!!!");
     return db
       .any("SELECT * FROM users WHERE email_address = $1", username)
       .then(user => {
         if (!user || user.length < 1) return done(null, false);
-        if (user.length > 0 && user[0].password != password)
-          return done(null, false);
-        console.log(
-          user[0].trial,
-          moment(new Date()) < moment(user[0].created_at).add(7, "days"),
-          moment(new Date()),
-          moment(user[0].created_at).add(7, "days"),
-          !user[0].trial
-            ? moment(new Date()) < moment(user[0].created_at).add(7, "days")
-            : false
-        );
-        return db
-          .any(
-            "UPDATE users set (last_signed_in,times_signed_in,trial,trial_expired) = ($1,$2,$3,$4) where id = $5 RETURNING *",
-            [
-              new Date(),
-              user[0].times_signed_in + 1,
-              !user[0].trial
-                ? moment(new Date()) < moment(user[0].created_at).add(7, "days")
-                : false,
-              moment(new Date()) > moment(user[0].created_at).add(7, "days"),
-              user[0].id
-            ]
-          )
-          .then(user => {
-            return done(null, user[0]);
-          });
+        return bcrypt.compare(password, user[0].password).then(bCryptResult => {
+          if (!bCryptResult) return done(null, false);
+          return db
+            .any(
+              "UPDATE users set (last_signed_in,times_signed_in,trial,trial_expired) = ($1,$2,$3,$4) where id = $5 RETURNING *",
+              [
+                new Date(),
+                user[0].times_signed_in + 1,
+                !user[0].trial
+                  ? moment(new Date()) <
+                    moment(user[0].created_at).add(7, "days")
+                  : false,
+                moment(new Date()) > moment(user[0].created_at).add(7, "days"),
+                user[0].id
+              ]
+            )
+            .then(user => {
+              return done(null, user[0]);
+            });
+        });
       });
   })
 );
@@ -360,58 +352,60 @@ router.post("/local/register", (req, res) => {
     .then(d => {
       if (d && d.length > 0) return res.status(400).send("found");
       else {
-        return db
-          .any(
-            "INSERT INTO users(first_name, last_name, email_address, display_name, provider, last_signed_in, created_at, password, type, company, trial, tokens,times_signed_in) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING *",
-            [
-              req.body.firstName,
-              req.body.lastName,
-              req.body.username,
-              `${req.body.firstName} ${req.body.lastName}`,
-              "local",
-              new Date(),
-              new Date(),
-              req.body.password,
-              "admin",
-              req.body.company,
-              true,
-              3,
-              1
-            ]
-          )
-          .then(u => {
-            console.log("registered user ===> ", u[0]);
-            user = u[0];
-            let userMsg = {
-              to: user.email_address,
-              from: "admin@testpenguin.com",
-              templateId: "bdd4a4e5-1c3a-464e-be08-4eb2aa3209f4",
-              substitutions: {
-                user_first_name: user.first_name,
-                base_url: "http://accounting-penguin.herokuapp.com"
-              }
-            };
-            sgMail.send(userMsg).then(() => {
-              console.log("registered user ===> ", user);
-              return stripe.customers
-                .create({
-                  email: user.email_address
-                })
-                .then(customer => {
-                  console.log("stripe customer ---->", customer, user);
-                  return db
-                    .any(
-                      "UPDATE users SET stripe_id = $1 WHERE id=$2 RETURNING *",
-                      [customer.id, u[0].id]
-                    )
-                    .then(u => {
-                      console.log(u[0]);
-                      if (u && u.length > 0) return res.send(u[0]);
-                      else return res.status(401).send(false);
-                    });
-                });
+        return bcrypt.hash(req.body.password, saltRounds).then(hash => {
+          return db
+            .any(
+              "INSERT INTO users(first_name, last_name, email_address, display_name, provider, last_signed_in, created_at, password, type, company, trial, tokens,times_signed_in) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING *",
+              [
+                req.body.firstName,
+                req.body.lastName,
+                req.body.username,
+                `${req.body.firstName} ${req.body.lastName}`,
+                "local",
+                new Date(),
+                new Date(),
+                hash,
+                "admin",
+                req.body.company,
+                true,
+                3,
+                1
+              ]
+            )
+            .then(u => {
+              console.log("registered user ===> ", u[0]);
+              user = u[0];
+              let userMsg = {
+                to: user.email_address,
+                from: "admin@testpenguin.com",
+                templateId: "bdd4a4e5-1c3a-464e-be08-4eb2aa3209f4",
+                substitutions: {
+                  user_first_name: user.first_name,
+                  base_url: "http://accounting-penguin.herokuapp.com"
+                }
+              };
+              sgMail.send(userMsg).then(() => {
+                console.log("registered user ===> ", user);
+                return stripe.customers
+                  .create({
+                    email: user.email_address
+                  })
+                  .then(customer => {
+                    console.log("stripe customer ---->", customer, user);
+                    return db
+                      .any(
+                        "UPDATE users SET stripe_id = $1 WHERE id=$2 RETURNING *",
+                        [customer.id, u[0].id]
+                      )
+                      .then(u => {
+                        console.log(u[0]);
+                        if (u && u.length > 0) return res.send(u[0]);
+                        else return res.status(401).send(false);
+                      });
+                  });
+              });
             });
-          });
+        });
       }
     })
     .catch(err => {
