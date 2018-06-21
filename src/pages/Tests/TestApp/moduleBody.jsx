@@ -220,7 +220,7 @@ export default class ModuleBody extends Component {
                       }}
                     >
                       <PDF
-                        file={`/img/${
+                        file={`https://s3-us-west-2.amazonaws.com/question-assets/pdf/${
                           externalDocs[this.state.activeDocIndex].url
                         }`}
                         style={{ maxWidth: "100%", height: "auto" }}

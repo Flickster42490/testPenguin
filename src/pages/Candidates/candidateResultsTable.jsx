@@ -176,9 +176,26 @@ export default class Dashboard extends Component {
                   </span>
                 ) : (
                   <span>
-                    {moment(cell.original.invited_at).format(
-                      "MM/DD/YYYY hh:mm a"
-                    )}
+                    {moment(cell.original.invited_at).format("MM/DD/YYYY")}
+                  </span>
+                );
+              }
+            },
+            {
+              Header: "Test Expiration Date",
+              accessor: "expiring_at",
+              sortable: true,
+              sortMethod: (a, b) => {
+                return moment(a).isBefore(moment(b)) ? -1 : 1;
+              },
+              Cell: cell => {
+                return this.props.issuedTestPage ? (
+                  <span>
+                    {moment(cell.original.expiring_at).format("MM/DD/YYYY")}
+                  </span>
+                ) : (
+                  <span>
+                    {moment(cell.original.expiring_at).format("MM/DD/YYYY")}
                   </span>
                 );
               }
@@ -193,7 +210,7 @@ export default class Dashboard extends Component {
                       <span>
                         Completed on{" "}
                         {moment(cell.original.completed_at).format(
-                          "MM/DD/YYYY hh:mm a"
+                          "MM/DD/YYYY"
                         )}
                       </span>
                     )}
@@ -202,7 +219,7 @@ export default class Dashboard extends Component {
                         <span>
                           Started on{" "}
                           {moment(cell.original.started_at).format(
-                            "MM/DD/YYYY hh:mm a"
+                            "MM/DD/YYYY"
                           )}
                         </span>
                       )}
@@ -213,7 +230,7 @@ export default class Dashboard extends Component {
               }
             },
             {
-              Header: "Score Results",
+              Header: "Score",
               accessor: "results",
               maxWidth: 250,
               minWidth: 220,
@@ -259,9 +276,7 @@ export default class Dashboard extends Component {
                 });
                 return (
                   <div>
-                    {!cell.original.completed_at && (
-                      <span>N/A - Not Yet Completed</span>
-                    )}
+                    {!cell.original.completed_at && <span />}
 
                     {cell.original.completed_at && resultList}
                   </div>
@@ -296,24 +311,27 @@ export default class Dashboard extends Component {
                         </Button>
                       </a>
                     )}
-                    {!cell.original.completed_at && (
-                      <a
-                        onClick={() =>
-                          this.handleSendReminder(
-                            cell.original.user_id,
-                            cell.original.email_address,
-                            cell.original.id,
-                            cell.original.test_id,
-                            cell.original.expiring_at
-                          )
-                        }
-                        style={{ color: "#fff" }}
-                      >
-                        <Button size="md" color="danger">
-                          Send Reminder
-                        </Button>
-                      </a>
-                    )}
+                    {!cell.original.completed_at &&
+                      moment(new Date()).isBefore(
+                        moment(cell.original.expiring_at)
+                      ) && (
+                        <a
+                          onClick={() =>
+                            this.handleSendReminder(
+                              cell.original.user_id,
+                              cell.original.email_address,
+                              cell.original.id,
+                              cell.original.test_id,
+                              cell.original.expiring_at
+                            )
+                          }
+                          style={{ color: "#fff" }}
+                        >
+                          <Button size="md" color="danger">
+                            Send Reminder
+                          </Button>
+                        </a>
+                      )}
                   </ButtonGroup>
                 </div>
               )

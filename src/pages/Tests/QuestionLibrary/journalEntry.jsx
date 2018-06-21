@@ -181,7 +181,7 @@ export default class JournalEntry extends Component {
             <Input
               className="right-align"
               type="number"
-              value={!currentRow.debit ? null : currentRow.debit}
+              value={!currentRow.debit ? "" : currentRow.debit}
               onChange={value => this.updateDebit(currentRow, value)}
             />
           </Col>
@@ -191,7 +191,7 @@ export default class JournalEntry extends Component {
             <Input
               className="right-align"
               type="number"
-              value={!currentRow.credit ? null : currentRow.credit}
+              value={!currentRow.credit ? "" : currentRow.credit}
               onChange={value => this.updateCredit(currentRow, value)}
             />
           </Col>

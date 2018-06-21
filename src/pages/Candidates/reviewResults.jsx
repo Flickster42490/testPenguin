@@ -369,6 +369,7 @@ export default class ReviewResults extends Component {
                                     href={`/#/dashboard/tests/questionLibrary/preview?id=${questionId}&returnTo=${`/#/dashboard/candidates/reviewResults%3Fid=${
                                       testResults.id
                                     }`}`}
+                                    target="_blank"
                                   >
                                     <Button color="link">
                                       Correct Answer Notes

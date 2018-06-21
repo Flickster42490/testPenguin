@@ -5,6 +5,8 @@ import SecondaryHeader from "../../components/Header/SecondaryHeader";
 import Sidebar from "../../components/TestsSidebar/";
 import Aside from "../../components/Aside/";
 import queryString from "querystring";
+import localForage from "localforage";
+import axios from "axios";
 
 export default class App extends Component {
   constructor(props) {
@@ -12,7 +14,8 @@ export default class App extends Component {
 
     this.state = {
       page: undefined,
-      filters: undefined
+      filters: undefined,
+      trialExpired: false
     };
 
     this.handleFilters = this.handleFilters.bind(this);
@@ -21,8 +24,20 @@ export default class App extends Component {
 
   componentWillMount() {
     const page = window.location.hash.split("tests/")[1];
-    this.setState({
-      page: page
+    localForage.getItem("userId").then(id => {
+      axios.get(`/users/${id}`).then(u => {
+        this.setState(
+          {
+            trialExpired: u.data[0].trial && u.data[0].trial_expired,
+            page: page
+          },
+          () => {
+            if (this.state.trialExpired && page !== "issuedTests") {
+              window.location.href = "/#/dashboard/profile?trialError=true";
+            }
+          }
+        );
+      });
     });
   }
 

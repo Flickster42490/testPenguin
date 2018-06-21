@@ -123,6 +123,12 @@ export default class Reconciliation extends Component {
     let segmentIndex = segment.id - 1;
     let rowIndex = row.id - 1;
     let currentRow = reconciliation[segmentIndex].rows[rowIndex];
+    console.log(
+      currentRow,
+      currentRow.prePopulatedValue && Boolean(currentRow.prePopulatedValue)
+    );
+    if (currentRow.prePopulatedValue && Boolean(currentRow.prePopulatedValue))
+      disabled = true;
     return (
       <FormGroup row key={row.id}>
         <Col sm={6}>
@@ -173,7 +179,7 @@ export default class Reconciliation extends Component {
                 className="right-align"
                 type="number"
                 readOnly={disabled}
-                value={!currentRow.value ? null : currentRow.value}
+                value={!currentRow.value ? "" : currentRow.value}
                 onChange={value => this.updateValue(currentRow, value)}
                 onBlur={value =>
                   this.calculateSum(segmentIndex, segment.id, value)

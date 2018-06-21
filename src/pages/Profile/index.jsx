@@ -345,39 +345,58 @@ export default class Profile extends Component {
                     {this.state.user && (
                       <Card>
                         <br />
-                        {!this.state.user.trial && (
+                        {!this.state.user.trial &&
+                          !this.state.user.trial_expired && (
+                            <Row>
+                              <Col
+                                md={{ size: 2 }}
+                                style={{ paddingLeft: "40px" }}
+                              >
+                                <Label htmlFor="text-input"># of Tokens</Label>
+                              </Col>
+                              <Col xs="12" md="3">
+                                <strong>{this.state.user.tokens} Tokens</strong>
+                              </Col>
+                            </Row>
+                          )}
+                        {this.state.user.trial &&
+                          !this.state.user.trial_expired && (
+                            <Row>
+                              <Col
+                                md={{ size: 2 }}
+                                style={{ paddingLeft: "40px" }}
+                              >
+                                <Label htmlFor="text-input">
+                                  Free Trial Until{" "}
+                                </Label>
+                              </Col>
+                              <Col xs="12" md="3">
+                                <strong>
+                                  {moment(this.state.user.created_at)
+                                    .add(7, "days")
+                                    .format("MM/DD/YYYY")}
+                                </strong>
+                              </Col>
+                            </Row>
+                          )}
+                        {this.state.user.trial_expired && (
                           <Row>
                             <Col
                               md={{ size: 2 }}
                               style={{ paddingLeft: "40px" }}
                             >
-                              <Label htmlFor="text-input"># of Tokens</Label>
+                              <Label htmlFor="text-input">Free Trial </Label>
                             </Col>
-                            <Col xs="12" md="3">
-                              <strong>{this.state.user.tokens} Tokens</strong>
-                            </Col>
-                          </Row>
-                        )}
-                        {this.state.user.trial && (
-                          <Row>
-                            <Col
-                              md={{ size: 2 }}
-                              style={{ paddingLeft: "40px" }}
-                            >
-                              <Label htmlFor="text-input">
-                                Free Trial Until{" "}
-                              </Label>
-                            </Col>
-                            <Col xs="12" md="3">
+                            <Col xs="12" md="5">
                               <strong>
-                                {moment(this.state.user.created_at)
-                                  .add(7, "days")
-                                  .format("MM/DD/YYYY")}
+                                Expired. Please add test tokens to utilize all
+                                features.{" "}
                               </strong>
                             </Col>
                           </Row>
                         )}
                         {this.state.user.trial &&
+                          !this.state.user.trial_expired &&
                           this.state.user.tokens && (
                             <Row>
                               <Col

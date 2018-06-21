@@ -90,7 +90,7 @@ module.exports = {
     q.module_answer.segments.forEach((s, sIdx) => {
       if (s.rows) {
         s.rows.forEach((r, rIdx) => {
-          if (r.options) {
+          if (r.options && !r.prePopulatedValue) {
             question.totalRows = question.totalRows + 1;
             let rowCorrect = false;
             q.module_candidate_answer.segments[sIdx].rows.forEach(check => {
@@ -103,7 +103,6 @@ module.exports = {
         });
       }
     });
-    console.log(question);
     return question;
   },
 
