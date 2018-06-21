@@ -178,6 +178,7 @@ export default class addQuestions extends Component {
                   <TestQuestionList
                     questions={this.state.testQuestionList}
                     handleUpdateOrder={this.handleUpdateOrder}
+                    removeQuestion
                   />
                 </Col>
               </Row>

@@ -201,7 +201,7 @@ export default class TestQuestionList extends Component {
                 {
                   Header: "Remove",
                   maxWidth: 100,
-                  show: this.state.addQuestions,
+                  show: this.props.removeQuestion ? true : false,
                   Cell: cell => (
                     <span
                       onClick={() => this.removeItem(cell.original)}
